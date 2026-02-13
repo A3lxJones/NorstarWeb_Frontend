@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════
+   Custom Base Styles
+   ═══════════════════════════════════════════ */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: oklch(var(--b2));
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: oklch(var(--s) / 0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: oklch(var(--s) / 0.5);
+    }
+
+    /* Selection color */
+    ::selection {
+        background-color: oklch(var(--s) / 0.3);
+        color: oklch(var(--sc));
+    }
+
+    /* Focus styles for accessibility */
+    :focus-visible {
+        outline: 2px solid oklch(var(--s));
+        outline-offset: 2px;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Component Styles
+   ═══════════════════════════════════════════ */
+@layer components {
+
+    /* Calendar grid events */
+    .cal-event {
+        @apply w-1.5 h-1.5 rounded-full inline-block;
+    }
+
+    /* Gradient top bar for cards */
+    .card-gradient-bar {
+        @apply h-1 w-full rounded-t-2xl;
+        background: linear-gradient(90deg, oklch(var(--s)), oklch(var(--a)));
+    }
+
+    /* Section heading with decorative underline */
+    .section-heading {
+        @apply font-heading text-3xl md:text-4xl font-bold relative inline-block;
+    }
+
+    .section-heading::after {
+        content: '';
+        @apply absolute -bottom-2 left-0 w-12 h-1 rounded-full;
+        background: oklch(var(--s));
+    }
+
+    /* Image placeholder boxes */
+    .img-placeholder {
+        @apply bg-base-300/50 flex items-center justify-center text-base-content/20;
+    }
+
+    /* Badge variants for fixture status */
+    .badge-home {
+        @apply badge badge-sm font-bold;
+        background: oklch(var(--s) / 0.15);
+        color: oklch(var(--s));
+        border: 1px solid oklch(var(--s) / 0.3);
+    }
+
+    .badge-away {
+        @apply badge badge-sm font-bold;
+        background: oklch(var(--a) / 0.15);
+        color: oklch(var(--a));
+        border: 1px solid oklch(var(--a) / 0.3);
+    }
+
+    /* FAQ accordion smooth open */
+    .collapse-content {
+        transition: padding 0.2s ease;
+    }
+
+    /* Form input focus glow */
+    .input:focus,
+    .textarea:focus,
+    .select:focus {
+        box-shadow: 0 0 0 3px oklch(var(--s) / 0.1);
+    }
+
+    /* Stat counter highlight */
+    .stat-value-glow {
+        text-shadow: 0 0 40px oklch(var(--s) / 0.3);
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Scroll Reveal Animation Classes
+   ═══════════════════════════════════════════ */
+@layer utilities {
+    .scroll-reveal.is-visible {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Keyframes used by scroll-reveal
+   (defined outside @layer to prevent tree-shaking)
+   ═══════════════════════════════════════════ */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@layer utilities {
+
+    /* Stagger delay helpers */
+    .delay-100 {
+        animation-delay: 0.1s;
+    }
+
+    .delay-200 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-300 {
+        animation-delay: 0.3s;
+    }
+
+    .delay-400 {
+        animation-delay: 0.4s;
+    }
+
+    .delay-500 {
+        animation-delay: 0.5s;
+    }
+
+    .delay-600 {
+        animation-delay: 0.6s;
+    }
+
+    .delay-700 {
+        animation-delay: 0.7s;
+    }
+
+    /* Reduced motion: disable all animations */
+    @media (prefers-reduced-motion: reduce) {
+
+        .scroll-reveal,
+        .scroll-reveal.is-visible {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        .animate-float,
+        .animate-pulse-glow {
+            animation: none !important;
+        }
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Active nav link highlight
+   ═══════════════════════════════════════════ */
+.nav-active {
+    color: oklch(var(--s));
+    position: relative;
+}
+
+.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: oklch(var(--s));
+    border-radius: 1px;
+}

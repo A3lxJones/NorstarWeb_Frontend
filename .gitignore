@@ -1,0 +1,7 @@
+node_modules/
+dist/
+src/public/css/output.css
+.env
+*.js.map
+*.d.ts
+!tailwind.config.js

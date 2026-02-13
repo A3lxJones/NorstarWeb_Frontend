@@ -1,0 +1,245 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="py-16 lg:py-20 bg-base-200/50 border-b border-base-300/50 relative overflow-hidden">
+  <div class="absolute top-10 left-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl"></div>
+  <div class="container mx-auto px-4 max-w-6xl text-center relative z-10">
+    <span class="scroll-reveal opacity-0 badge badge-secondary badge-outline badge-sm font-medium tracking-wider uppercase mb-4">Get In Touch</span>
+    <h1 class="scroll-reveal opacity-0 font-heading text-4xl md:text-6xl font-bold mb-4">
+      Contact <span class="text-secondary">Us</span>
+    </h1>
+    <p class="scroll-reveal opacity-0 text-base-content/60 max-w-lg mx-auto">
+      Have a question, want to register, or just want to say hello? We'd love to hear from you.
+    </p>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-16 lg:py-24">
+  <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+
+      <!-- Contact Form (wider column) -->
+      <div class="lg:col-span-3 scroll-reveal opacity-0">
+        <h2 class="font-heading text-2xl font-bold mb-6">Send Us a <span class="text-secondary">Message</span></h2>
+        <form class="space-y-5" action="/contact" method="POST" novalidate>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="form-control">
+              <label class="label" for="name">
+                <span class="label-text font-medium">Full Name <span class="text-error">*</span></span>
+              </label>
+              <input type="text" id="name" name="name" placeholder="John Doe"
+                     class="input input-bordered w-full focus:input-secondary transition-colors"
+                     required autocomplete="name" maxlength="100" />
+            </div>
+
+            <div class="form-control">
+              <label class="label" for="email">
+                <span class="label-text font-medium">Email Address <span class="text-error">*</span></span>
+              </label>
+              <input type="email" id="email" name="email" placeholder="john@example.com"
+                     class="input input-bordered w-full focus:input-secondary transition-colors"
+                     required autocomplete="email" maxlength="254" />
+            </div>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="subject">
+              <span class="label-text font-medium">Subject <span class="text-error">*</span></span>
+            </label>
+            <select id="subject" name="subject" class="select select-bordered w-full focus:select-secondary transition-colors" required>
+              <option disabled selected value="">Select a topic</option>
+              <option>Junior U13 Registration</option>
+              <option>Learn to Play Enquiry</option>
+              <option>Learn to Skate Enquiry</option>
+              <option>General Enquiry</option>
+              <option>Sponsorship</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="message">
+              <span class="label-text font-medium">Message <span class="text-error">*</span></span>
+            </label>
+            <textarea id="message" name="message"
+                      class="textarea textarea-bordered h-36 w-full focus:textarea-secondary transition-colors"
+                      placeholder="Your message..." required maxlength="2000"></textarea>
+            <label class="label">
+              <span class="label-text-alt text-base-content/40">Max 2000 characters</span>
+            </label>
+          </div>
+
+          <!-- Honeypot (anti-bot, hidden from real users) -->
+          <div class="hidden" aria-hidden="true">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-block font-semibold gap-2 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-secondary/20">
+            Send Message
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+
+          <p class="text-xs text-base-content/40 text-center">
+            By submitting this form you agree to our
+            <a href="#" class="text-secondary hover:underline">Privacy Policy</a>.
+            We'll never share your data with third parties.
+          </p>
+        </form>
+      </div>
+
+      <!-- Contact Info sidebar -->
+      <div class="lg:col-span-2 scroll-reveal opacity-0 space-y-6" style="animation-delay: 0.15s;">
+        <h2 class="font-heading text-2xl font-bold mb-6">Club <span class="text-secondary">Info</span></h2>
+
+        <!-- Info cards -->
+        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
+          <div class="card-body flex-row items-center gap-4 p-5">
+            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-heading font-bold text-lg">Location</h3>
+              <p class="text-base-content/60 text-sm">Seven Towers Leisure Centre, Ballymena, Co. Antrim</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
+          <div class="card-body flex-row items-center gap-4 p-5">
+            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-heading font-bold text-lg">Email</h3>
+              <a href="mailto:info@norstarinline.com" class="text-secondary hover:text-accent transition-colors text-sm">info@norstarinline.com</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
+          <div class="card-body flex-row items-center gap-4 p-5">
+            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-heading font-bold text-lg">Training Times</h3>
+              <p class="text-base-content/60 text-sm">Saturdays 10:00 – 12:00</p>
+              <p class="text-base-content/60 text-sm">Wednesdays 18:00 – 19:30</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social links -->
+        <div class="pt-2">
+          <h3 class="font-heading font-bold text-lg mb-3">Follow Us</h3>
+          <div class="flex gap-3">
+            <a href="#" class="btn btn-circle btn-outline btn-secondary btn-sm hover:scale-110 transition-transform duration-200" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+              </svg>
+            </a>
+            <a href="#" class="btn btn-circle btn-outline btn-secondary btn-sm hover:scale-110 transition-transform duration-200" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Map Placeholder -->
+<section class="py-0">
+  <div class="bg-base-200 border-y border-base-300/50">
+    <div class="container mx-auto px-4 lg:px-8 max-w-6xl py-12">
+      <div class="scroll-reveal opacity-0 card bg-base-300/30 border border-base-300 overflow-hidden">
+        <div class="flex items-center justify-center min-h-[300px] relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-accent/5"></div>
+          <div class="text-center relative z-10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-secondary/30 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <h3 class="font-heading text-xl font-bold text-secondary mb-1">Interactive Map</h3>
+            <p class="text-sm text-base-content/50 max-w-sm">
+              Seven Towers Leisure Centre, Trostan Ave, Ballymena BT43 7BL
+            </p>
+            <p class="text-xs text-base-content/30 mt-2">Map embed coming soon</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 lg:py-20">
+  <div class="container mx-auto px-4 lg:px-8 max-w-3xl">
+    <div class="text-center mb-12">
+      <span class="scroll-reveal opacity-0 badge badge-accent badge-outline badge-sm font-medium tracking-wider uppercase mb-3">Questions?</span>
+      <h2 class="scroll-reveal opacity-0 font-heading text-2xl md:text-4xl font-bold">
+        Frequently Asked <span class="text-secondary">Questions</span>
+      </h2>
+    </div>
+
+    <div class="space-y-3">
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300">
+        <input type="radio" name="faq" checked="checked" />
+        <div class="collapse-title font-heading font-bold text-lg">
+          What age can my child start?
+        </div>
+        <div class="collapse-content">
+          <p class="text-base-content/70">Our Learn to Skate programme is open to children aged 5 and up. Once they're comfortable on skates, they can progress to Learn to Play (ages 6+) and eventually to the competitive Junior U13 squad.</p>
+        </div>
+      </div>
+
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.1s;">
+        <input type="radio" name="faq" />
+        <div class="collapse-title font-heading font-bold text-lg">
+          Do I need my own equipment?
+        </div>
+        <div class="collapse-content">
+          <p class="text-base-content/70">For Learn to Skate sessions we provide all the equipment you need. For Learn to Play and U13, we recommend having your own inline skates and a hockey stick. Full protective gear is required for competitive play — we can advise on brands and sizing.</p>
+        </div>
+      </div>
+
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.2s;">
+        <input type="radio" name="faq" />
+        <div class="collapse-title font-heading font-bold text-lg">
+          What does it cost?
+        </div>
+        <div class="collapse-content">
+          <p class="text-base-content/70">Pricing varies by programme. Contact us for the latest fees and details on any early-bird discounts or sibling deals. We aim to keep costs accessible for all families.</p>
+        </div>
+      </div>
+
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.3s;">
+        <input type="radio" name="faq" />
+        <div class="collapse-title font-heading font-bold text-lg">
+          Where do you train?
+        </div>
+        <div class="collapse-content">
+          <p class="text-base-content/70">All sessions take place at Seven Towers Leisure Centre in Ballymena. Saturdays 10:00–12:00 and Wednesdays 18:00–19:30. Away matches are played at various venues across Northern Ireland.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

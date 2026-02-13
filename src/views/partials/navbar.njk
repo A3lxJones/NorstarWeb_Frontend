@@ -1,0 +1,78 @@
+<!-- ======== NAVBAR ======== -->
+<div class="navbar bg-base-200/90 backdrop-blur-md sticky top-0 z-50 shadow-lg border-b border-base-300/50 px-4 lg:px-8">
+  
+  <!-- Mobile menu button -->
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden" aria-label="Open menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+        </svg>
+      </div>
+      <!-- Mobile dropdown -->
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-200 rounded-box w-56 border border-base-300 animate-slide-down">
+        <li><a href="/" class="font-medium">Home</a></li>
+        <li><a href="/fixtures" class="font-medium">Fixtures</a></li>
+        <li><a href="/news" class="font-medium">News</a></li>
+        <li><a href="/contact" class="font-medium">Contact</a></li>
+        <li>
+          <a href="https://shop.norstarinline.com" target="_blank" rel="noopener noreferrer" class="font-medium">
+            Shop
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Logo / Brand -->
+    <a href="/" class="btn btn-ghost text-xl font-heading tracking-wider group">
+      <span class="text-secondary group-hover:text-accent transition-colors duration-300">NOR</span><span class="text-base-content group-hover:text-secondary transition-colors duration-300">STAR</span>
+    </a>
+  </div>
+
+  <!-- Desktop nav links -->
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1 gap-1">
+      <li>
+        <a href="/" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="/fixtures" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
+          Fixtures
+        </a>
+      </li>
+      <li>
+        <a href="/news" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
+          News
+        </a>
+      </li>
+      <li>
+        <a href="/contact" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
+          Contact
+        </a>
+      </li>
+      <li>
+        <a href="https://shop.norstarinline.com" target="_blank" rel="noopener noreferrer" class="font-medium text-base hover:text-accent transition-colors duration-200 rounded-lg">
+          Shop
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Login button -->
+  <div class="navbar-end">
+    <button id="login-btn" class="btn btn-secondary btn-sm lg:btn-md font-semibold gap-2 hover:animate-pulse-glow" type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+      <span class="hidden sm:inline">Login</span>
+    </button>
+  </div>
+</div>

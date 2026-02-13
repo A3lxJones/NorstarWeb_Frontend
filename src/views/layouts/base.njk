@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="norstar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="{{ description | default('Norstar Inline Hockey Club — Ballymena\'s home of inline hockey. Junior U13, Learn to Play, and Learn to Skate programmes.') }}" />
+  <meta name="theme-color" content="#3b1d8e" />
+
+  <!-- Security meta tags -->
+  <!-- X-Frame-Options and X-Content-Type-Options are set via HTTP headers by Helmet -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <title>{{ title | default('Norstar Inline Hockey Club') }}</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind / DaisyUI compiled CSS -->
+  <link rel="stylesheet" href="/css/output.css" />
+
+  {% block head %}{% endblock %}
+</head>
+<body class="font-body bg-base-100 text-base-content min-h-screen flex flex-col">
+
+  {% include "partials/navbar.njk" %}
+
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.njk" %}
+
+  <!-- ═══════════════════════════════════════════
+       LOGIN MODAL (no functionality)
+       ═══════════════════════════════════════════ -->
+  <dialog id="login-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-base-200 border border-base-300 shadow-2xl max-w-md p-0 relative overflow-hidden">
+      <!-- Decorative gradient blob -->
+      <div class="absolute -top-20 -right-20 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-accent/10 rounded-full blur-3xl"></div>
+
+      <div class="relative z-10 p-8">
+        <!-- Close button -->
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/50 hover:text-base-content">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </form>
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <h2 class="font-heading text-3xl font-bold mb-2">
+            <span class="text-secondary">NOR</span>STAR
+          </h2>
+          <p class="text-base-content/60 text-sm">Sign in to your member account</p>
+        </div>
+
+        <!-- Login form (no action, purely visual) -->
+        <form class="space-y-5" action="#" method="POST" novalidate>
+          <div class="form-control">
+            <label class="label" for="modal-email">
+              <span class="label-text font-medium">Email Address</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              </span>
+              <input type="email" id="modal-email" name="email" placeholder="you@example.com"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     autocomplete="email" maxlength="254" />
+            </div>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="modal-password">
+              <span class="label-text font-medium">Password</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              </span>
+              <input type="password" id="modal-password" name="password" placeholder="••••••••"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     autocomplete="current-password" minlength="8" />
+            </div>
+            <label class="label">
+              <a href="#" class="label-text-alt link link-hover text-secondary/70 hover:text-secondary">Forgot password?</a>
+            </label>
+          </div>
+
+          <!-- Honeypot (anti-bot, hidden from real users) -->
+          <div class="hidden" aria-hidden="true">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- Role indicator -->
+          <div class="alert bg-base-300/50 border-base-300 text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="text-base-content/60">Login functionality coming soon — members &amp; coaches will see role-based dashboards.</span>
+          </div>
+
+          <button type="button" class="btn btn-secondary btn-block font-semibold gap-2 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-secondary/20" disabled>
+            Sign In
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider text-base-content/30 text-xs my-4">OR</div>
+
+        <!-- Footer links -->
+        <div class="text-center space-y-3">
+          <p class="text-xs text-base-content/40">
+            Don't have an account? <a href="/contact" class="text-secondary hover:underline">Contact us</a> to register.
+          </p>
+          <p class="text-xs text-base-content/30 flex items-center justify-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            Secured with bcrypt, rate limiting &amp; HTTPS
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Click outside to close -->
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Client JS -->
+  <script src="/js/main.js" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
