@@ -1,0 +1,95 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-lg">
+
+    <!-- Breadcrumb -->
+    <div class="text-sm breadcrumbs mb-6">
+      <ul>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/dashboard/teams">Teams</a></li>
+        <li class="text-base-content/60">Create</li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-200 border border-base-300 shadow-2xl">
+      <div class="card-body p-8">
+        <h1 class="font-heading text-2xl font-bold mb-1">
+          Create Team<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 text-sm mb-6">Set up a new inline hockey team</p>
+
+        {% if error %}
+        <div class="alert alert-error text-sm mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form action="/dashboard/teams/create" method="POST" class="space-y-5" novalidate>
+
+          <!-- Team Name -->
+          <div class="form-control">
+            <label class="label" for="team-name">
+              <span class="label-text font-medium">Team Name <span class="text-error">*</span></span>
+            </label>
+            <input type="text" id="team-name" name="name"
+                   value="{{ values.name or '' }}"
+                   placeholder="e.g. Norstar U13 Panthers"
+                   class="input input-bordered w-full focus:input-secondary transition-colors"
+                   required maxlength="100" />
+          </div>
+
+          <!-- Age Group -->
+          <div class="form-control">
+            <label class="label" for="team-age-group">
+              <span class="label-text font-medium">Age Group <span class="text-error">*</span></span>
+            </label>
+            <select id="team-age-group" name="age_group" class="select select-bordered w-full focus:select-secondary transition-colors" required>
+              <option value="" disabled {% if not values.age_group %}selected{% endif %}>Select age group</option>
+              <option value="Learn to Skate" {% if values.age_group === 'Learn to Skate' %}selected{% endif %}>Learn to Skate</option>
+              <option value="Learn to Play" {% if values.age_group === 'Learn to Play' %}selected{% endif %}>Learn to Play</option>
+              <option value="U8" {% if values.age_group === 'U8' %}selected{% endif %}>Under 8</option>
+              <option value="U10" {% if values.age_group === 'U10' %}selected{% endif %}>Under 10</option>
+              <option value="U13" {% if values.age_group === 'U13' %}selected{% endif %}>Under 13</option>
+              <option value="U16" {% if values.age_group === 'U16' %}selected{% endif %}>Under 16</option>
+              <option value="U19" {% if values.age_group === 'U19' %}selected{% endif %}>Under 19</option>
+              <option value="Senior" {% if values.age_group === 'Senior' %}selected{% endif %}>Senior</option>
+            </select>
+          </div>
+
+          <!-- Max Players -->
+          <div class="form-control">
+            <label class="label" for="team-max-players">
+              <span class="label-text font-medium">Max Players <span class="text-base-content/40">(optional)</span></span>
+            </label>
+            <input type="number" id="team-max-players" name="max_players"
+                   value="{{ values.max_players or '' }}"
+                   placeholder="e.g. 15"
+                   class="input input-bordered w-full focus:input-secondary transition-colors"
+                   min="1" max="50" />
+            <label class="label">
+              <span class="label-text-alt text-base-content/40">Leave blank for no limit</span>
+            </label>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-3 pt-2">
+            <a href="/dashboard/teams" class="btn btn-ghost flex-1">Cancel</a>
+            <button type="submit" class="btn btn-secondary flex-1 gap-2 font-semibold">
+              Create Team
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

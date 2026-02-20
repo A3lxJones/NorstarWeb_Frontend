@@ -20,6 +20,15 @@
           <p class="text-base-content/60 text-sm">Sign in to your member account</p>
         </div>
 
+        {% if error %}
+        <div class="alert alert-error text-sm mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
         <!-- Login form -->
         <form action="/login" method="POST" class="space-y-5" novalidate>
           <div class="form-control">
@@ -33,6 +42,7 @@
                 </svg>
               </span>
               <input type="email" id="login-email" name="email" placeholder="you@example.com"
+                     value="{{ email or '' }}"
                      class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
                      required autocomplete="email" maxlength="254" />
             </div>
@@ -79,11 +89,11 @@
         </form>
 
         <!-- Divider -->
-        <div class="divider text-base-content/30 text-xs my-4">OR</div>
+        <div class="divider text-base-content/30 text-xs my-4">NEW HERE?</div>
 
-        <!-- Back to home -->
-        <a href="/" class="btn btn-ghost btn-sm w-full text-base-content/60 hover:text-secondary">
-          ← Back to Home
+        <!-- Signup link -->
+        <a href="/signup" class="btn btn-ghost btn-sm w-full text-base-content/60 hover:text-secondary">
+          Create an account →
         </a>
       </div>
     </div>
