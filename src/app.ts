@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import nunjucks from 'nunjucks';
 import path from 'path';
@@ -5,12 +6,20 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
 
+// Session & auth middleware
+import { configureSession } from './middleware/session';
+import { injectUser } from './middleware/auth';
+
 // Import routes
 import homeRoutes from './routes/index';
 import fixturesRoutes from './routes/fixtures';
 import newsRoutes from './routes/news';
 import contactRoutes from './routes/contact';
 import loginRoutes from './routes/login';
+import signupRoutes from './routes/signup';
+import logoutRoutes from './routes/logout';
+import dashboardRoutes from './routes/dashboard';
+import teamsRoutes from './routes/teams';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -115,16 +124,27 @@ app.use(
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
+// --- Session ---
+configureSession(app);
+
+// --- Inject user into all templates ---
+app.use(injectUser);
+
 // --- Routes ---
 app.use('/', homeRoutes);
 app.use('/fixtures', fixturesRoutes);
 app.use('/news', newsRoutes);
 app.use('/contact', contactRoutes);
 app.use('/login', loginRoutes);
+app.use('/signup', signupRoutes);
+app.use('/logout', logoutRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/dashboard/teams', teamsRoutes);
 
 // Apply stricter rate limiter to form POST routes
 app.post('/contact', formLimiter);
 app.post('/login', formLimiter);
+app.post('/signup', formLimiter);
 
 // --- 404 Handler ---
 app.use((_req: Request, res: Response) => {

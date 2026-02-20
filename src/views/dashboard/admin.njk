@@ -1,0 +1,151 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          Admin Dashboard<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">Full overview of Norstar operations</p>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Stats overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Teams</div>
+        <div class="stat-value text-2xl text-secondary">{{ teams | length }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Games</div>
+        <div class="stat-value text-2xl text-secondary">{{ games | length }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Reports</div>
+        <div class="stat-value text-2xl text-secondary">{{ reports | length }}</div>
+      </div>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-3">
+
+      <!-- Teams section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading text-xl font-semibold">Teams</h2>
+          <a href="/dashboard/teams/create" class="btn btn-secondary btn-xs gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            New
+          </a>
+        </div>
+
+        {% if teams.length === 0 %}
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body text-center py-8">
+            <p class="text-base-content/60 text-sm">No teams created yet.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="space-y-2">
+          {% for team in teams %}
+          <a href="/dashboard/teams/{{ team.id }}" class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow block">
+            <div class="card-body p-3">
+              <h3 class="font-semibold text-sm">{{ team.name }}</h3>
+              <p class="text-xs text-base-content/60">{{ team.age_group }}</p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Games section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading text-xl font-semibold">Recent Games</h2>
+          <a href="/dashboard/games/create" class="btn btn-secondary btn-xs gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            New
+          </a>
+        </div>
+
+        {% if games.length === 0 %}
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body text-center py-8">
+            <p class="text-base-content/60 text-sm">No games scheduled yet.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="space-y-2">
+          {% for game in games %}
+          <a href="/dashboard/games/{{ game.id }}" class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow block">
+            <div class="card-body p-3">
+              <div class="flex items-center gap-2">
+                <span class="badge badge-xs {% if game.type === 'match' %}badge-primary{% else %}badge-accent{% endif %}">
+                  {{ game.type }}
+                </span>
+                <h3 class="font-semibold text-sm">
+                  {% if game.opponent %}vs {{ game.opponent }}{% else %}{{ game.type | title }}{% endif %}
+                </h3>
+              </div>
+              <p class="text-xs text-base-content/60">{{ game.date }}</p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Reports section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading text-xl font-semibold">Reports</h2>
+          <a href="/dashboard/reports/create" class="btn btn-secondary btn-xs gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            New
+          </a>
+        </div>
+
+        {% if reports.length === 0 %}
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body text-center py-8">
+            <p class="text-base-content/60 text-sm">No reports filed yet.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="space-y-2">
+          {% for report in reports %}
+          <a href="/dashboard/reports/{{ report.id }}" class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow block">
+            <div class="card-body p-3">
+              <h3 class="font-semibold text-sm">{{ report.title }}</h3>
+              <p class="text-xs text-base-content/60">{{ report.type }} · {{ report.created_at | truncate(10, true, '') }}</p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

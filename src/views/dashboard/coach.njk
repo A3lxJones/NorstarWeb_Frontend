@@ -1,0 +1,125 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          Coach Dashboard<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">Manage your teams and games</p>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Stats overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Teams</div>
+        <div class="stat-value text-2xl text-secondary">{{ teams | length }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Upcoming Games</div>
+        <div class="stat-value text-2xl text-secondary">{{ games | length }}</div>
+      </div>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-2">
+
+      <!-- Teams section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading text-xl font-semibold">Your Teams</h2>
+        </div>
+
+        {% if teams.length === 0 %}
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body text-center py-8">
+            <p class="text-base-content/60">No teams assigned yet.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="space-y-3">
+          {% for team in teams %}
+          <div class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow">
+            <div class="card-body p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-heading font-semibold">{{ team.name }}</h3>
+                  <p class="text-sm text-base-content/60">
+                    {{ team.age_group }}
+                    {% if team.max_players %}· Max {{ team.max_players }} players{% endif %}
+                  </p>
+                </div>
+                <a href="/dashboard/teams/{{ team.id }}" class="btn btn-ghost btn-sm">
+                  View
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Games section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading text-xl font-semibold">Upcoming Games</h2>
+        </div>
+
+        {% if games.length === 0 %}
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body text-center py-8">
+            <p class="text-base-content/60">No upcoming games scheduled.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="space-y-3">
+          {% for game in games %}
+          <div class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow">
+            <div class="card-body p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if game.type === 'match' %}badge-primary{% else %}badge-accent{% endif %}">
+                      {{ game.type }}
+                    </span>
+                    <h3 class="font-heading font-semibold">
+                      {% if game.opponent %}vs {{ game.opponent }}{% else %}{{ game.type | title }}{% endif %}
+                    </h3>
+                  </div>
+                  <p class="text-sm text-base-content/60 mt-1">
+                    📅 {{ game.date }} · 📍 {{ game.location or 'TBC' }}
+                  </p>
+                </div>
+                <a href="/dashboard/games/{{ game.id }}" class="btn btn-ghost btn-sm">
+                  Details
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

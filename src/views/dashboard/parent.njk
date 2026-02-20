@@ -1,0 +1,116 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          Welcome back<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">Manage your children's inline hockey activities</p>
+      </div>
+      <a href="/dashboard/add-child" class="btn btn-secondary btn-sm gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Add Child
+      </a>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Children list -->
+    {% if children.length === 0 %}
+    <div class="card bg-base-200 border border-base-300 shadow-lg">
+      <div class="card-body items-center text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <h2 class="font-heading text-xl font-semibold mb-2">No children registered yet</h2>
+        <p class="text-base-content/60 mb-4">Add your child to get started with team registration and availability.</p>
+        <a href="/dashboard/add-child" class="btn btn-secondary">Add Your First Child</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="grid gap-6 md:grid-cols-2">
+      {% for child in children %}
+      <div class="card bg-base-200 border border-base-300 shadow-lg hover:shadow-xl transition-shadow">
+        <div class="card-body">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="card-title font-heading text-lg">
+                {{ child.first_name }} {{ child.last_name }}
+              </h2>
+              <p class="text-base-content/60 text-sm">
+                DOB: {{ child.date_of_birth }}
+                {% if child.skill_level %}
+                  · <span class="badge badge-sm badge-outline">{{ child.skill_level }}</span>
+                {% endif %}
+                {% if child.position %}
+                  · {{ child.position }}
+                {% endif %}
+              </p>
+            </div>
+            <div class="dropdown dropdown-end">
+              <label tabindex="0" class="btn btn-ghost btn-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01" />
+                </svg>
+              </label>
+              <ul tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-300 rounded-box w-48 z-50">
+                <li><a href="/dashboard/children/{{ child.id }}">View Details</a></li>
+                <li><a href="/dashboard/children/{{ child.id }}/edit">Edit</a></li>
+                <li><a href="/dashboard/children/{{ child.id }}/availability">Set Availability</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="divider my-2"></div>
+
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Emergency Contact</span>
+              <p class="font-medium">{{ child.emergency_contact_name }}</p>
+              <p class="text-base-content/60">{{ child.emergency_contact_phone }}</p>
+            </div>
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Consent</span>
+              <p class="flex items-center gap-1">
+                {% if child.photo_consent %}
+                  <span class="badge badge-success badge-xs"></span> Photo consent given
+                {% else %}
+                  <span class="badge badge-warning badge-xs"></span> No photo consent
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          {% if child.medical_conditions or child.allergies %}
+          <div class="mt-3 p-3 bg-warning/10 rounded-lg text-sm">
+            {% if child.medical_conditions %}
+              <p><strong>Medical:</strong> {{ child.medical_conditions }}</p>
+            {% endif %}
+            {% if child.allergies %}
+              <p><strong>Allergies:</strong> {{ child.allergies }}</p>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

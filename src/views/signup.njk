@@ -1,0 +1,158 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+
+<section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
+  <!-- Background decoration -->
+  <div class="absolute inset-0 bg-gradient-to-br from-base-100 via-primary/10 to-base-100"></div>
+  <div class="absolute top-20 right-20 w-72 h-72 bg-secondary/5 rounded-full blur-3xl animate-float"></div>
+  <div class="absolute bottom-20 left-20 w-72 h-72 bg-accent/5 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+
+  <div class="relative z-10 w-full max-w-md mx-auto px-4 py-12">
+    <!-- Signup card -->
+    <div class="scroll-reveal opacity-0 card bg-base-200 border border-base-300 shadow-2xl">
+      <div class="card-body p-8">
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <h1 class="font-heading text-3xl font-bold mb-2">
+            <span class="text-secondary">NOR</span>STAR
+          </h1>
+          <p class="text-base-content/60 text-sm">Create your parent account</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error text-sm mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Signup form -->
+        <form action="/signup" method="POST" class="space-y-4" novalidate>
+
+          <!-- Full Name -->
+          <div class="form-control">
+            <label class="label" for="signup-name">
+              <span class="label-text font-medium">Full Name <span class="text-error">*</span></span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <input type="text" id="signup-name" name="full_name" placeholder="Your full name"
+                     value="{{ values.full_name or '' }}"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     required autocomplete="name" maxlength="100" />
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-control">
+            <label class="label" for="signup-email">
+              <span class="label-text font-medium">Email Address <span class="text-error">*</span></span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </span>
+              <input type="email" id="signup-email" name="email" placeholder="you@example.com"
+                     value="{{ values.email or '' }}"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     required autocomplete="email" maxlength="254" />
+            </div>
+          </div>
+
+          <!-- Phone (optional) -->
+          <div class="form-control">
+            <label class="label" for="signup-phone">
+              <span class="label-text font-medium">Phone Number <span class="text-base-content/40">(optional)</span></span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </span>
+              <input type="tel" id="signup-phone" name="phone" placeholder="07XXX XXXXXX"
+                     value="{{ values.phone or '' }}"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     autocomplete="tel" maxlength="20" />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-control">
+            <label class="label" for="signup-password">
+              <span class="label-text font-medium">Password <span class="text-error">*</span></span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+              <input type="password" id="signup-password" name="password" placeholder="Min. 8 characters"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     required autocomplete="new-password" minlength="8" />
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-control">
+            <label class="label" for="signup-confirm">
+              <span class="label-text font-medium">Confirm Password <span class="text-error">*</span></span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </span>
+              <input type="password" id="signup-confirm" name="confirm_password" placeholder="Re-enter password"
+                     class="input input-bordered w-full pl-10 focus:input-secondary transition-colors"
+                     required autocomplete="new-password" minlength="8" />
+            </div>
+          </div>
+
+          <!-- Honeypot (anti-bot) -->
+          <div class="hidden" aria-hidden="true">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-block font-semibold gap-2 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-secondary/20 mt-2">
+            Create Account
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider text-base-content/30 text-xs my-4">ALREADY REGISTERED?</div>
+
+        <!-- Link to login -->
+        <a href="/login" class="btn btn-ghost btn-sm w-full text-base-content/60 hover:text-secondary">
+          ← Sign in to your account
+        </a>
+      </div>
+    </div>
+
+    <!-- Security note -->
+    <div class="scroll-reveal opacity-0 text-center mt-6" style="animation-delay: 0.2s;">
+      <p class="text-xs text-base-content/40 flex items-center justify-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        Your data is secured &amp; encrypted
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
