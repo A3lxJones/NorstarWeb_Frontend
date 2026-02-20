@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveal();
     initCounterAnimation();
     highlightActiveNav();
+    initCookieBanner();
     initLoginModal();
 });
 
@@ -109,22 +110,85 @@ function highlightActiveNav() {
 }
 
 /* ═══════════════════════════════════════════
+   Cookie Consent Banner
+   ═══════════════════════════════════════════ */
+function initCookieBanner() {
+    var banner = document.getElementById('cookie-banner');
+    var acceptBtn = document.getElementById('cookie-accept');
+
+    if (!banner || !acceptBtn) return;
+
+    // Already accepted — don't show
+    if (localStorage.getItem('norstar-cookies-accepted')) return;
+
+    // Slide the banner in after a short delay
+    setTimeout(function () {
+        banner.classList.remove('translate-y-full');
+        banner.classList.add('translate-y-0');
+    }, 1000);
+
+    acceptBtn.addEventListener('click', function () {
+        localStorage.setItem('norstar-cookies-accepted', 'true');
+        banner.classList.remove('translate-y-0');
+        banner.classList.add('translate-y-full');
+
+        // Remove from DOM after transition
+        banner.addEventListener('transitionend', function () {
+            banner.remove();
+        }, { once: true });
+    });
+}
+
+/* ═══════════════════════════════════════════
    Login Modal
    ═══════════════════════════════════════════ */
 function initLoginModal() {
     var loginBtn = document.getElementById('login-btn');
     var loginModal = document.getElementById('login-modal');
 
-    if (!loginBtn || !loginModal) return;
+    if (!loginModal) return;
 
-    loginBtn.addEventListener('click', function () {
-        loginModal.showModal();
+    // Nav button opens modal
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            loginModal.showModal();
+        });
+    }
+
+    // Also allow any element with data-open-login to trigger it
+    var triggers = document.querySelectorAll('[data-open-login]');
+    triggers.forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            loginModal.showModal();
+        });
     });
+
+    // Auto-show on first visit (only if not already dismissed this session)
+    if (!sessionStorage.getItem('norstar-login-shown')) {
+        // Wait for cookie banner to settle first, then show login modal
+        var delay = localStorage.getItem('norstar-cookies-accepted') ? 1500 : 3000;
+
+        setTimeout(function () {
+            // Don't show if user is on /login or /signup page already
+            var path = window.location.pathname;
+            if (path === '/login' || path === '/signup') return;
+
+            loginModal.showModal();
+            sessionStorage.setItem('norstar-login-shown', 'true');
+        }, delay);
+    }
 
     // Close on Escape key (dialog handles this natively, but just in case)
     loginModal.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             loginModal.close();
         }
+    });
+
+    // Mark as shown when closed so it doesn't re-appear on navigate
+    loginModal.addEventListener('close', function () {
+        sessionStorage.setItem('norstar-login-shown', 'true');
     });
 }

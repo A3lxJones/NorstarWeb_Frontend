@@ -1,0 +1,35 @@
+{# ═══════════════════════════════════════════════════════════
+   COOKIE CONSENT BANNER
+   Fixed to bottom of viewport. Dismissed state stored in
+   localStorage so it only shows once per browser.
+   ═══════════════════════════════════════════════════════════ #}
+
+<div id="cookie-banner" class="fixed bottom-0 inset-x-0 z-[100] translate-y-full transition-transform duration-500 ease-out" role="alert" aria-label="Cookie consent">
+  <div class="bg-base-200/95 backdrop-blur-lg border-t border-base-300 shadow-2xl">
+    <div class="container mx-auto max-w-6xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+      <!-- Message -->
+      <div class="flex items-start gap-3 text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-base-content/80">
+          We use <strong class="text-base-content">essential cookies</strong> to keep you signed in and remember your preferences.
+          No tracking or advertising cookies are used.
+          <a href="/privacy" class="text-secondary hover:underline ml-1">Privacy Policy</a>
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="cookie-accept" class="btn btn-secondary btn-sm font-semibold gap-1 hover:scale-[1.02] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Got it
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
