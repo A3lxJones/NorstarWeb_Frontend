@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, requireRole } from '../middleware/auth';
 import { apiRequest } from '../utils/api';
 
 const router = Router();
@@ -7,42 +7,73 @@ const router = Router();
 // All dashboard routes require authentication
 router.use(requireAuth);
 
-// GET /dashboard — role-based dashboard
+// ─── POST /dashboard/switch-role — admin impersonation toggle ───
+router.post(
+    '/switch-role',
+    requireRole('admin'),
+    (req: Request, res: Response) => {
+        const { role } = req.body;
+
+        if (role && ['parent', 'coach'].includes(role)) {
+            req.session.viewAsRole = role;
+        } else {
+            // Clear impersonation — go back to admin view
+            delete req.session.viewAsRole;
+        }
+
+        res.redirect('/dashboard');
+    }
+);
+
+// ─── GET /dashboard — role-based dashboard ──────────────────
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
     const user = req.session.user!;
+    const isAdmin = user.role === 'admin';
+    const viewAsRole = isAdmin ? req.session.viewAsRole : undefined;
+    const effectiveRole = viewAsRole || user.role;
+    const isImpersonating = isAdmin && !!viewAsRole;
 
     try {
-        if (user.role === 'parent') {
-            // Fetch parent's children
-            const childrenRes = await apiRequest<unknown[]>('/api/children', { token });
+        // Call the backend dashboard endpoint, passing X-View-As-Role if impersonating
+        const dashboardRes = await apiRequest<Record<string, unknown>>('/api/dashboard', {
+            token,
+            viewAsRole,
+        });
+
+        const dashData = dashboardRes.data || {};
+
+        if (effectiveRole === 'parent') {
             res.render('dashboard/parent.njk', {
                 title: 'My Dashboard — Norstar',
-                children: childrenRes.data || [],
+                children: dashData.children || [],
+                registrations: dashData.registrations || [],
+                upcomingGames: dashData.upcomingGames || [],
+                isImpersonating,
+                realRole: user.role,
+                viewAsRole: viewAsRole || null,
             });
-        } else if (user.role === 'coach') {
-            // Fetch teams and upcoming games
-            const [teamsRes, gamesRes] = await Promise.all([
-                apiRequest<unknown[]>('/api/teams', { token }),
-                apiRequest<unknown[]>('/api/games?status=scheduled', { token }),
-            ]);
+        } else if (effectiveRole === 'coach') {
             res.render('dashboard/coach.njk', {
                 title: 'Coach Dashboard — Norstar',
-                teams: teamsRes.data || [],
-                games: gamesRes.data || [],
+                teams: dashData.teams || [],
+                pendingRegistrations: dashData.pendingRegistrations || [],
+                games: dashData.upcomingGames || dashData.games || [],
+                isImpersonating,
+                realRole: user.role,
+                viewAsRole: viewAsRole || null,
             });
-        } else if (user.role === 'admin') {
-            // Fetch overview data
-            const [teamsRes, gamesRes, reportsRes] = await Promise.all([
-                apiRequest<unknown[]>('/api/teams', { token }),
-                apiRequest<unknown[]>('/api/games', { token }),
-                apiRequest<unknown[]>('/api/reports', { token }),
-            ]);
+        } else if (effectiveRole === 'admin') {
             res.render('dashboard/admin.njk', {
                 title: 'Admin Dashboard — Norstar',
-                teams: teamsRes.data || [],
-                games: gamesRes.data || [],
-                reports: reportsRes.data || [],
+                userCounts: dashData.userCounts || {},
+                teams: dashData.teams || [],
+                teamCount: dashData.teamCount || 0,
+                games: dashData.upcomingGames || dashData.games || [],
+                reports: dashData.recentReports || dashData.reports || [],
+                isImpersonating: false,
+                realRole: user.role,
+                viewAsRole: null,
             });
         } else {
             res.redirect('/');
@@ -53,6 +84,9 @@ router.get('/', async (req: Request, res: Response) => {
             title: 'Dashboard — Norstar',
             error: 'Unable to load dashboard data.',
             children: [],
+            isImpersonating: false,
+            realRole: user.role,
+            viewAsRole: null,
         });
     }
 });

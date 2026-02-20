@@ -1,0 +1,31 @@
+{# ═══════════════════════════════════════════════════════════
+   IMPERSONATION BANNER
+   Shown at the top of dashboard pages when an admin is
+   viewing as a different role. Includes a button to exit.
+   ═══════════════════════════════════════════════════════════ #}
+
+{% if isImpersonating %}
+<div class="bg-accent/20 border-b border-accent/30 py-2 px-4">
+  <div class="container mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div class="flex items-center gap-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <span class="font-semibold text-accent">Viewing as {{ viewAsRole | capitalize }}</span>
+      <span class="text-base-content/60">— You are still logged in as Admin</span>
+    </div>
+    <form action="/dashboard/switch-role" method="POST">
+      {# Honeypot #}
+      <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+      {# No role value = exit impersonation #}
+      <button type="submit" class="btn btn-xs btn-accent gap-1 font-semibold">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Exit Preview
+      </button>
+    </form>
+  </div>
+</div>
+{% endif %}

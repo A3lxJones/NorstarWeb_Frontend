@@ -28,10 +28,17 @@ export function requireRole(...roles: string[]) {
 
 /**
  * Middleware: Pass the current user (if any) to all templates.
- * Available as {{ user }} in Nunjucks.
+ * Available as {{ user }}, {{ isLoggedIn }}, {{ isImpersonating }} in Nunjucks.
  */
 export function injectUser(req: Request, res: Response, next: NextFunction): void {
-    res.locals.user = req.session?.user || null;
-    res.locals.isLoggedIn = !!req.session?.user;
+    const user = req.session?.user || null;
+    const isAdmin = user?.role === 'admin';
+    const viewAsRole = isAdmin ? req.session?.viewAsRole : undefined;
+
+    res.locals.user = user;
+    res.locals.isLoggedIn = !!user;
+    res.locals.isImpersonating = isAdmin && !!viewAsRole;
+    res.locals.viewAsRole = viewAsRole || null;
+    res.locals.realRole = user?.role || null;
     next();
 }
