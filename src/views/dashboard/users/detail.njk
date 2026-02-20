@@ -1,0 +1,179 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-4xl">
+
+    <!-- Back link -->
+    <a href="/dashboard/users" class="btn btn-ghost btn-sm gap-1 mb-6 -ml-2 text-base-content/60 hover:text-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Users
+    </a>
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          {{ member.full_name }}<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">
+          <span class="badge badge-sm
+            {% if member.role == 'admin' %}badge-error
+            {% elif member.role == 'coach' %}badge-accent
+            {% else %}badge-secondary{% endif %}
+            badge-outline">
+            {{ member.role | capitalize }}
+          </span>
+          {% if member.created_at %}
+            <span class="ml-2 text-sm">·  Joined {{ member.created_at | truncate(10, true, '') }}</span>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+
+      <!-- User Details Card -->
+      <div class="card bg-base-200 border border-base-300 shadow-xl">
+        <div class="card-body">
+          <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Account Details
+          </h2>
+
+          <div class="space-y-4 text-sm">
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Full Name</span>
+              <p class="font-medium mt-0.5">{{ member.full_name }}</p>
+            </div>
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Email</span>
+              <p class="font-medium mt-0.5">{{ member.email }}</p>
+            </div>
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Phone</span>
+              <p class="font-medium mt-0.5">{{ member.phone or 'Not provided' }}</p>
+            </div>
+            <div>
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Role</span>
+              <p class="font-medium mt-0.5">
+                <span class="badge
+                  {% if member.role == 'admin' %}badge-error
+                  {% elif member.role == 'coach' %}badge-accent
+                  {% else %}badge-secondary{% endif %}">
+                  {{ member.role | capitalize }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Change Role -->
+          <h3 class="font-heading text-sm font-semibold mb-3 text-base-content/70">Change Role</h3>
+          <form action="/dashboard/users/{{ member.id }}/role" method="POST" class="flex gap-2 items-end">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+            <div class="form-control flex-1">
+              <select name="role" class="select select-bordered select-sm w-full focus:select-secondary">
+                <option value="parent" {% if member.role == 'parent' %}selected{% endif %}>Parent</option>
+                <option value="coach" {% if member.role == 'coach' %}selected{% endif %}>Coach</option>
+                <option value="admin" {% if member.role == 'admin' %}selected{% endif %}>Admin</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-sm gap-1 hover:scale-[1.02] transition-all"
+                    onclick="return confirm('Change this user\'s role? This will affect their access permissions.')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Update
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Children Card -->
+      <div class="card bg-base-200 border border-base-300 shadow-xl">
+        <div class="card-body">
+          <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Registered Children
+            {% if member.children and member.children.length > 0 %}
+              <span class="badge badge-secondary badge-sm">{{ member.children | length }}</span>
+            {% endif %}
+          </h2>
+
+          {% if member.children and member.children.length > 0 %}
+          <div class="space-y-3">
+            {% for child in member.children %}
+            <div class="p-4 bg-base-300/50 rounded-lg border border-base-300">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="font-semibold">{{ child.first_name }} {{ child.last_name }}</h3>
+                  <p class="text-sm text-base-content/60 mt-0.5">
+                    DOB: {{ child.date_of_birth }}
+                  </p>
+                </div>
+                <div class="flex gap-1">
+                  {% if child.skill_level %}
+                  <span class="badge badge-xs badge-outline badge-secondary">{{ child.skill_level | capitalize }}</span>
+                  {% endif %}
+                  {% if child.position %}
+                  <span class="badge badge-xs badge-ghost">{{ child.position | capitalize }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Child details -->
+              <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+                <div>
+                  <span class="text-base-content/50 uppercase tracking-wide">Emergency Contact</span>
+                  <p class="font-medium">{{ child.emergency_contact_name or '—' }}</p>
+                  <p class="text-base-content/60">{{ child.emergency_contact_phone or '—' }}</p>
+                </div>
+                <div>
+                  <span class="text-base-content/50 uppercase tracking-wide">Photo Consent</span>
+                  <p class="mt-0.5">
+                    {% if child.photo_consent %}
+                      <span class="badge badge-success badge-xs">Yes</span>
+                    {% else %}
+                      <span class="badge badge-warning badge-xs">No</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+
+              {% if child.medical_conditions or child.allergies %}
+              <div class="mt-2 p-2 bg-warning/10 rounded text-xs">
+                {% if child.medical_conditions %}
+                  <p><strong>Medical:</strong> {{ child.medical_conditions }}</p>
+                {% endif %}
+                {% if child.allergies %}
+                  <p><strong>Allergies:</strong> {{ child.allergies }}</p>
+                {% endif %}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-base-content/60 text-sm">No children registered under this account.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

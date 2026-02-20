@@ -1,0 +1,17 @@
+{
+    "watch": [
+        "dist/server.js",
+        "dist/app.js",
+        "dist/routes",
+        "dist/middleware"
+    ],
+    "ignore": [
+        "**/*.map",
+        "**/*.d.ts",
+        "dist/**/*.css"
+    ],
+    "ext": "js",
+    "delay": 2500,
+    "legacyWatch": true,
+    "quiet": true
+}

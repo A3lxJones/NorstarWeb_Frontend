@@ -1,0 +1,265 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+{% include "partials/impersonation-banner.njk" %}
+
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-7xl">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <a href="/dashboard" class="btn btn-ghost btn-sm gap-1 text-base-content/60 hover:text-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Dashboard
+          </a>
+        </div>
+        <h1 class="font-heading text-3xl font-bold">
+          Drill Library<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">
+          {{ total }} inline hockey drills — filter by skill, difficulty &amp; age group
+        </p>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- ═══ FILTERS BAR ═══ -->
+    <form method="GET" action="/dashboard/drills" class="mb-8">
+      <div class="card bg-base-200 border border-base-300 shadow-lg">
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+
+            <!-- Search -->
+            <div class="form-control lg:col-span-2">
+              <label class="label py-1" for="search-input">
+                <span class="label-text text-xs font-medium uppercase tracking-wider text-base-content/50">Search</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+                <input type="text" id="search-input" name="search"
+                       value="{{ filters.search }}"
+                       placeholder="Search drills..."
+                       maxlength="100"
+                       class="input input-bordered input-sm w-full pl-9 focus:input-secondary" />
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="form-control">
+              <label class="label py-1" for="category-select">
+                <span class="label-text text-xs font-medium uppercase tracking-wider text-base-content/50">Skill Category</span>
+              </label>
+              <select id="category-select" name="category" class="select select-bordered select-sm w-full focus:select-secondary">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if filters.category === cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="form-control">
+              <label class="label py-1" for="difficulty-select">
+                <span class="label-text text-xs font-medium uppercase tracking-wider text-base-content/50">Difficulty</span>
+              </label>
+              <select id="difficulty-select" name="difficulty" class="select select-bordered select-sm w-full focus:select-secondary">
+                <option value="">All Levels</option>
+                {% for diff in difficulties %}
+                <option value="{{ diff }}" {% if filters.difficulty === diff %}selected{% endif %}>{{ diff }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Age Group -->
+            <div class="form-control">
+              <label class="label py-1" for="age-group-select">
+                <span class="label-text text-xs font-medium uppercase tracking-wider text-base-content/50">Age Group</span>
+              </label>
+              <select id="age-group-select" name="age_group" class="select select-bordered select-sm w-full focus:select-secondary">
+                <option value="">All Ages</option>
+                {% for ag in ageGroups %}
+                <option value="{{ ag }}" {% if filters.ageGroup === ag %}selected{% endif %}>{{ ag }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+          </div>
+
+          <!-- Filter actions -->
+          <div class="flex items-center justify-between mt-4 pt-3 border-t border-base-300">
+            <div class="flex items-center gap-2">
+              <button type="submit" class="btn btn-secondary btn-sm gap-1 hover:scale-[1.02] transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Apply Filters
+              </button>
+              <a href="/dashboard/drills" class="btn btn-ghost btn-sm text-base-content/50 hover:text-base-content">
+                Clear All
+              </a>
+            </div>
+            <span class="text-sm text-base-content/50">
+              Showing {{ drills | length }} of {{ total }} drills
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- ═══ ACTIVE FILTERS BADGES ═══ -->
+    {% if filters.category or filters.difficulty or filters.ageGroup or filters.search %}
+    <div class="flex flex-wrap items-center gap-2 mb-6">
+      <span class="text-xs text-base-content/50 font-medium uppercase tracking-wider">Active:</span>
+      {% if filters.search %}
+      <span class="badge badge-outline badge-sm gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        "{{ filters.search }}"
+      </span>
+      {% endif %}
+      {% if filters.category %}
+      <span class="badge badge-secondary badge-sm">{{ filters.category }}</span>
+      {% endif %}
+      {% if filters.difficulty %}
+      <span class="badge badge-accent badge-sm">{{ filters.difficulty }}</span>
+      {% endif %}
+      {% if filters.ageGroup %}
+      <span class="badge badge-primary badge-sm">{{ filters.ageGroup }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ═══ DRILLS GRID ═══ -->
+    {% if drills.length === 0 %}
+    <div class="card bg-base-200 border border-base-300 shadow-lg">
+      <div class="card-body items-center text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        <h3 class="font-heading text-xl font-semibold mb-2">No drills found</h3>
+        <p class="text-base-content/50 max-w-md">
+          Try adjusting your filters or search terms to find the drills you're looking for.
+        </p>
+        <a href="/dashboard/drills" class="btn btn-secondary btn-sm mt-4">View All Drills</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {% for drill in drills %}
+      <a href="/dashboard/drills/{{ drill.id }}"
+         class="card bg-base-200 border border-base-300 shadow hover:shadow-xl hover:border-secondary/30 transition-all duration-300 hover:scale-[1.01] group scroll-reveal opacity-0">
+        <div class="card-body p-5">
+          <!-- Category & difficulty badges -->
+          <div class="flex items-center gap-2 mb-2">
+            <span class="badge badge-sm
+              {% if drill.difficulty === 'Beginner' %}badge-success
+              {% elif drill.difficulty === 'Intermediate' %}badge-warning
+              {% elif drill.difficulty === 'Advanced' %}badge-error
+              {% else %}badge-info{% endif %}
+            ">{{ drill.difficulty }}</span>
+            <span class="badge badge-sm badge-outline badge-secondary">{{ drill.category }}</span>
+          </div>
+
+          <!-- Drill name -->
+          <h3 class="font-heading font-semibold text-base group-hover:text-secondary transition-colors line-clamp-2">
+            {{ drill.name }}
+          </h3>
+
+          <!-- Description preview -->
+          <p class="text-sm text-base-content/50 mt-1 line-clamp-2">
+            {{ drill.description }}
+          </p>
+
+          <!-- Meta info -->
+          <div class="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-base-300 text-xs text-base-content/40">
+            <span class="flex items-center gap-1" title="Duration">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {{ drill.duration_minutes }} min
+            </span>
+            <span class="flex items-center gap-1" title="Players needed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              {{ drill.min_players }}–{{ drill.max_players }}
+            </span>
+            {% if drill.equipment.length > 0 %}
+            <span class="flex items-center gap-1" title="Equipment">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+              {{ drill.equipment | length }}
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- Suitable for tags -->
+          {% if drill.suitable_for and drill.suitable_for.length > 0 %}
+          <div class="flex flex-wrap gap-1 mt-2">
+            {% for age in drill.suitable_for %}
+            <span class="badge badge-xs badge-ghost">{{ age }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- ═══ PAGINATION ═══ -->
+    {% if totalPages > 1 %}
+    <div class="flex justify-center mt-10">
+      <div class="join shadow-lg">
+        {% if page > 1 %}
+        <a href="/dashboard/drills?page={{ page - 1 }}{% if filters.category %}&category={{ filters.category }}{% endif %}{% if filters.difficulty %}&difficulty={{ filters.difficulty }}{% endif %}{% if filters.ageGroup %}&age_group={{ filters.ageGroup }}{% endif %}{% if filters.search %}&search={{ filters.search }}{% endif %}"
+           class="join-item btn btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </a>
+        {% endif %}
+
+        {% for p in range(1, totalPages + 1) %}
+          {% if p === page %}
+          <button class="join-item btn btn-sm btn-secondary">{{ p }}</button>
+          {% elif p === 1 or p === totalPages or (p >= page - 2 and p <= page + 2) %}
+          <a href="/dashboard/drills?page={{ p }}{% if filters.category %}&category={{ filters.category }}{% endif %}{% if filters.difficulty %}&difficulty={{ filters.difficulty }}{% endif %}{% if filters.ageGroup %}&age_group={{ filters.ageGroup }}{% endif %}{% if filters.search %}&search={{ filters.search }}{% endif %}"
+             class="join-item btn btn-sm">{{ p }}</a>
+          {% elif p === page - 3 or p === page + 3 %}
+          <button class="join-item btn btn-sm btn-disabled">...</button>
+          {% endif %}
+        {% endfor %}
+
+        {% if page < totalPages %}
+        <a href="/dashboard/drills?page={{ page + 1 }}{% if filters.category %}&category={{ filters.category }}{% endif %}{% if filters.difficulty %}&difficulty={{ filters.difficulty }}{% endif %}{% if filters.ageGroup %}&age_group={{ filters.ageGroup }}{% endif %}{% if filters.search %}&search={{ filters.search }}{% endif %}"
+           class="join-item btn btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
