@@ -1,0 +1,190 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+
+    <!-- Back link -->
+    <a href="/dashboard" class="btn btn-ghost btn-sm gap-1 mb-6 -ml-2 text-base-content/60 hover:text-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Dashboard
+    </a>
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          Registered Children<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">View all children registered by parents</p>
+      </div>
+      <div class="badge badge-secondary badge-lg font-semibold">
+        {{ children | length }} child{{ 'ren' if children | length != 1 }}
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Search -->
+    <div class="card bg-base-200 border border-base-300 mb-6">
+      <div class="card-body p-4">
+        <form action="/dashboard/children/all" method="GET" class="flex flex-col sm:flex-row gap-3">
+          <div class="form-control flex-1">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </span>
+              <input type="text" name="search" value="{{ search }}"
+                     class="input input-bordered w-full pl-10 input-sm focus:input-secondary transition-colors"
+                     placeholder="Search by child name or parent name..." maxlength="100" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-sm gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Search
+          </button>
+
+          {% if search %}
+          <a href="/dashboard/children/all" class="btn btn-ghost btn-sm">Clear</a>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <!-- Children list -->
+    {% if children.length === 0 %}
+    <div class="card bg-base-200 border border-base-300 shadow-lg">
+      <div class="card-body items-center text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <h2 class="font-heading text-xl font-semibold mb-2">No children found</h2>
+        <p class="text-base-content/60">
+          {% if search %}
+            Try adjusting your search.
+          {% else %}
+            No children have been registered yet.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    {% else %}
+
+    <!-- Desktop table -->
+    <div class="hidden md:block overflow-x-auto">
+      <table class="table table-zebra w-full bg-base-200 border border-base-300 rounded-box">
+        <thead>
+          <tr class="text-xs uppercase tracking-wider text-base-content/50">
+            <th>Name</th>
+            <th>Date of Birth</th>
+            <th>Skill Level</th>
+            <th>Position</th>
+            <th>Parent</th>
+            <th>Emergency Contact</th>
+            <th>Registered</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for child in children %}
+          <tr class="hover:bg-base-300/40 transition-colors">
+            <td class="font-medium">{{ child.first_name }} {{ child.last_name }}</td>
+            <td class="text-base-content/70 text-sm">{{ child.date_of_birth }}</td>
+            <td>
+              {% if child.skill_level %}
+              <span class="badge badge-sm badge-outline badge-secondary">{{ child.skill_level | capitalize }}</span>
+              {% else %}
+              <span class="text-base-content/40 text-sm">—</span>
+              {% endif %}
+            </td>
+            <td class="text-base-content/70 text-sm">{{ child.position | capitalize if child.position else '—' }}</td>
+            <td class="text-sm">
+              {% if child.parent %}
+                <a href="/dashboard/users/{{ child.parent.id }}" class="link link-hover text-secondary">
+                  {{ child.parent.full_name }}
+                </a>
+              {% else %}
+                <span class="text-base-content/40">—</span>
+              {% endif %}
+            </td>
+            <td class="text-sm text-base-content/70">
+              {{ child.emergency_contact_name or '—' }}
+            </td>
+            <td class="text-base-content/50 text-xs">
+              {{ child.created_at | truncate(10, true, '') if child.created_at else '—' }}
+            </td>
+            <td>
+              <a href="/dashboard/children/all/{{ child.id }}" class="btn btn-ghost btn-xs gap-1 hover:text-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                View
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="md:hidden space-y-3">
+      {% for child in children %}
+      <a href="/dashboard/children/all/{{ child.id }}" class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow block">
+        <div class="card-body p-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold">{{ child.first_name }} {{ child.last_name }}</h3>
+              <p class="text-sm text-base-content/60">DOB: {{ child.date_of_birth }}</p>
+            </div>
+            <div class="flex gap-1">
+              {% if child.skill_level %}
+              <span class="badge badge-xs badge-outline badge-secondary">{{ child.skill_level | capitalize }}</span>
+              {% endif %}
+              {% if child.position %}
+              <span class="badge badge-xs badge-ghost">{{ child.position | capitalize }}</span>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if child.parent %}
+          <p class="text-xs text-base-content/50 mt-2">
+            Parent: <span class="text-secondary">{{ child.parent.full_name }}</span>
+          </p>
+          {% endif %}
+
+          {% if child.medical_conditions or child.allergies %}
+          <div class="mt-2 p-2 bg-warning/10 rounded text-xs">
+            {% if child.medical_conditions %}
+              <p><strong>Medical:</strong> {{ child.medical_conditions }}</p>
+            {% endif %}
+            {% if child.allergies %}
+              <p><strong>Allergies:</strong> {{ child.allergies }}</p>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

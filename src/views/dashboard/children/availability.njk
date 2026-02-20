@@ -1,0 +1,264 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+{% include "partials/impersonation-banner.njk" %}
+
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-4xl">
+
+    <!-- Back link -->
+    <a href="/dashboard/children/{{ child.id }}" class="btn btn-ghost btn-sm gap-1 mb-6 -ml-2 text-base-content/60 hover:text-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to {{ child.first_name }}'s Profile
+    </a>
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          {{ child.first_name }}'s Availability<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">Set availability for matches and training sessions</p>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    {% if success %}
+    <div class="alert alert-success mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>{{ success }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Submit Availability Form -->
+    <div class="card bg-base-200 border border-base-300 shadow-xl mb-8">
+      <div class="card-body">
+        <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Set Availability
+        </h2>
+
+        <form action="/dashboard/children/{{ child.id }}/availability" method="POST" class="space-y-4">
+          <!-- Honeypot -->
+          <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Type -->
+            <div class="form-control">
+              <label class="label" for="availability_type">
+                <span class="label-text font-medium">Type <span class="text-error">*</span></span>
+              </label>
+              <select id="availability_type" name="availability_type" class="select select-bordered w-full select-sm focus:select-secondary transition-colors" required>
+                <option value="" disabled {% if not values.availability_type %}selected{% endif %}>Select type</option>
+                <option value="match" {% if values.availability_type == 'match' %}selected{% endif %}>Match</option>
+                <option value="training" {% if values.availability_type == 'training' %}selected{% endif %}>Training</option>
+              </select>
+            </div>
+
+            <!-- Event Date -->
+            <div class="form-control">
+              <label class="label" for="event_date">
+                <span class="label-text font-medium">Event Date <span class="text-error">*</span></span>
+              </label>
+              <input type="date" id="event_date" name="event_date" value="{{ values.event_date or '' }}"
+                     class="input input-bordered input-sm w-full focus:input-secondary transition-colors" required />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Status -->
+            <div class="form-control">
+              <label class="label" for="status">
+                <span class="label-text font-medium">Status <span class="text-error">*</span></span>
+              </label>
+              <select id="status" name="status" class="select select-bordered w-full select-sm focus:select-secondary transition-colors" required>
+                <option value="" disabled {% if not values.status %}selected{% endif %}>Select status</option>
+                <option value="available" {% if values.status == 'available' %}selected{% endif %}>Available</option>
+                <option value="unavailable" {% if values.status == 'unavailable' %}selected{% endif %}>Unavailable</option>
+                <option value="tentative" {% if values.status == 'tentative' %}selected{% endif %}>Tentative</option>
+              </select>
+            </div>
+
+            <!-- Game (optional) -->
+            <div class="form-control">
+              <label class="label" for="game_id">
+                <span class="label-text font-medium">Game <span class="text-base-content/40">(optional)</span></span>
+              </label>
+              <select id="game_id" name="game_id" class="select select-bordered w-full select-sm focus:select-secondary transition-colors">
+                <option value="">No specific game</option>
+                {% for game in games %}
+                <option value="{{ game.id }}" {% if values.game_id == game.id %}selected{% endif %}>
+                  {{ game.game_date }} — {% if game.opponent %}vs {{ game.opponent }}{% elif game.home_team %}{{ game.home_team.name }}{% else %}{{ game.game_type | title }}{% endif %}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Reason -->
+          <div class="form-control">
+            <label class="label" for="reason">
+              <span class="label-text font-medium">Reason <span class="text-base-content/40">(optional — especially if unavailable)</span></span>
+            </label>
+            <textarea id="reason" name="reason" rows="2" maxlength="500"
+                      class="textarea textarea-bordered textarea-sm w-full focus:textarea-secondary transition-colors"
+                      placeholder="e.g. Holiday, injury, school event...">{{ values.reason or '' }}</textarea>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="btn btn-secondary btn-sm gap-1 hover:scale-[1.02] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Submit Availability
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Existing Records -->
+    <div class="card bg-base-200 border border-base-300 shadow-xl">
+      <div class="card-body">
+        <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          Availability History
+        </h2>
+
+        {% if records.length === 0 %}
+        <div class="text-center py-8">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p class="text-base-content/60 text-sm">No availability records yet.</p>
+          <p class="text-base-content/40 text-xs mt-1">Use the form above to set availability for upcoming events.</p>
+        </div>
+        {% else %}
+
+        <!-- Desktop table -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr class="text-xs uppercase tracking-wider">
+                <th>Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in records %}
+              <tr class="hover">
+                <td class="font-medium">{{ record.event_date }}</td>
+                <td>
+                  <span class="badge badge-sm {% if record.availability_type == 'match' %}badge-primary{% else %}badge-accent{% endif %}">
+                    {{ record.availability_type | title }}
+                  </span>
+                </td>
+                <td>
+                  {% if record.status == 'available' %}
+                    <span class="badge badge-sm badge-success gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Available
+                    </span>
+                  {% elif record.status == 'tentative' %}
+                    <span class="badge badge-sm badge-warning gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01" />
+                      </svg>
+                      Tentative
+                    </span>
+                  {% else %}
+                    <span class="badge badge-sm badge-error gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      Unavailable
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="text-base-content/60 text-sm max-w-[200px] truncate">
+                  {{ record.reason or '—' }}
+                </td>
+                <td class="text-right">
+                  <form action="/dashboard/children/{{ child.id }}/availability/{{ record.id }}/delete" method="POST" class="inline">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+                    <button type="submit" class="btn btn-ghost btn-xs text-error hover:bg-error/10"
+                            onclick="return confirm('Remove this availability record?')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile cards -->
+        <div class="md:hidden space-y-3">
+          {% for record in records %}
+          <div class="card bg-base-100 border border-base-300 shadow-sm">
+            <div class="card-body p-4">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="font-semibold text-sm">{{ record.event_date }}</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="badge badge-xs {% if record.availability_type == 'match' %}badge-primary{% else %}badge-accent{% endif %}">
+                      {{ record.availability_type | title }}
+                    </span>
+                    {% if record.status == 'available' %}
+                      <span class="badge badge-xs badge-success">Available</span>
+                    {% elif record.status == 'tentative' %}
+                      <span class="badge badge-xs badge-warning">Tentative</span>
+                    {% else %}
+                      <span class="badge badge-xs badge-error">Unavailable</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <form action="/dashboard/children/{{ child.id }}/availability/{{ record.id }}/delete" method="POST" class="inline">
+                  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+                  <button type="submit" class="btn btn-ghost btn-xs text-error"
+                          onclick="return confirm('Remove this availability record?')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </form>
+              </div>
+              {% if record.reason %}
+              <p class="text-xs text-base-content/60 mt-2">{{ record.reason }}</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

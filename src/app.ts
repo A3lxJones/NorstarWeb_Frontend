@@ -20,6 +20,9 @@ import signupRoutes from './routes/signup';
 import logoutRoutes from './routes/logout';
 import dashboardRoutes from './routes/dashboard';
 import teamsRoutes from './routes/teams';
+import drillsRoutes from './routes/drills';
+import childrenRoutes from './routes/children';
+import usersRoutes from './routes/users';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -140,11 +143,16 @@ app.use('/signup', signupRoutes);
 app.use('/logout', logoutRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/dashboard/teams', teamsRoutes);
+app.use('/dashboard/drills', drillsRoutes);
+app.use('/dashboard/children', childrenRoutes);
+app.use('/dashboard/users', usersRoutes);
 
 // Apply stricter rate limiter to form POST routes
 app.post('/contact', formLimiter);
 app.post('/login', formLimiter);
 app.post('/signup', formLimiter);
+app.post('/dashboard/children/add', formLimiter);
+app.post('/dashboard/users/:id/role', formLimiter);
 
 // --- 404 Handler ---
 app.use((_req: Request, res: Response) => {

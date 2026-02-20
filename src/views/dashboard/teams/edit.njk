@@ -50,14 +50,9 @@
             </label>
             <select id="team-age-group" name="age_group" class="select select-bordered w-full focus:select-secondary transition-colors" required>
               <option value="" disabled>Select age group</option>
-              <option value="Learn to Skate" {% if values.age_group === 'Learn to Skate' %}selected{% endif %}>Learn to Skate</option>
-              <option value="Learn to Play" {% if values.age_group === 'Learn to Play' %}selected{% endif %}>Learn to Play</option>
-              <option value="U8" {% if values.age_group === 'U8' %}selected{% endif %}>Under 8</option>
-              <option value="U10" {% if values.age_group === 'U10' %}selected{% endif %}>Under 10</option>
-              <option value="U13" {% if values.age_group === 'U13' %}selected{% endif %}>Under 13</option>
-              <option value="U16" {% if values.age_group === 'U16' %}selected{% endif %}>Under 16</option>
-              <option value="U19" {% if values.age_group === 'U19' %}selected{% endif %}>Under 19</option>
-              <option value="Senior" {% if values.age_group === 'Senior' %}selected{% endif %}>Senior</option>
+              <option value="learn_to_play" {% if values.age_group === 'learn_to_play' %}selected{% endif %}>Learn to Play</option>
+              <option value="u13" {% if values.age_group === 'u13' %}selected{% endif %}>Under 13</option>
+              <option value="u15" {% if values.age_group === 'u15' %}selected{% endif %}>Under 15</option>
             </select>
           </div>
 
