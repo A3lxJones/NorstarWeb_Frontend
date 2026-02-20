@@ -14,6 +14,8 @@ declare module "express-session" {
             role: string;
             full_name?: string;
         };
+        /** Admin impersonation: the role being viewed as */
+        viewAsRole?: string;
     }
 }
 

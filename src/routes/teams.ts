@@ -11,14 +11,19 @@ router.use(requireAuth);
 
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
+    const user = req.session.user!;
+    const viewAsRole = user.role === 'admin' ? req.session.viewAsRole : undefined;
 
     try {
-        const result = await apiRequest<unknown[]>('/api/teams', { token });
+        const result = await apiRequest<unknown[]>('/api/teams', { token, viewAsRole });
 
         res.render('dashboard/teams/index.njk', {
             title: 'Teams — Norstar',
             teams: result.data || [],
-            canCreate: ['admin', 'coach'].includes(req.session.user!.role),
+            canCreate: ['admin', 'coach'].includes(user.role),
+            isImpersonating: user.role === 'admin' && !!viewAsRole,
+            viewAsRole: viewAsRole || null,
+            realRole: user.role,
         });
     } catch (error) {
         console.error('Teams list error:', error);
@@ -27,6 +32,9 @@ router.get('/', async (req: Request, res: Response) => {
             teams: [],
             error: 'Unable to load teams.',
             canCreate: false,
+            isImpersonating: false,
+            viewAsRole: null,
+            realRole: user.role,
         });
     }
 });

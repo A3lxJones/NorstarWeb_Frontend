@@ -12,6 +12,33 @@
         </h1>
         <p class="text-base-content/60 mt-1">Full overview of Norstar operations</p>
       </div>
+
+      <!-- Role Switcher: View As -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-base-content/50 uppercase tracking-wide font-semibold hidden sm:inline">View as:</span>
+        <div class="flex gap-1">
+          <form action="/dashboard/switch-role" method="POST" class="inline">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+            <input type="hidden" name="role" value="parent" />
+            <button type="submit" class="btn btn-xs btn-outline btn-secondary gap-1 hover:scale-[1.02] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Parent
+            </button>
+          </form>
+          <form action="/dashboard/switch-role" method="POST" class="inline">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+            <input type="hidden" name="role" value="coach" />
+            <button type="submit" class="btn btn-xs btn-outline btn-accent gap-1 hover:scale-[1.02] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Coach
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
 
     {% if error %}
@@ -26,16 +53,20 @@
     <!-- Stats overview -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Parents</div>
+        <div class="stat-value text-2xl text-secondary">{{ userCounts.parent or 0 }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Coaches</div>
+        <div class="stat-value text-2xl text-secondary">{{ userCounts.coach or 0 }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
         <div class="stat-title text-xs">Teams</div>
-        <div class="stat-value text-2xl text-secondary">{{ teams | length }}</div>
+        <div class="stat-value text-2xl text-secondary">{{ teamCount or teams | length }}</div>
       </div>
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
-        <div class="stat-title text-xs">Games</div>
+        <div class="stat-title text-xs">Upcoming Games</div>
         <div class="stat-value text-2xl text-secondary">{{ games | length }}</div>
-      </div>
-      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
-        <div class="stat-title text-xs">Reports</div>
-        <div class="stat-value text-2xl text-secondary">{{ reports | length }}</div>
       </div>
     </div>
 

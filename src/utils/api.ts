@@ -16,13 +16,15 @@ interface RequestOptions {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: Record<string, unknown>;
     token?: string;
+    /** Admin-only: temporarily view as a different role */
+    viewAsRole?: string;
 }
 
 export async function apiRequest<T = unknown>(
     endpoint: string,
     options: RequestOptions = {}
 ): Promise<ApiResponse<T>> {
-    const { method = "GET", body, token } = options;
+    const { method = "GET", body, token, viewAsRole } = options;
 
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -30,6 +32,10 @@ export async function apiRequest<T = unknown>(
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    if (viewAsRole) {
+        headers["X-View-As-Role"] = viewAsRole;
     }
 
     try {
