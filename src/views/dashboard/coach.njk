@@ -35,7 +35,34 @@
         <div class="stat-title text-xs">Upcoming Games</div>
         <div class="stat-value text-2xl text-secondary">{{ games | length }}</div>
       </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Availability Requests</div>
+        <div class="stat-value text-2xl text-secondary">{{ availabilityCount }}</div>
+      </div>
     </div>
+
+    <!-- Resources — Availability Requests CTA -->
+    <a href="/dashboard/availability"
+       class="card bg-gradient-to-r from-accent/10 via-base-200 to-secondary/10 border border-accent/20 shadow-lg hover:shadow-xl hover:border-accent/40 transition-all duration-300 hover:scale-[1.01] mb-4 group scroll-reveal opacity-0">
+      <div class="card-body p-5 flex-row items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0 group-hover:bg-accent/30 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-heading font-semibold text-lg group-hover:text-accent transition-colors">
+            Availability Requests
+          </h3>
+          <p class="text-sm text-base-content/50">
+            Check who's available for training &amp; matches — send requests to parents and track responses
+          </p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30 group-hover:text-accent group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </a>
 
     <!-- Resources — Drill Library CTA -->
     <a href="/dashboard/drills"

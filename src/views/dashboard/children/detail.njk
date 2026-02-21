@@ -90,6 +90,61 @@
 
         <div class="divider"></div>
 
+        <!-- Team Registrations -->
+        <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Team Registrations
+        </h2>
+
+        {% if registrations and registrations.length > 0 %}
+        <div class="space-y-2">
+          {% for reg in registrations %}
+          <div class="flex items-center justify-between p-3 bg-base-300/50 rounded-lg">
+            <div>
+              <span class="font-medium">{{ reg.team.name }}</span>
+              <span class="text-base-content/60 text-sm ml-2">{{ reg.team.age_group }}</span>
+            </div>
+            <span class="badge badge-sm
+              {% if reg.status === 'approved' %}badge-success
+              {% elif reg.status === 'pending' %}badge-warning
+              {% elif reg.status === 'rejected' %}badge-error
+              {% endif %}">
+              {{ reg.status | capitalize }}
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-base-content/60 text-sm">Not registered for any teams yet.</p>
+        {% endif %}
+
+        {% if availableTeams and availableTeams.length > 0 %}
+        <div class="mt-4">
+          <div class="dropdown dropdown-top">
+            <label tabindex="0" class="btn btn-secondary btn-sm gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Register for Team
+            </label>
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-300 rounded-box w-56 z-50 mb-2">
+              {% for team in availableTeams %}
+              <li>
+                <a href="/dashboard/teams/{{ team.id }}/register">
+                  {{ team.name }}
+                  <span class="text-base-content/50 text-xs">{{ team.age_group }}</span>
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="divider"></div>
+
         <!-- Emergency Contact -->
         <h2 class="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
