@@ -69,6 +69,21 @@
                        class="input input-bordered w-full focus:input-secondary transition-colors"
                        required autocomplete="family-name" maxlength="100" />
               </div>
+
+              <!-- Gender -->
+              <div class="form-control">
+                <label class="label" for="edit-gender">
+                  <span class="label-text font-medium">Gender</span>
+                </label>
+                <select id="edit-gender" name="gender"
+                        class="select select-bordered w-full focus:select-secondary transition-colors">
+                  <option value="" {% if not child.gender %}selected{% endif %}>Select gender</option>
+                  <option value="male" {% if child.gender == 'male' %}selected{% endif %}>Male</option>
+                  <option value="female" {% if child.gender == 'female' %}selected{% endif %}>Female</option>
+                  <option value="other" {% if child.gender == 'other' %}selected{% endif %}>Other</option>
+                  <option value="prefer_not_to_say" {% if child.gender == 'prefer_not_to_say' %}selected{% endif %}>Prefer not to say</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-control mt-4">
