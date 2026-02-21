@@ -107,6 +107,7 @@ router.post('/add', async (req: Request, res: Response) => {
         position,
         emergency_contact_name,
         emergency_contact_phone,
+        emergency_contact_relationship,
         medical_conditions,
         allergies,
         photo_consent,
@@ -127,6 +128,7 @@ router.post('/add', async (req: Request, res: Response) => {
         position,
         emergency_contact_name,
         emergency_contact_phone,
+        emergency_contact_relationship,
         medical_conditions,
         allergies,
         photo_consent,
@@ -142,10 +144,10 @@ router.post('/add', async (req: Request, res: Response) => {
         return;
     }
 
-    if (!emergency_contact_name || !emergency_contact_phone) {
+    if (!emergency_contact_name || !emergency_contact_phone || !emergency_contact_relationship) {
         res.render('dashboard/children/add.njk', {
             title: 'Add Child — Norstar',
-            error: 'Emergency contact details are required.',
+            error: 'All emergency contact details are required (name, phone, and relationship).',
             values,
         });
         return;
@@ -163,6 +165,7 @@ router.post('/add', async (req: Request, res: Response) => {
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
+            emergency_contact_relationship,
             medical_conditions: medical_conditions?.trim() || undefined,
             allergies: allergies?.trim() || undefined,
             photo_consent: photo_consent === 'on',
@@ -188,19 +191,36 @@ router.get('/:id', async (req: Request, res: Response) => {
     const childId = req.params.id;
 
     try {
-        const result = await apiRequest<Record<string, unknown>>(
-            `/api/children/${childId}`,
-            { token }
-        );
+        // Fetch child details and their team registrations in parallel
+        const [result, regsResult, teamsResult] = await Promise.all([
+            apiRequest<Record<string, unknown>>(
+                `/api/children/${childId}`,
+                { token }
+            ),
+            apiRequest<{ id: string; team_id: string; status: string; team: { id: string; name: string; age_group: string } }[]>(
+                `/api/children/${childId}/registrations`,
+                { token }
+            ),
+            apiRequest<{ id: string; name: string; age_group: string }[]>(
+                '/api/teams',
+                { token }
+            ),
+        ]);
 
         if (!result.success || !result.data) {
             res.status(404).render('404.njk', { title: 'Child Not Found' });
             return;
         }
 
+        const registrations = regsResult.data || [];
+        const registeredTeamIds = new Set(registrations.map((r) => r.team_id));
+        const availableTeams = (teamsResult.data || []).filter((t) => !registeredTeamIds.has(t.id));
+
         res.render('dashboard/children/detail.njk', {
             title: `${result.data.first_name} ${result.data.last_name} — Norstar`,
             child: result.data,
+            registrations,
+            availableTeams,
         });
     } catch (error) {
         console.error('Child detail error:', error);
@@ -250,6 +270,7 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         position,
         emergency_contact_name,
         emergency_contact_phone,
+        emergency_contact_relationship,
         medical_conditions,
         allergies,
         photo_consent,
@@ -270,6 +291,7 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         position,
         emergency_contact_name,
         emergency_contact_phone,
+        emergency_contact_relationship,
         medical_conditions,
         allergies,
         photo_consent,
@@ -285,10 +307,10 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         return;
     }
 
-    if (!emergency_contact_name || !emergency_contact_phone) {
+    if (!emergency_contact_name || !emergency_contact_phone || !emergency_contact_relationship) {
         res.render('dashboard/children/edit.njk', {
             title: 'Edit Child — Norstar',
-            error: 'Emergency contact details are required.',
+            error: 'All emergency contact details are required (name, phone, and relationship).',
             child: { id: childId, ...childData },
         });
         return;
@@ -306,6 +328,7 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
+            emergency_contact_relationship,
             medical_conditions: medical_conditions?.trim() || undefined,
             allergies: allergies?.trim() || undefined,
             photo_consent: photo_consent === 'on',

@@ -113,6 +113,128 @@
     </div>
     {% endif %}
 
+    <!-- ─── Availability Requests ────────────────────────── -->
+    {% if availabilityRequests.length > 0 %}
+    <div class="mt-10">
+      <h2 class="font-heading text-2xl font-bold mb-2">
+        Availability Requests<span class="text-secondary">.</span>
+      </h2>
+      <p class="text-base-content/60 mb-6">Your coach needs to know if your child can make it</p>
+
+      <div class="space-y-4">
+        {% for req in availabilityRequests %}
+        <div class="card bg-base-200 border border-secondary/20 shadow-lg scroll-reveal opacity-0">
+          <div class="card-body p-5">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="badge badge-sm {% if req.request_type === 'match' %}badge-primary{% elif req.request_type === 'training' %}badge-accent{% else %}badge-ghost{% endif %}">
+                    {% if req.request_type === 'other' and req.custom_request_type %}
+                      {{ req.custom_request_type }}
+                    {% else %}
+                      {{ req.request_type | capitalize }}
+                    {% endif %}
+                  </span>
+                  {% if req.team_name %}
+                  <span class="text-xs text-base-content/40">{{ req.team_name }}</span>
+                  {% endif %}
+                </div>
+                <h3 class="font-heading font-semibold text-lg">{{ req.title }}</h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  📅 {{ req.event_date }}
+                  {% if req.deadline %}
+                    · ⏰ Respond by {{ req.deadline }}
+                  {% endif %}
+                </p>
+                {% if req.notes %}
+                <p class="text-sm text-base-content/50 mt-2 italic">{{ req.notes }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Response forms per child -->
+            {% if req.children and req.children.length > 0 %}
+            <div class="divider my-3 text-xs text-base-content/40">RESPOND FOR YOUR CHILDREN</div>
+            <div class="space-y-3">
+              {% for child in req.children %}
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-base-300/50 rounded-lg">
+                <div>
+                  <span class="font-medium">{{ child.first_name }} {{ child.last_name }}</span>
+                  {% if child.current_status %}
+                    <span class="ml-2 badge badge-sm
+                      {% if child.current_status === 'available' %}badge-success
+                      {% elif child.current_status === 'unavailable' %}badge-error
+                      {% elif child.current_status === 'tentative' %}badge-warning
+                      {% endif %}">
+                      {{ child.current_status | capitalize }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                {% if not child.current_status %}
+                <form action="/dashboard/availability/{{ req.id }}/respond" method="POST" class="flex gap-2 flex-wrap">
+                  <input type="hidden" name="child_id" value="{{ child.id }}" />
+                  <!-- Honeypot -->
+                  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+
+                  <button type="submit" name="status" value="available"
+                          class="btn btn-success btn-xs gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Available
+                  </button>
+                  <button type="submit" name="status" value="tentative"
+                          class="btn btn-warning btn-xs gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
+                    </svg>
+                    Maybe
+                  </button>
+                  <button type="submit" name="status" value="unavailable"
+                          class="btn btn-error btn-xs gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Unavailable
+                  </button>
+                </form>
+                {% else %}
+                <form action="/dashboard/availability/{{ req.id }}/respond" method="POST" class="flex gap-2 flex-wrap">
+                  <input type="hidden" name="child_id" value="{{ child.id }}" />
+                  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+
+                  {% if child.current_status !== 'available' %}
+                  <button type="submit" name="status" value="available" class="btn btn-success btn-xs btn-outline gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    Available
+                  </button>
+                  {% endif %}
+                  {% if child.current_status !== 'tentative' %}
+                  <button type="submit" name="status" value="tentative" class="btn btn-warning btn-xs btn-outline gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" /></svg>
+                    Maybe
+                  </button>
+                  {% endif %}
+                  {% if child.current_status !== 'unavailable' %}
+                  <button type="submit" name="status" value="unavailable" class="btn btn-error btn-xs btn-outline gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    Unavailable
+                  </button>
+                  {% endif %}
+                </form>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
   </div>
 </section>
 {% endblock %}

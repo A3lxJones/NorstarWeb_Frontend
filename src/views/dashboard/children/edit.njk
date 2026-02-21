@@ -166,6 +166,22 @@
                        class="input input-bordered w-full focus:input-secondary transition-colors"
                        required autocomplete="tel" maxlength="20" />
               </div>
+
+              <!-- Relationship -->
+              <div class="form-control">
+                <label class="label" for="edit-ec-relationship">
+                  <span class="label-text font-medium">Relationship <span class="text-error">*</span></span>
+                </label>
+                <select id="edit-ec-relationship" name="emergency_contact_relationship"
+                        class="select select-bordered w-full focus:select-secondary transition-colors" required>
+                  <option value="" disabled {% if not child.emergency_contact_relationship %}selected{% endif %}>Select relationship</option>
+                  <option value="mother" {% if child.emergency_contact_relationship == 'mother' %}selected{% endif %}>Mother</option>
+                  <option value="father" {% if child.emergency_contact_relationship == 'father' %}selected{% endif %}>Father</option>
+                  <option value="guardian" {% if child.emergency_contact_relationship == 'guardian' %}selected{% endif %}>Guardian</option>
+                  <option value="grandparent" {% if child.emergency_contact_relationship == 'grandparent' %}selected{% endif %}>Grandparent</option>
+                  <option value="other" {% if child.emergency_contact_relationship == 'other' %}selected{% endif %}>Other</option>
+                </select>
+              </div>
             </div>
           </div>
 
