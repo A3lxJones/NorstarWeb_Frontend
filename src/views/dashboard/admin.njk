@@ -10,6 +10,7 @@
         <h1 class="font-heading text-3xl font-bold">
           Admin Dashboard<span class="text-secondary">.</span>
         </h1>
+        <h2>Welcome back, {{ user.name }}!</h2>
         <p class="text-base-content/60 mt-1">Full overview of Norstar operations</p>
       </div>
 
@@ -75,6 +76,10 @@
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
         <div class="stat-title text-xs">Teams</div>
         <div class="stat-value text-2xl text-secondary">{{ teamCount or teams | length }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">Registered Players</div>
+        <div class="stat-value text-2xl text-secondary">{{ playerCount or players | length }}</div>
       </div>
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
         <div class="stat-title text-xs">Upcoming Games</div>
