@@ -53,7 +53,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          Already Registered
+          This Child is Already Registered
         </h2>
         <div class="space-y-2">
           {% for child in allChildren %}
@@ -129,7 +129,16 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-success/40 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
+  <!-- could be an issue here as different children may have different teams-->
         <h2 class="font-heading text-xl font-semibold mb-2">All children registered</h2>
+        <!--if a child is registered for a different team, we should show that here instead of saying all children are registered for this team-->
+        <!-- needs finished -->
+        {% if condition %}
+          <p class ="text-base-content/60 mb-4">{{ child.first_name }} {{ child.last_name }} is already registered for {{ different_team.name }}.</p>
+        {% endif %}
+        <p class ="text-base-content/60 mb-4">{{ child.first_name }} {{ child.last_name }} is already registered for {{ team.name }}.</p>
+       
+        
         <p class="text-base-content/60 mb-4">All your children are already registered for {{ team.name }}.</p>
         <a href="/dashboard/teams/{{ team.id }}" class="btn btn-outline btn-sm">Back to Team</a>
       </div>
