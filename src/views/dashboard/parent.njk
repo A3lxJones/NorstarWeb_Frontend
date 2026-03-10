@@ -173,57 +173,58 @@
                 </div>
 
                 {% if not child.current_status %}
-                <form action="/dashboard/availability/{{ req.id }}/respond" method="POST" class="flex gap-2 flex-wrap">
-                  <input type="hidden" name="child_id" value="{{ child.id }}" />
-                  <!-- Honeypot -->
-                  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
-
-                  <button type="submit" name="status" value="available"
-                          class="btn btn-success btn-xs gap-1">
+                <div class="availability-response-row flex gap-2 flex-wrap" data-request-id="{{ req.id }}" data-child-id="{{ child.id }}" data-current-status="">
+                  <button type="button" data-status="available"
+                          class="btn btn-success btn-xs gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     Available
                   </button>
-                  <button type="submit" name="status" value="tentative"
-                          class="btn btn-warning btn-xs gap-1">
+                  <button type="button" data-status="tentative"
+                          class="btn btn-warning btn-xs gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
                     </svg>
                     Maybe
                   </button>
-                  <button type="submit" name="status" value="unavailable"
-                          class="btn btn-error btn-xs gap-1">
+                  <button type="button" data-status="unavailable"
+                          class="btn btn-error btn-xs gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                     Unavailable
                   </button>
-                </form>
+                </div>
                 {% else %}
-                <form action="/dashboard/availability/{{ req.id }}/respond" method="POST" class="flex gap-2 flex-wrap">
-                  <input type="hidden" name="child_id" value="{{ child.id }}" />
-                  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
+                <div class="availability-response-row flex gap-2 flex-wrap" data-request-id="{{ req.id }}" data-child-id="{{ child.id }}" data-current-status="{{ child.current_status }}">
+                  <span class="badge badge-sm
+                    {% if child.current_status === 'available' %}badge-success
+                    {% elif child.current_status === 'unavailable' %}badge-error
+                    {% elif child.current_status === 'tentative' %}badge-warning
+                    {% endif %} current-status-badge">
+                    {{ child.current_status | capitalize }}
+                  </span>
 
                   {% if child.current_status !== 'available' %}
-                  <button type="submit" name="status" value="available" class="btn btn-success btn-xs btn-outline gap-1">
+                  <button type="button" data-status="available" class="btn btn-success btn-xs btn-outline gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                     Available
                   </button>
                   {% endif %}
                   {% if child.current_status !== 'tentative' %}
-                  <button type="submit" name="status" value="tentative" class="btn btn-warning btn-xs btn-outline gap-1">
+                  <button type="button" data-status="tentative" class="btn btn-warning btn-xs btn-outline gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" /></svg>
                     Maybe
                   </button>
                   {% endif %}
                   {% if child.current_status !== 'unavailable' %}
-                  <button type="submit" name="status" value="unavailable" class="btn btn-error btn-xs btn-outline gap-1">
+                  <button type="button" data-status="unavailable" class="btn btn-error btn-xs btn-outline gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     Unavailable
                   </button>
                   {% endif %}
-                </form>
+                </div>
                 {% endif %}
               </div>
               {% endfor %}
@@ -238,4 +239,110 @@
 
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ cspNonce }}">
+(function () {
+  var STATUS_CONFIG = {
+    available:   { badge: 'badge-success', label: 'Available' },
+    tentative:   { badge: 'badge-warning', label: 'Maybe' },
+    unavailable: { badge: 'badge-error',   label: 'Unavailable' }
+  };
+
+  /* ── Toast helper ────────────────────────────────── */
+  function showToast(message, type) {
+    var container = document.getElementById('toast-container');
+    if (!container) return;
+
+    var alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+    var alert = document.createElement('div');
+    alert.className = 'alert ' + alertClass + ' shadow-lg text-sm py-3 px-4 animate-fade-in';
+    alert.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+        (type === 'error'
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />') +
+      '</svg>' +
+      '<span>' + message + '</span>';
+
+    container.appendChild(alert);
+
+    setTimeout(function () {
+      alert.style.opacity = '0';
+      alert.style.transition = 'opacity 0.3s ease';
+      setTimeout(function () { alert.remove(); }, 300);
+    }, 4000);
+  }
+
+  /* ── Rebuild the button row after a status change ── */
+  function rebuildRow(row, newStatus) {
+    row.dataset.currentStatus = newStatus;
+    row.innerHTML = '';
+
+    // Status badge
+    var cfg = STATUS_CONFIG[newStatus];
+    var badge = document.createElement('span');
+    badge.className = 'badge badge-sm ' + cfg.badge + ' current-status-badge';
+    badge.textContent = cfg.label;
+    row.appendChild(badge);
+
+    // Change-buttons for the other two statuses
+    var allStatuses = ['available', 'tentative', 'unavailable'];
+    allStatuses.forEach(function (s) {
+      if (s === newStatus) return;
+      var btnCfg = STATUS_CONFIG[s];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.status = s;
+      btn.className = 'btn btn-xs btn-outline gap-1 availability-btn btn-' +
+        (s === 'available' ? 'success' : s === 'tentative' ? 'warning' : 'error');
+      btn.textContent = btnCfg.label;
+      row.appendChild(btn);
+    });
+  }
+
+  /* ── Delegate click on any availability button ───── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.availability-btn');
+    if (!btn) return;
+
+    var row = btn.closest('.availability-response-row');
+    if (!row) return;
+
+    var requestId = row.dataset.requestId;
+    var childId   = row.dataset.childId;
+    var status    = btn.dataset.status;
+
+    if (!requestId || !childId || !status) return;
+
+    // Disable buttons while in flight
+    var buttons = row.querySelectorAll('.availability-btn');
+    buttons.forEach(function (b) { b.disabled = true; b.classList.add('loading', 'loading-xs'); });
+
+    fetch('/dashboard/availability/' + encodeURIComponent(requestId) + '/respond', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ child_id: childId, status: status })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.success) {
+        rebuildRow(row, status);
+        showToast('Thank you for responding! Your availability has been recorded.', 'success');
+      } else {
+        showToast(data.error || 'Something went wrong. Please try again.', 'error');
+        buttons.forEach(function (b) { b.disabled = false; b.classList.remove('loading', 'loading-xs'); });
+      }
+    })
+    .catch(function () {
+      showToast('Network error — please check your connection and try again.', 'error');
+      buttons.forEach(function (b) { b.disabled = false; b.classList.remove('loading', 'loading-xs'); });
+    });
+  });
+})();
+</script>
 {% endblock %}
