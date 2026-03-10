@@ -46,7 +46,7 @@ app.use(
                 defaultSrc: ["'self'"],
                 scriptSrc: [
                     "'self'",
-                    ((_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`) as any,
+                    ((_req: Request, res: Response): unknown => `'nonce-${res.locals.cspNonce}'`) as unknown as string,
                 ],
                 styleSrc: [
                     "'self'",

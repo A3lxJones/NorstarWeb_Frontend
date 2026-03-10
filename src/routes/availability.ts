@@ -318,7 +318,7 @@ router.get(
             };
 
             // Normalise response child names for the template
-            const normalisedResponses = responses.map((r: any) => ({
+            const normalisedResponses = responses.map((r: AvailabilityResponse & { child?: { first_name: string; last_name: string } }) => ({
                 ...r,
                 child_name: r.child
                     ? `${r.child.first_name} ${r.child.last_name}`
@@ -327,7 +327,7 @@ router.get(
             }));
 
             // Normalise pending member names
-            const normalisedPending = pendingMembers.map((m: any) => ({
+            const normalisedPending = pendingMembers.map((m: PendingMember & { first_name?: string; last_name?: string }) => ({
                 ...m,
                 child_name: m.first_name
                     ? `${m.first_name} ${m.last_name}`
@@ -384,9 +384,11 @@ router.post(
         const { child_id, status, website } = req.body;
         const token = req.session.accessToken!;
         const requestId = req.params.id;
+        const wantsJson = req.headers.accept?.includes('application/json');
 
         // Honeypot check
         if (website) {
+            if (wantsJson) { res.json({ success: false, error: 'Invalid request' }); return; }
             res.redirect('/dashboard');
             return;
         }
@@ -396,12 +398,13 @@ router.post(
             !status ||
             !['available', 'unavailable', 'tentative'].includes(status)
         ) {
+            if (wantsJson) { res.status(400).json({ success: false, error: 'Missing or invalid fields' }); return; }
             res.redirect('/dashboard');
             return;
         }
 
         try {
-            await apiRequest<unknown>(
+            const _result = await apiRequest<unknown>(
                 `/api/availability-requests/${requestId}/respond`,
                 {
                     method: 'POST',
@@ -409,8 +412,17 @@ router.post(
                     body: { child_id, status },
                 }
             );
+
+            if (wantsJson) {
+                res.json({ success: true, data: { child_id, status } });
+                return;
+            }
         } catch (error) {
             console.error('Availability respond error:', error);
+            if (wantsJson) {
+                res.status(500).json({ success: false, error: 'Failed to submit response' });
+                return;
+            }
         }
 
         res.redirect('/dashboard');

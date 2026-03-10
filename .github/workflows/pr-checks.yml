@@ -1,0 +1,92 @@
+name: PR Quality Checks
+
+on:
+    pull_request:
+        branches: [main, develop]
+        types: [opened, synchronize, reopened]
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    quality-checks:
+        runs-on: ubuntu-latest
+        name: Code Quality & Security
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "18"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: TypeScript type checking
+              run: npm run build:ts -- --noEmit
+              continue-on-error: false
+
+            - name: ESLint - Code quality check
+              run: npm run lint
+              continue-on-error: false
+
+            - name: Build verification
+              run: npm run build
+              continue-on-error: false
+
+            - name: Security audit
+              run: npm audit --audit-level=moderate
+              continue-on-error: true
+
+            - name: Check for console statements (security)
+              run: |
+                  if grep -r "console\." src/ --include="*.ts" --exclude-dir=node_modules | grep -v "console.error\|console.warn"; then
+                    echo "❌ Found debug console statements. Please remove console.log, console.info, etc."
+                    exit 1
+                  fi
+                  echo "✅ No debug console statements found"
+
+    security-scanning:
+        runs-on: ubuntu-latest
+        name: Dependency Security Scan
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Run Snyk vulnerability scan
+              uses: snyk/actions/node@master
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+              with:
+                  args: --severity-threshold=high
+              continue-on-error: true
+
+    pr-comment:
+        runs-on: ubuntu-latest
+        name: PR Status Comment
+        if: always()
+        needs: [quality-checks, security-scanning]
+        steps:
+            - name: Comment on PR
+              if: github.event_name == 'pull_request'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const checks = ${{ needs.quality-checks.result }};
+                      const security = ${{ needs.security-scanning.result }};
+
+                      let message = '## ✅ Quality Checks Summary\n\n';
+                      message += `- TypeScript & Build: ${checks === 'success' ? '✅' : '❌'}\n`;
+                      message += `- Security Scan: ${security === 'success' || security === 'skipped' ? '✅' : '⚠️'}\n`;
+
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: message
+                      });

@@ -288,11 +288,7 @@ interface ChildSummary {
     date_of_birth: string;
 }
 
-interface RegistrationRecord {
-    team_id: string;
-    child_id: string;
-    status: string;
-}
+
 
 router.get('/:id/register', requireAuth, async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
