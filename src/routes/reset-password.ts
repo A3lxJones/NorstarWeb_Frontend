@@ -1,11 +1,39 @@
 import { Router, Request, Response } from 'express';
-import { resetPassword } from '../utils/api';
+import { resetPassword, exchangeRecoveryCode } from '../utils/api';
 
 const router = Router();
 
 // GET /reset-password — render the "set new password" form
-// The access_token is in the URL hash (fragment) — client JS reads it.
-router.get('/', (_req: Request, res: Response) => {
+// The access_token may arrive in either:
+//   - URL hash fragment (#access_token=...) — implicit flow, read by client JS
+//   - Query parameter (?code=...)           — PKCE flow, exchanged server-side
+router.get('/', async (req: Request, res: Response) => {
+    const code = req.query.code;
+
+    // PKCE flow: exchange the code for an access token server-side
+    if (typeof code === 'string' && code.length > 0) {
+        try {
+            const result = await exchangeRecoveryCode(code);
+
+            if (result.success && result.data?.accessToken) {
+                res.render('reset-password.njk', {
+                    title: 'Reset Password',
+                    serverToken: result.data.accessToken,
+                });
+                return;
+            }
+        } catch {
+            // fall through to show the no-token warning
+        }
+
+        res.render('reset-password.njk', {
+            title: 'Reset Password',
+            error: 'Invalid or expired reset link. Please request a new one.',
+        });
+        return;
+    }
+
+    // Implicit flow: the JS in the template will extract the token from the hash
     res.render('reset-password.njk', { title: 'Reset Password' });
 });
 

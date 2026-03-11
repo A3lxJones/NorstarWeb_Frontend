@@ -111,3 +111,10 @@ export async function resetPassword(accessToken: string, newPassword: string) {
         body: { password: newPassword },
     });
 }
+
+export async function exchangeRecoveryCode(code: string) {
+    return apiRequest<{ accessToken: string }>("/api/auth/exchange-recovery-code", {
+        method: "POST",
+        body: { code },
+    });
+}
