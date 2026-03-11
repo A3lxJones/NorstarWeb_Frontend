@@ -16,198 +16,654 @@
   </div>
 </section>
 
-<!-- Filter Tabs -->
+<!-- Filters + Legend -->
 <section class="py-8 bg-base-100 border-b border-base-300/30 sticky top-[64px] z-30 backdrop-blur-md">
   <div class="container mx-auto px-4 max-w-6xl">
-    <div class="flex flex-wrap gap-2 justify-center">
-      <button class="btn btn-sm btn-secondary font-medium">All</button>
-      <button class="btn btn-sm btn-ghost border-base-300 font-medium hover:btn-secondary">U13 League</button>
-      <button class="btn btn-sm btn-ghost border-base-300 font-medium hover:btn-secondary">Learn to Play</button>
-      <button class="btn btn-sm btn-ghost border-base-300 font-medium hover:btn-secondary">Learn to Skate</button>
-      <button class="btn btn-sm btn-ghost border-base-300 font-medium hover:btn-secondary">Training</button>
-      <button class="btn btn-sm btn-ghost border-base-300 font-medium hover:btn-secondary">Events</button>
+    <div class="flex flex-wrap items-center gap-3">
+      <select id="team-filter" class="select select-bordered select-sm w-auto">
+        <option value="">All Teams</option>
+        {% for team in teams %}
+        <option value="{{ team.id }}">{{ team.name }} ({{ team.age_group }})</option>
+        {% endfor %}
+      </select>
+
+      <div class="flex flex-wrap items-center gap-3 ml-auto text-xs text-base-content/60">
+        <span class="flex items-center gap-1"><span class="cal-event bg-error"></span> Match</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-info"></span> Training</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-warning"></span> Announcement</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-primary"></span> Meeting</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-success"></span> Social</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-base-content/40"></span> Other</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Calendar Widget Placeholder -->
+<!-- Interactive Calendar -->
 <section class="py-16 lg:py-20">
   <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
 
-    <!-- Month navigation placeholder -->
+    <!-- Month navigation -->
     <div class="scroll-reveal opacity-0 flex items-center justify-between mb-8">
-      <button class="btn btn-ghost btn-sm gap-1">
+      <button type="button" id="cal-prev" class="btn btn-ghost btn-sm gap-1" aria-label="Previous month">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
         Previous
       </button>
-      <h2 class="font-heading text-2xl md:text-3xl font-bold">
-        February <span class="text-secondary">2026</span>
-      </h2>
-      <button class="btn btn-ghost btn-sm gap-1">
+      <div class="text-center">
+        <h2 id="cal-month-label" class="font-heading text-2xl md:text-3xl font-bold"></h2>
+        <button type="button" id="cal-today" class="btn btn-ghost btn-xs mt-1">Today</button>
+      </div>
+      <button type="button" id="cal-next" class="btn btn-ghost btn-sm gap-1" aria-label="Next month">
         Next
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
       </button>
     </div>
 
-    <!-- Calendar grid placeholder -->
+    <!-- Calendar grid -->
     <div class="scroll-reveal opacity-0 card bg-base-200 border border-base-300 shadow-xl overflow-hidden">
       <!-- Day headers -->
       <div class="grid grid-cols-7 bg-base-300/50 border-b border-base-300">
-        {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">{{ day }}</div>
-        {% endfor %}
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Mon</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Tue</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Wed</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Thu</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Fri</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Sat</div>
+        <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Sun</div>
       </div>
-      <!-- Week rows (placeholder) -->
-      {% for week in range(0, 5) %}
-      <div class="grid grid-cols-7 border-b border-base-300/30 last:border-0">
-        {% for day in range(0, 7) %}
-        {% set cellDay = week * 7 + day - 1 %}
-        <div class="min-h-[80px] md:min-h-[100px] p-1.5 border-r border-base-300/20 last:border-0 hover:bg-base-300/30 transition-colors cursor-pointer group relative">
-          {% if cellDay >= 1 and cellDay <= 28 %}
-          <span class="text-xs font-medium text-base-content/40 group-hover:text-secondary transition-colors">{{ cellDay }}</span>
-          {% if cellDay == 15 %}
-          <div class="mt-1 px-1.5 py-0.5 bg-secondary/20 text-secondary text-[10px] font-medium rounded truncate">U13 Match</div>
-          {% endif %}
-          {% if cellDay == 18 %}
-          <div class="mt-1 px-1.5 py-0.5 bg-accent/20 text-accent text-[10px] font-medium rounded truncate">Learn to Skate</div>
-          {% endif %}
-          {% if cellDay == 22 %}
-          <div class="mt-1 px-1.5 py-0.5 bg-secondary/20 text-secondary text-[10px] font-medium rounded truncate">U13 Away</div>
-          {% endif %}
-          {% if cellDay == 12 or cellDay == 19 or cellDay == 26 %}
-          <div class="mt-1 px-1.5 py-0.5 bg-info/20 text-info text-[10px] font-medium rounded truncate">Training</div>
-          {% endif %}
-          {% endif %}
+
+      <!-- Calendar cells (populated by JS) -->
+      <div id="cal-grid" class="grid grid-cols-7"></div>
+    </div>
+
+    <!-- Day events panel (shown when clicking a date) -->
+    <div id="day-events" class="mt-6 hidden">
+      <h3 id="day-events-heading" class="font-heading text-lg font-semibold mb-3"></h3>
+      <div id="day-events-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Event detail panel -->
+    <div id="event-panel" class="mt-6 hidden">
+      <div class="card bg-base-200 border border-base-300 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span id="event-panel-type-badge" class="badge badge-sm"></span>
+                <span id="event-panel-source-badge" class="badge badge-sm badge-ghost hidden"></span>
+              </div>
+              <h3 id="event-panel-title" class="font-heading text-xl font-semibold"></h3>
+            </div>
+            <button type="button" id="event-panel-close" class="btn btn-ghost btn-sm btn-circle" aria-label="Close panel">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-sm">
+            <div id="event-panel-date-row">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Date</span>
+              <p id="event-panel-date" class="font-medium"></p>
+            </div>
+            <div id="event-panel-time-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Time</span>
+              <p id="event-panel-time" class="font-medium"></p>
+            </div>
+            <div id="event-panel-location-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Location</span>
+              <p id="event-panel-location" class="font-medium"></p>
+            </div>
+            <div id="event-panel-team-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Team</span>
+              <p id="event-panel-team" class="font-medium"></p>
+            </div>
+          </div>
+
+          <div id="event-panel-description-row" class="hidden mt-3">
+            <span class="text-base-content/50 text-xs uppercase tracking-wide">Description</span>
+            <p id="event-panel-description" class="text-sm text-base-content/70 mt-1"></p>
+          </div>
         </div>
-        {% endfor %}
-      </div>
-      {% endfor %}
-      <!-- Legend -->
-      <div class="p-4 bg-base-300/30 flex flex-wrap gap-4 text-xs">
-        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-secondary/30"></span> Matches</div>
-        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-accent/30"></span> Learn to Skate</div>
-        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-info/30"></span> Training</div>
-        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-success/30"></span> Events</div>
-        <span class="ml-auto badge badge-ghost badge-xs">Interactive calendar coming with API</span>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- Upcoming Fixtures List -->
-<section class="py-16 lg:py-20 bg-base-200/50">
+<!-- Upcoming Fixtures List (dynamically populated) -->
+<section class="py-16 lg:py-20 bg-base-200/50 relative">
   <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent"></div>
   <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
     <div class="flex items-end justify-between mb-10">
       <div>
         <span class="scroll-reveal opacity-0 badge badge-accent badge-outline badge-sm font-medium tracking-wider uppercase mb-3">Coming Up</span>
-        <h2 class="scroll-reveal opacity-0 font-heading text-2xl md:text-4xl font-bold">
+        <h2 id="fixtures-heading" class="scroll-reveal opacity-0 font-heading text-2xl md:text-4xl font-bold">
           Upcoming <span class="text-secondary">Fixtures</span>
         </h2>
       </div>
-      <div class="scroll-reveal opacity-0 hidden md:block">
-        <div class="flex gap-2">
-          <button class="btn btn-sm btn-ghost border-base-300">List View</button>
-          <button class="btn btn-sm btn-ghost border-base-300">Card View</button>
-        </div>
-      </div>
     </div>
 
-    <div class="space-y-4">
-      <!-- Fixture 1 -->
-      <div class="scroll-reveal opacity-0 card card-side bg-base-100 border border-base-300 shadow-md hover:border-secondary/30 transition-all duration-300 hover:shadow-lg">
-        <div class="bg-secondary/10 flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">
-          <span class="font-heading text-3xl font-bold text-secondary">15</span>
-          <span class="text-xs uppercase tracking-wider text-base-content/60">Feb</span>
-          <span class="text-[10px] text-base-content/40">SAT</span>
-        </div>
-        <div class="card-body py-4">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h3 class="card-title text-lg font-heading">Norstar U13 vs Belfast Blades</h3>
-              <p class="text-sm text-base-content/60">Seven Towers Leisure Centre, Ballymena &bull; 14:00</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="badge badge-secondary badge-sm">U13 League</span>
-              <span class="badge badge-outline badge-sm text-success border-success/30">Home</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Fixture 2 -->
-      <div class="scroll-reveal opacity-0 card card-side bg-base-100 border border-base-300 shadow-md hover:border-accent/30 transition-all duration-300 hover:shadow-lg" style="animation-delay: 0.1s;">
-        <div class="bg-accent/10 flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">
-          <span class="font-heading text-3xl font-bold text-accent">18</span>
-          <span class="text-xs uppercase tracking-wider text-base-content/60">Feb</span>
-          <span class="text-[10px] text-base-content/40">TUE</span>
-        </div>
-        <div class="card-body py-4">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h3 class="card-title text-lg font-heading">Learn to Skate — Open Session</h3>
-              <p class="text-sm text-base-content/60">Seven Towers Leisure Centre, Ballymena &bull; 10:00</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="badge badge-accent badge-sm">Learn to Skate</span>
-              <span class="badge badge-outline badge-sm text-info border-info/30">Open</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Fixture 3 -->
-      <div class="scroll-reveal opacity-0 card card-side bg-base-100 border border-base-300 shadow-md hover:border-secondary/30 transition-all duration-300 hover:shadow-lg" style="animation-delay: 0.2s;">
-        <div class="bg-secondary/10 flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">
-          <span class="font-heading text-3xl font-bold text-secondary">22</span>
-          <span class="text-xs uppercase tracking-wider text-base-content/60">Feb</span>
-          <span class="text-[10px] text-base-content/40">SAT</span>
-        </div>
-        <div class="card-body py-4">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h3 class="card-title text-lg font-heading">Norstar U13 vs Lisburn Lightning</h3>
-              <p class="text-sm text-base-content/60">Lagan Valley LeisurePlex, Lisburn &bull; 15:00</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="badge badge-secondary badge-sm">U13 League</span>
-              <span class="badge badge-outline badge-sm text-warning border-warning/30">Away</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Fixture 4 -->
-      <div class="scroll-reveal opacity-0 card card-side bg-base-100 border border-base-300 shadow-md hover:border-secondary/30 transition-all duration-300 hover:shadow-lg" style="animation-delay: 0.3s;">
-        <div class="bg-info/10 flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">
-          <span class="font-heading text-3xl font-bold text-info">26</span>
-          <span class="text-xs uppercase tracking-wider text-base-content/60">Feb</span>
-          <span class="text-[10px] text-base-content/40">WED</span>
-        </div>
-        <div class="card-body py-4">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h3 class="card-title text-lg font-heading">Training Session — All Squads</h3>
-              <p class="text-sm text-base-content/60">Seven Towers Leisure Centre, Ballymena &bull; 18:00 – 19:30</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="badge badge-info badge-sm">Training</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="fixtures-list" class="space-y-4">
+      <!-- Populated by JS -->
     </div>
 
-    <!-- Load more -->
-    <div class="scroll-reveal opacity-0 text-center mt-10">
-      <button class="btn btn-outline btn-secondary btn-wide gap-2 hover:scale-105 transition-all duration-300" disabled>
-        Load More Fixtures
-        <span class="badge badge-xs badge-ghost">API Coming Soon</span>
-      </button>
+    <div id="fixtures-empty" class="hidden text-center py-12">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <p class="text-base-content/40 font-medium">No events found for this month.</p>
+      <p class="text-base-content/30 text-sm mt-1">Try selecting a different month or team.</p>
     </div>
-
   </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ cspNonce }}">
+(function () {
+  'use strict';
+
+  /* ═══════════════════════════════════════════
+     Configuration
+     ═══════════════════════════════════════════ */
+  var TYPE_COLORS = {
+    match:        { bg: 'bg-error',            badge: 'badge-error',   label: 'Match',        accent: 'secondary', accentBg: 'bg-secondary/10', accentText: 'text-secondary' },
+    training:     { bg: 'bg-info',             badge: 'badge-info',    label: 'Training',     accent: 'info',      accentBg: 'bg-info/10',      accentText: 'text-info' },
+    announcement: { bg: 'bg-warning',          badge: 'badge-warning', label: 'Announcement', accent: 'accent',    accentBg: 'bg-accent/10',    accentText: 'text-accent' },
+    meeting:      { bg: 'bg-primary',          badge: 'badge-primary', label: 'Meeting',      accent: 'primary',   accentBg: 'bg-primary/10',   accentText: 'text-primary' },
+    social:       { bg: 'bg-success',          badge: 'badge-success', label: 'Social',       accent: 'success',   accentBg: 'bg-success/10',   accentText: 'text-success' },
+    other:        { bg: 'bg-base-content/40',  badge: 'badge-ghost',   label: 'Other',        accent: 'secondary', accentBg: 'bg-base-300/30',  accentText: 'text-base-content/60' }
+  };
+
+  var MONTH_NAMES = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  var DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var SHORT_DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var SHORT_MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  /* ═══════════════════════════════════════════
+     State
+     ═══════════════════════════════════════════ */
+  var currentDate = new Date();
+  var events = [];
+  var selectedEvent = null;
+  var isLoading = false;
+
+  /* ═══════════════════════════════════════════
+     DOM references
+     ═══════════════════════════════════════════ */
+  var $grid          = document.getElementById('cal-grid');
+  var $monthLabel    = document.getElementById('cal-month-label');
+  var $prevBtn       = document.getElementById('cal-prev');
+  var $nextBtn       = document.getElementById('cal-next');
+  var $todayBtn      = document.getElementById('cal-today');
+  var $teamFilter    = document.getElementById('team-filter');
+  var $eventPanel    = document.getElementById('event-panel');
+  var $dayEvents     = document.getElementById('day-events');
+  var $fixturesList  = document.getElementById('fixtures-list');
+  var $fixturesEmpty = document.getElementById('fixtures-empty');
+  var $fixturesHead  = document.getElementById('fixtures-heading');
+
+  /* ═══════════════════════════════════════════
+     Helpers
+     ═══════════════════════════════════════════ */
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function toDateStr(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function startOfMonth(d) {
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  }
+
+  function endOfMonth(d) {
+    return new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  }
+
+  function parseDate(dateStr) {
+    var parts = dateStr.split('-');
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  }
+
+  function formatDate(dateStr) {
+    var d = parseDate(dateStr);
+    return DAY_NAMES[d.getDay()] + ', ' + d.getDate() + ' ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function formatTime(timeStr) {
+    if (!timeStr) return '';
+    var parts = timeStr.split(':');
+    var h = parseInt(parts[0], 10);
+    var m = parts[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ═══════════════════════════════════════════
+     Fetch Events
+     ═══════════════════════════════════════════ */
+  function fetchEvents() {
+    if (isLoading) return;
+    isLoading = true;
+
+    var first = startOfMonth(currentDate);
+    var last = endOfMonth(currentDate);
+    var from = toDateStr(first);
+    var to = toDateStr(last);
+
+    var url = '/fixtures/events?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
+    var teamId = $teamFilter ? $teamFilter.value : '';
+    if (teamId) {
+      url += '&team_id=' + encodeURIComponent(teamId);
+    }
+
+    fetch(url, { headers: { 'Accept': 'application/json' } })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      events = (data.data || []);
+      isLoading = false;
+      renderCalendar();
+      renderFixturesList();
+    })
+    .catch(function () {
+      events = [];
+      isLoading = false;
+      renderCalendar();
+      renderFixturesList();
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     Build event map by date
+     ═══════════════════════════════════════════ */
+  function buildEventMap() {
+    var map = {};
+    events.forEach(function (ev) {
+      var key = ev.event_date;
+      if (!map[key]) map[key] = [];
+      map[key].push(ev);
+    });
+    return map;
+  }
+
+  /* ═══════════════════════════════════════════
+     Render Calendar Grid
+     ═══════════════════════════════════════════ */
+  function renderCalendar() {
+    var year = currentDate.getFullYear();
+    var month = currentDate.getMonth();
+
+    $monthLabel.innerHTML = MONTH_NAMES[month] + ' <span class="text-secondary">' + year + '</span>';
+
+    var firstDay = new Date(year, month, 1);
+    var lastDay  = new Date(year, month + 1, 0);
+    var daysInMonth = lastDay.getDate();
+
+    // Monday = 0 ... Sunday = 6 (ISO weekday)
+    var startDow = (firstDay.getDay() + 6) % 7;
+
+    var today = toDateStr(new Date());
+    var eventMap = buildEventMap();
+
+    var html = '';
+
+    // Leading empty cells
+    for (var i = 0; i < startDow; i++) {
+      html += '<div class="min-h-[80px] md:min-h-[100px] border-b border-r border-base-300/20 bg-base-300/10"></div>';
+    }
+
+    // Day cells
+    for (var d = 1; d <= daysInMonth; d++) {
+      var dateStr = year + '-' + pad(month + 1) + '-' + pad(d);
+      var isToday = dateStr === today;
+      var dayEvts = eventMap[dateStr] || [];
+
+      html += '<div class="min-h-[80px] md:min-h-[100px] p-1.5 border-b border-r border-base-300/20 hover:bg-base-300/30 transition-colors cursor-pointer group cal-day" data-date="' + dateStr + '">';
+
+      // Day number
+      html += '<div class="text-right mb-1">';
+      if (isToday) {
+        html += '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-secondary-content text-xs font-bold">' + d + '</span>';
+      } else {
+        html += '<span class="text-xs font-medium text-base-content/40 group-hover:text-secondary transition-colors">' + d + '</span>';
+      }
+      html += '</div>';
+
+      // Event dots (max 4 visible, then +N)
+      if (dayEvts.length > 0) {
+        html += '<div class="flex flex-wrap gap-0.5">';
+        var maxDots = 4;
+        for (var j = 0; j < Math.min(dayEvts.length, maxDots); j++) {
+          var typeConf = TYPE_COLORS[dayEvts[j].event_type] || TYPE_COLORS.other;
+          html += '<span class="cal-event ' + typeConf.bg + '" title="' + escapeHtml(dayEvts[j].title) + '"></span>';
+        }
+        if (dayEvts.length > maxDots) {
+          html += '<span class="text-[10px] text-base-content/50">+' + (dayEvts.length - maxDots) + '</span>';
+        }
+        html += '</div>';
+
+        // Show first event title on larger screens
+        html += '<p class="hidden sm:block text-[10px] text-base-content/50 truncate mt-0.5">' + escapeHtml(dayEvts[0].title) + '</p>';
+      }
+
+      html += '</div>';
+    }
+
+    // Trailing empty cells
+    var totalCells = startDow + daysInMonth;
+    var remainder = totalCells % 7;
+    if (remainder > 0) {
+      for (var t = 0; t < 7 - remainder; t++) {
+        html += '<div class="min-h-[80px] md:min-h-[100px] border-b border-r border-base-300/20 bg-base-300/10"></div>';
+      }
+    }
+
+    $grid.innerHTML = html;
+  }
+
+  /* ═══════════════════════════════════════════
+     Render Fixtures List
+     ═══════════════════════════════════════════ */
+  function renderFixturesList() {
+    var month = currentDate.getMonth();
+    var year = currentDate.getFullYear();
+
+    // Update heading
+    $fixturesHead.innerHTML = SHORT_MONTH_NAMES[month] + ' ' + year + ' <span class="text-secondary">Events</span>';
+
+    // Sort events by date then by time
+    var sorted = events.slice().sort(function (a, b) {
+      if (a.event_date < b.event_date) return -1;
+      if (a.event_date > b.event_date) return 1;
+      var aTime = a.event_time || '99:99';
+      var bTime = b.event_time || '99:99';
+      if (aTime < bTime) return -1;
+      if (aTime > bTime) return 1;
+      return 0;
+    });
+
+    if (sorted.length === 0) {
+      $fixturesList.innerHTML = '';
+      $fixturesEmpty.classList.remove('hidden');
+      return;
+    }
+
+    $fixturesEmpty.classList.add('hidden');
+
+    var html = '';
+    var delay = 0;
+    sorted.forEach(function (ev) {
+      var d = parseDate(ev.event_date);
+      var dayNum = d.getDate();
+      var monthShort = SHORT_MONTH_NAMES[d.getMonth()];
+      var dayName = SHORT_DAY_NAMES[d.getDay()];
+      var typeConf = TYPE_COLORS[ev.event_type] || TYPE_COLORS.other;
+
+      var timeStr = '';
+      if (ev.event_time) {
+        timeStr = formatTime(ev.event_time);
+        if (ev.end_time) timeStr += ' – ' + formatTime(ev.end_time);
+      }
+
+      html += '<div class="scroll-reveal opacity-0 card card-side bg-base-100 border border-base-300 shadow-md hover:border-' + typeConf.accent + '/30 transition-all duration-300 hover:shadow-lg fixture-card" data-event-id="' + ev.id + '" style="animation-delay: ' + (delay * 0.05) + 's;">';
+
+      // Date column
+      html += '<div class="' + typeConf.accentBg + ' flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">';
+      html += '<span class="font-heading text-3xl font-bold ' + typeConf.accentText + '">' + dayNum + '</span>';
+      html += '<span class="text-xs uppercase tracking-wider text-base-content/60">' + escapeHtml(monthShort) + '</span>';
+      html += '<span class="text-[10px] text-base-content/40">' + escapeHtml(dayName) + '</span>';
+      html += '</div>';
+
+      // Details
+      html += '<div class="card-body py-4">';
+      html += '<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">';
+      html += '<div>';
+      html += '<h3 class="card-title text-lg font-heading">' + escapeHtml(ev.title) + '</h3>';
+
+      var details = '';
+      if (ev.location) details += escapeHtml(ev.location);
+      if (ev.location && timeStr) details += ' &bull; ';
+      if (timeStr) details += escapeHtml(timeStr);
+      if (details) {
+        html += '<p class="text-sm text-base-content/60">' + details + '</p>';
+      }
+
+      html += '</div>';
+      html += '<div class="flex items-center gap-2">';
+      html += '<span class="badge ' + typeConf.badge + ' badge-sm">' + escapeHtml(typeConf.label) + '</span>';
+      if (ev.team && ev.team.name) {
+        html += '<span class="badge badge-outline badge-sm">' + escapeHtml(ev.team.name) + '</span>';
+      }
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '</div>';
+
+      delay++;
+    });
+
+    $fixturesList.innerHTML = html;
+
+    // Re-trigger scroll-reveal for newly added fixture cards
+    var newCards = $fixturesList.querySelectorAll('.scroll-reveal');
+    if (newCards.length > 0 && window.IntersectionObserver) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0');
+            entry.target.classList.add('animate-fadeIn');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      newCards.forEach(function (card) { observer.observe(card); });
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     Show Day Events (click a calendar day)
+     ═══════════════════════════════════════════ */
+  function showDayEvents(dateStr) {
+    var eventMap = buildEventMap();
+    var dayEvts = eventMap[dateStr] || [];
+    var $heading = document.getElementById('day-events-heading');
+    var $list = document.getElementById('day-events-list');
+
+    $heading.textContent = 'Events on ' + formatDate(dateStr);
+
+    if (dayEvts.length === 0) {
+      $list.innerHTML = '<div class="card bg-base-200 border border-base-300"><div class="card-body text-center py-6"><p class="text-base-content/60 text-sm">No events on this day.</p></div></div>';
+    } else {
+      var html = '';
+      dayEvts.forEach(function (ev) {
+        var typeConf = TYPE_COLORS[ev.event_type] || TYPE_COLORS.other;
+        html += '<div class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow cursor-pointer cal-event-card" data-event-id="' + ev.id + '">';
+        html += '<div class="card-body p-4">';
+        html += '<div class="flex items-center gap-2">';
+        html += '<span class="badge badge-sm ' + typeConf.badge + '">' + escapeHtml(typeConf.label) + '</span>';
+        if (ev.team && ev.team.name) {
+          html += '<span class="text-xs text-base-content/40">' + escapeHtml(ev.team.name) + '</span>';
+        }
+        html += '</div>';
+        html += '<h4 class="font-semibold text-sm mt-1">' + escapeHtml(ev.title) + '</h4>';
+
+        var timeStr = '';
+        if (ev.event_time) {
+          timeStr = formatTime(ev.event_time);
+          if (ev.end_time) timeStr += ' – ' + formatTime(ev.end_time);
+        }
+        if (timeStr || ev.location) {
+          html += '<p class="text-xs text-base-content/50 mt-1">';
+          if (timeStr) html += escapeHtml(timeStr);
+          if (timeStr && ev.location) html += ' · ';
+          if (ev.location) html += escapeHtml(ev.location);
+          html += '</p>';
+        }
+
+        html += '</div></div>';
+      });
+      $list.innerHTML = html;
+    }
+
+    $dayEvents.classList.remove('hidden');
+    $eventPanel.classList.add('hidden');
+    $dayEvents.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ═══════════════════════════════════════════
+     Show Event Detail Panel
+     ═══════════════════════════════════════════ */
+  function showEventPanel(eventId) {
+    var ev = null;
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].id === eventId) { ev = events[i]; break; }
+    }
+    if (!ev) return;
+
+    selectedEvent = ev;
+    var typeConf = TYPE_COLORS[ev.event_type] || TYPE_COLORS.other;
+
+    // Type badge
+    var $typeBadge = document.getElementById('event-panel-type-badge');
+    $typeBadge.className = 'badge badge-sm ' + typeConf.badge;
+    $typeBadge.textContent = typeConf.label;
+
+    // Source badge
+    var $srcBadge = document.getElementById('event-panel-source-badge');
+    if (ev.source === 'auto') {
+      $srcBadge.textContent = 'Auto-generated';
+      $srcBadge.classList.remove('hidden');
+    } else {
+      $srcBadge.classList.add('hidden');
+    }
+
+    document.getElementById('event-panel-title').textContent = ev.title;
+    document.getElementById('event-panel-date').textContent = formatDate(ev.event_date);
+
+    // Time
+    var $timeRow = document.getElementById('event-panel-time-row');
+    if (ev.event_time) {
+      var timeText = formatTime(ev.event_time);
+      if (ev.end_time) timeText += ' – ' + formatTime(ev.end_time);
+      document.getElementById('event-panel-time').textContent = timeText;
+      $timeRow.classList.remove('hidden');
+    } else {
+      $timeRow.classList.add('hidden');
+    }
+
+    // Location
+    var $locRow = document.getElementById('event-panel-location-row');
+    if (ev.location) {
+      document.getElementById('event-panel-location').textContent = ev.location;
+      $locRow.classList.remove('hidden');
+    } else {
+      $locRow.classList.add('hidden');
+    }
+
+    // Team
+    var $teamRow = document.getElementById('event-panel-team-row');
+    if (ev.team && ev.team.name) {
+      document.getElementById('event-panel-team').textContent = ev.team.name + (ev.team.age_group ? ' (' + ev.team.age_group + ')' : '');
+      $teamRow.classList.remove('hidden');
+    } else {
+      $teamRow.classList.add('hidden');
+    }
+
+    // Description
+    var $descRow = document.getElementById('event-panel-description-row');
+    if (ev.description) {
+      document.getElementById('event-panel-description').textContent = ev.description;
+      $descRow.classList.remove('hidden');
+    } else {
+      $descRow.classList.add('hidden');
+    }
+
+    $eventPanel.classList.remove('hidden');
+    $eventPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ═══════════════════════════════════════════
+     Event Handlers
+     ═══════════════════════════════════════════ */
+
+  // Month navigation
+  $prevBtn.addEventListener('click', function () {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  $nextBtn.addEventListener('click', function () {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  $todayBtn.addEventListener('click', function () {
+    currentDate = new Date();
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  // Team filter
+  if ($teamFilter) {
+    $teamFilter.addEventListener('change', function () {
+      $dayEvents.classList.add('hidden');
+      $eventPanel.classList.add('hidden');
+      fetchEvents();
+    });
+  }
+
+  // Calendar day click (delegated)
+  $grid.addEventListener('click', function (e) {
+    var dayCell = e.target.closest('.cal-day');
+    if (!dayCell) return;
+    var dateStr = dayCell.dataset.date;
+    if (!dateStr) return;
+    showDayEvents(dateStr);
+  });
+
+  // Event card click — day list and fixture cards (delegated)
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest('.cal-event-card') || e.target.closest('.fixture-card');
+    if (!card) return;
+    var eventId = card.dataset.eventId;
+    if (eventId) showEventPanel(eventId);
+  });
+
+  // Close event panel
+  var $closePanel = document.getElementById('event-panel-close');
+  if ($closePanel) {
+    $closePanel.addEventListener('click', function () {
+      $eventPanel.classList.add('hidden');
+      selectedEvent = null;
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     Init
+     ═══════════════════════════════════════════ */
+  fetchEvents();
+
+})();
+</script>
 {% endblock %}

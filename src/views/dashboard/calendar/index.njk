@@ -1,0 +1,977 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+{% include "partials/impersonation-banner.njk" %}
+
+<section class="min-h-[80vh] py-12">
+  <div class="container mx-auto px-4 max-w-6xl">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div>
+        <h1 class="font-heading text-3xl font-bold">
+          Calendar<span class="text-secondary">.</span>
+        </h1>
+        <p class="text-base-content/60 mt-1">View upcoming matches, training sessions, and events</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/dashboard" class="btn btn-ghost btn-sm gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Dashboard
+        </a>
+        {% if userRole === 'admin' or userRole === 'coach' %}
+        <button type="button" id="add-event-btn" class="btn btn-secondary btn-sm gap-2 hover:scale-[1.02] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Event
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Filters row -->
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <select id="team-filter" class="select select-bordered select-sm w-auto">
+        <option value="">All Teams</option>
+        {% for team in teams %}
+        <option value="{{ team.id }}">{{ team.name }} ({{ team.age_group }})</option>
+        {% endfor %}
+      </select>
+
+      <!-- Event type legend -->
+      <div class="flex flex-wrap items-center gap-3 ml-auto text-xs text-base-content/60">
+        <span class="flex items-center gap-1"><span class="cal-event bg-error"></span> Match</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-info"></span> Training</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-warning"></span> Announcement</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-primary"></span> Meeting</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-success"></span> Social</span>
+        <span class="flex items-center gap-1"><span class="cal-event bg-base-content/40"></span> Other</span>
+      </div>
+    </div>
+
+    <!-- Calendar navigation -->
+    <div class="flex items-center justify-between mb-4">
+      <button type="button" id="cal-prev" class="btn btn-ghost btn-sm" aria-label="Previous month">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <h2 id="cal-month-label" class="font-heading text-xl font-semibold"></h2>
+      <div class="flex items-center gap-2">
+        <button type="button" id="cal-today" class="btn btn-ghost btn-xs">Today</button>
+        <button type="button" id="cal-next" class="btn btn-ghost btn-sm" aria-label="Next month">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar grid -->
+    <div class="card bg-base-200 border border-base-300 shadow-xl overflow-hidden">
+      <!-- Day headers -->
+      <div class="grid grid-cols-7 bg-base-300/50 border-b border-base-300">
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Mon</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Tue</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Wed</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Thu</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Fri</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Sat</div>
+        <div class="py-2 text-center text-xs font-semibold text-base-content/60 uppercase">Sun</div>
+      </div>
+
+      <!-- Calendar cells (populated by JS) -->
+      <div id="cal-grid" class="grid grid-cols-7"></div>
+    </div>
+
+    <!-- Event detail panel (hidden by default) -->
+    <div id="event-panel" class="mt-6 hidden">
+      <div class="card bg-base-200 border border-base-300 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span id="event-panel-type-badge" class="badge badge-sm"></span>
+                <span id="event-panel-source-badge" class="badge badge-sm badge-ghost hidden"></span>
+              </div>
+              <h3 id="event-panel-title" class="font-heading text-xl font-semibold"></h3>
+            </div>
+            <button type="button" id="event-panel-close" class="btn btn-ghost btn-sm btn-circle" aria-label="Close panel">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-sm">
+            <div id="event-panel-date-row">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Date</span>
+              <p id="event-panel-date" class="font-medium"></p>
+            </div>
+            <div id="event-panel-time-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Time</span>
+              <p id="event-panel-time" class="font-medium"></p>
+            </div>
+            <div id="event-panel-location-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Location</span>
+              <p id="event-panel-location" class="font-medium"></p>
+            </div>
+            <div id="event-panel-team-row" class="hidden">
+              <span class="text-base-content/50 text-xs uppercase tracking-wide">Team</span>
+              <p id="event-panel-team" class="font-medium"></p>
+            </div>
+          </div>
+
+          <div id="event-panel-description-row" class="hidden mt-3">
+            <span class="text-base-content/50 text-xs uppercase tracking-wide">Description</span>
+            <p id="event-panel-description" class="text-sm text-base-content/70 mt-1"></p>
+          </div>
+
+          <div id="event-panel-auto-notice" class="hidden mt-4 p-3 bg-info/10 rounded-lg text-sm flex items-start gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-info shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-medium">Auto-generated from availability request</p>
+              <p class="text-base-content/50 mt-1">This event was created automatically. To edit it, update the linked availability request.</p>
+              <a id="event-panel-avail-link" href="#" class="link link-secondary text-sm mt-1 inline-block">View Availability Request</a>
+            </div>
+          </div>
+
+          {% if userRole === 'admin' or userRole === 'coach' %}
+          <div id="event-panel-actions" class="flex gap-2 mt-4 hidden">
+            <button type="button" id="event-panel-edit" class="btn btn-outline btn-secondary btn-sm gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+            <button type="button" id="event-panel-delete" class="btn btn-outline btn-error btn-sm gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Day events list (shown when clicking a date) -->
+    <div id="day-events" class="mt-6 hidden">
+      <h3 id="day-events-heading" class="font-heading text-lg font-semibold mb-3"></h3>
+      <div id="day-events-list" class="space-y-2"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     Add / Edit Event Modal (coach/admin only)
+     ═══════════════════════════════════════════ -->
+{% if userRole === 'admin' or userRole === 'coach' %}
+<dialog id="event-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-200 border border-base-300 shadow-2xl max-w-lg p-0 relative overflow-hidden">
+    <div class="absolute -top-20 -right-20 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-accent/10 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 p-8">
+      <!-- Close button -->
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/50 hover:text-base-content" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </form>
+
+      <h2 id="event-modal-heading" class="font-heading text-2xl font-bold mb-6">
+        Add Event<span class="text-secondary">.</span>
+      </h2>
+
+      <!-- Error display -->
+      <div id="event-modal-error" class="alert alert-error text-sm mb-4 hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="event-modal-error-text"></span>
+      </div>
+
+      <form id="event-form" class="space-y-4" novalidate>
+        <!-- Hidden ID for edit mode -->
+        <input type="hidden" id="event-form-id" name="id" value="" />
+
+        <div class="form-control">
+          <label class="label" for="event-title">
+            <span class="label-text font-medium">Title <span class="text-error">*</span></span>
+          </label>
+          <input type="text" id="event-title" name="title" maxlength="200"
+                 class="input input-bordered w-full focus:input-secondary transition-colors"
+                 placeholder="e.g. U13 Practice Session" required />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label" for="event-date">
+              <span class="label-text font-medium">Date <span class="text-error">*</span></span>
+            </label>
+            <input type="date" id="event-date" name="event_date"
+                   class="input input-bordered w-full focus:input-secondary transition-colors" required />
+          </div>
+          <div class="form-control">
+            <label class="label" for="event-type">
+              <span class="label-text font-medium">Type <span class="text-error">*</span></span>
+            </label>
+            <select id="event-type" name="event_type" class="select select-bordered w-full focus:select-secondary transition-colors" required>
+              <option value="" disabled selected>Select type</option>
+              <option value="match">Match</option>
+              <option value="training">Training</option>
+              <option value="announcement">Announcement</option>
+              <option value="meeting">Meeting</option>
+              <option value="social">Social</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="event-team">
+            <span class="label-text font-medium">Team <span class="text-base-content/40">(optional — leave blank for global)</span></span>
+          </label>
+          <select id="event-team" name="team_id" class="select select-bordered w-full focus:select-secondary transition-colors">
+            <option value="">Global (all teams)</option>
+            {% for team in teams %}
+            <option value="{{ team.id }}">{{ team.name }} ({{ team.age_group }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label" for="event-time">
+              <span class="label-text font-medium">Start Time</span>
+            </label>
+            <input type="time" id="event-time" name="event_time"
+                   class="input input-bordered w-full focus:input-secondary transition-colors" />
+          </div>
+          <div class="form-control">
+            <label class="label" for="event-end-time">
+              <span class="label-text font-medium">End Time</span>
+            </label>
+            <input type="time" id="event-end-time" name="end_time"
+                   class="input input-bordered w-full focus:input-secondary transition-colors" />
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="event-location">
+            <span class="label-text font-medium">Location</span>
+          </label>
+          <input type="text" id="event-location" name="location" maxlength="200"
+                 class="input input-bordered w-full focus:input-secondary transition-colors"
+                 placeholder="e.g. Seven Towers Leisure Centre" />
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="event-description">
+            <span class="label-text font-medium">Description</span>
+          </label>
+          <textarea id="event-description" name="description" maxlength="2000" rows="3"
+                    class="textarea textarea-bordered w-full focus:textarea-secondary transition-colors"
+                    placeholder="Additional details..."></textarea>
+        </div>
+
+        <!-- Honeypot -->
+        <div class="hidden" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" id="event-form-submit" class="btn btn-secondary btn-block font-semibold gap-2 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-secondary/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span id="event-form-submit-text">Create Event</span>
+        </button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Delete confirmation modal -->
+<dialog id="delete-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-200 border border-base-300 shadow-2xl max-w-sm text-center">
+    <h3 class="font-heading text-xl font-bold mb-2">Delete Event?</h3>
+    <p class="text-base-content/60 text-sm mb-6">This action cannot be undone.</p>
+    <div class="flex justify-center gap-3">
+      <form method="dialog">
+        <button class="btn btn-ghost btn-sm">Cancel</button>
+      </form>
+      <button type="button" id="delete-confirm" class="btn btn-error btn-sm gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ cspNonce }}">
+(function () {
+  'use strict';
+
+  /* ═══════════════════════════════════════════
+     Configuration
+     ═══════════════════════════════════════════ */
+  var USER_ROLE = '{{ userRole }}';
+  var CAN_EDIT = (USER_ROLE === 'admin' || USER_ROLE === 'coach');
+
+  var TYPE_COLORS = {
+    match:        { bg: 'bg-error',            badge: 'badge-error',   label: 'Match' },
+    training:     { bg: 'bg-info',             badge: 'badge-info',    label: 'Training' },
+    announcement: { bg: 'bg-warning',          badge: 'badge-warning', label: 'Announcement' },
+    meeting:      { bg: 'bg-primary',          badge: 'badge-primary', label: 'Meeting' },
+    social:       { bg: 'bg-success',          badge: 'badge-success', label: 'Social' },
+    other:        { bg: 'bg-base-content/40',  badge: 'badge-ghost',   label: 'Other' }
+  };
+
+  var MONTH_NAMES = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  var DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  /* ═══════════════════════════════════════════
+     State
+     ═══════════════════════════════════════════ */
+  var currentDate = new Date();
+  var events = [];
+  var selectedEvent = null;
+  var isLoading = false;
+
+  /* ═══════════════════════════════════════════
+     DOM references
+     ═══════════════════════════════════════════ */
+  var $grid       = document.getElementById('cal-grid');
+  var $monthLabel = document.getElementById('cal-month-label');
+  var $prevBtn    = document.getElementById('cal-prev');
+  var $nextBtn    = document.getElementById('cal-next');
+  var $todayBtn   = document.getElementById('cal-today');
+  var $teamFilter = document.getElementById('team-filter');
+  var $eventPanel = document.getElementById('event-panel');
+  var $dayEvents  = document.getElementById('day-events');
+
+  /* ═══════════════════════════════════════════
+     Helpers
+     ═══════════════════════════════════════════ */
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function toDateStr(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function startOfMonth(d) {
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  }
+
+  function endOfMonth(d) {
+    return new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  }
+
+  function formatDate(dateStr) {
+    var parts = dateStr.split('-');
+    var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    return DAY_NAMES[d.getDay()] + ', ' + d.getDate() + ' ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function formatTime(timeStr) {
+    if (!timeStr) return '';
+    var parts = timeStr.split(':');
+    var h = parseInt(parts[0], 10);
+    var m = parts[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function showToast(message, type) {
+    var container = document.getElementById('toast-container');
+    if (!container) return;
+    var alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+    var alert = document.createElement('div');
+    alert.className = 'alert ' + alertClass + ' shadow-lg text-sm py-3 px-4';
+    alert.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+        (type === 'error'
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />') +
+      '</svg>' +
+      '<span>' + escapeHtml(message) + '</span>';
+    container.appendChild(alert);
+    setTimeout(function () {
+      alert.style.opacity = '0';
+      alert.style.transition = 'opacity 0.3s ease';
+      setTimeout(function () { alert.remove(); }, 300);
+    }, 4000);
+  }
+
+  /* ═══════════════════════════════════════════
+     Fetch Events
+     ═══════════════════════════════════════════ */
+  function fetchEvents() {
+    if (isLoading) return;
+    isLoading = true;
+
+    var first = startOfMonth(currentDate);
+    var last = endOfMonth(currentDate);
+    var from = toDateStr(first);
+    var to = toDateStr(last);
+
+    var url = '/dashboard/calendar/events?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
+    var teamId = $teamFilter ? $teamFilter.value : '';
+    if (teamId) {
+      url += '&team_id=' + encodeURIComponent(teamId);
+    }
+
+    fetch(url, {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      events = (data.data || []);
+      isLoading = false;
+      renderCalendar();
+    })
+    .catch(function () {
+      events = [];
+      isLoading = false;
+      renderCalendar();
+      showToast('Failed to load calendar events.', 'error');
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     Build event map by date
+     ═══════════════════════════════════════════ */
+  function buildEventMap() {
+    var map = {};
+    events.forEach(function (ev) {
+      var key = ev.event_date;
+      if (!map[key]) map[key] = [];
+      map[key].push(ev);
+    });
+    return map;
+  }
+
+  /* ═══════════════════════════════════════════
+     Render Calendar Grid
+     ═══════════════════════════════════════════ */
+  function renderCalendar() {
+    var year = currentDate.getFullYear();
+    var month = currentDate.getMonth();
+
+    $monthLabel.textContent = MONTH_NAMES[month] + ' ' + year;
+
+    var firstDay = new Date(year, month, 1);
+    var lastDay  = new Date(year, month + 1, 0);
+    var daysInMonth = lastDay.getDate();
+
+    // Monday = 0 ... Sunday = 6 (ISO weekday)
+    var startDow = (firstDay.getDay() + 6) % 7;
+
+    var today = toDateStr(new Date());
+    var eventMap = buildEventMap();
+
+    var html = '';
+
+    // Leading empty cells
+    for (var i = 0; i < startDow; i++) {
+      html += '<div class="min-h-[4rem] sm:min-h-[5rem] border-b border-r border-base-300/30 bg-base-300/10"></div>';
+    }
+
+    // Day cells
+    for (var d = 1; d <= daysInMonth; d++) {
+      var dateStr = year + '-' + pad(month + 1) + '-' + pad(d);
+      var isToday = dateStr === today;
+      var dayEvents = eventMap[dateStr] || [];
+
+      html += '<div class="min-h-[4rem] sm:min-h-[5rem] border-b border-r border-base-300/30 p-1 cursor-pointer hover:bg-base-300/30 transition-colors cal-day" data-date="' + dateStr + '">';
+
+      // Day number
+      html += '<div class="text-right mb-1">';
+      if (isToday) {
+        html += '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-secondary-content text-xs font-bold">' + d + '</span>';
+      } else {
+        html += '<span class="text-xs text-base-content/60">' + d + '</span>';
+      }
+      html += '</div>';
+
+      // Event dots (max 4 visible, then +N)
+      if (dayEvents.length > 0) {
+        html += '<div class="flex flex-wrap gap-0.5">';
+        var maxDots = 4;
+        for (var j = 0; j < Math.min(dayEvents.length, maxDots); j++) {
+          var typeConf = TYPE_COLORS[dayEvents[j].event_type] || TYPE_COLORS.other;
+          html += '<span class="cal-event ' + typeConf.bg + '" title="' + escapeHtml(dayEvents[j].title) + '"></span>';
+        }
+        if (dayEvents.length > maxDots) {
+          html += '<span class="text-[10px] text-base-content/50">+' + (dayEvents.length - maxDots) + '</span>';
+        }
+        html += '</div>';
+
+        // Show first event title on larger screens
+        html += '<p class="hidden sm:block text-[10px] text-base-content/50 truncate mt-0.5">' + escapeHtml(dayEvents[0].title) + '</p>';
+      }
+
+      html += '</div>';
+    }
+
+    // Trailing empty cells to fill the last row
+    var totalCells = startDow + daysInMonth;
+    var remainder = totalCells % 7;
+    if (remainder > 0) {
+      for (var t = 0; t < 7 - remainder; t++) {
+        html += '<div class="min-h-[4rem] sm:min-h-[5rem] border-b border-r border-base-300/30 bg-base-300/10"></div>';
+      }
+    }
+
+    $grid.innerHTML = html;
+  }
+
+  /* ═══════════════════════════════════════════
+     Show Day Events
+     ═══════════════════════════════════════════ */
+  function showDayEvents(dateStr) {
+    var eventMap = buildEventMap();
+    var dayEvts = eventMap[dateStr] || [];
+    var $heading = document.getElementById('day-events-heading');
+    var $list = document.getElementById('day-events-list');
+
+    $heading.textContent = 'Events on ' + formatDate(dateStr);
+
+    if (dayEvts.length === 0) {
+      $list.innerHTML = '<div class="card bg-base-200 border border-base-300"><div class="card-body text-center py-6"><p class="text-base-content/60 text-sm">No events on this day.</p></div></div>';
+    } else {
+      var html = '';
+      dayEvts.forEach(function (ev) {
+        var typeConf = TYPE_COLORS[ev.event_type] || TYPE_COLORS.other;
+        html += '<div class="card bg-base-200 border border-base-300 shadow hover:shadow-md transition-shadow cursor-pointer cal-event-card" data-event-id="' + ev.id + '">';
+        html += '<div class="card-body p-4">';
+        html += '<div class="flex items-center gap-2">';
+        html += '<span class="badge badge-sm ' + typeConf.badge + '">' + escapeHtml(typeConf.label) + '</span>';
+        if (ev.source === 'auto') {
+          html += '<span class="badge badge-sm badge-ghost">Auto</span>';
+        }
+        if (ev.team && ev.team.name) {
+          html += '<span class="text-xs text-base-content/40">' + escapeHtml(ev.team.name) + '</span>';
+        }
+        html += '</div>';
+        html += '<h4 class="font-semibold text-sm mt-1">' + escapeHtml(ev.title) + '</h4>';
+
+        var timeStr = '';
+        if (ev.event_time) {
+          timeStr = formatTime(ev.event_time);
+          if (ev.end_time) timeStr += ' – ' + formatTime(ev.end_time);
+        }
+        if (timeStr || ev.location) {
+          html += '<p class="text-xs text-base-content/50 mt-1">';
+          if (timeStr) html += '🕐 ' + escapeHtml(timeStr);
+          if (timeStr && ev.location) html += ' · ';
+          if (ev.location) html += '📍 ' + escapeHtml(ev.location);
+          html += '</p>';
+        }
+
+        html += '</div></div>';
+      });
+      $list.innerHTML = html;
+    }
+
+    $dayEvents.classList.remove('hidden');
+    $eventPanel.classList.add('hidden');
+    $dayEvents.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ═══════════════════════════════════════════
+     Show Event Detail Panel
+     ═══════════════════════════════════════════ */
+  function showEventPanel(eventId) {
+    var ev = null;
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].id === eventId) { ev = events[i]; break; }
+    }
+    if (!ev) return;
+
+    selectedEvent = ev;
+    var typeConf = TYPE_COLORS[ev.event_type] || TYPE_COLORS.other;
+
+    // Type badge
+    var $typeBadge = document.getElementById('event-panel-type-badge');
+    $typeBadge.className = 'badge badge-sm ' + typeConf.badge;
+    $typeBadge.textContent = typeConf.label;
+
+    // Source badge
+    var $srcBadge = document.getElementById('event-panel-source-badge');
+    if (ev.source === 'auto') {
+      $srcBadge.textContent = 'Auto-generated';
+      $srcBadge.classList.remove('hidden');
+    } else {
+      $srcBadge.classList.add('hidden');
+    }
+
+    document.getElementById('event-panel-title').textContent = ev.title;
+    document.getElementById('event-panel-date').textContent = formatDate(ev.event_date);
+
+    // Time
+    var $timeRow = document.getElementById('event-panel-time-row');
+    if (ev.event_time) {
+      var timeText = formatTime(ev.event_time);
+      if (ev.end_time) timeText += ' – ' + formatTime(ev.end_time);
+      document.getElementById('event-panel-time').textContent = timeText;
+      $timeRow.classList.remove('hidden');
+    } else {
+      $timeRow.classList.add('hidden');
+    }
+
+    // Location
+    var $locRow = document.getElementById('event-panel-location-row');
+    if (ev.location) {
+      document.getElementById('event-panel-location').textContent = ev.location;
+      $locRow.classList.remove('hidden');
+    } else {
+      $locRow.classList.add('hidden');
+    }
+
+    // Team
+    var $teamRow = document.getElementById('event-panel-team-row');
+    if (ev.team && ev.team.name) {
+      document.getElementById('event-panel-team').textContent = ev.team.name + ' (' + ev.team.age_group + ')';
+      $teamRow.classList.remove('hidden');
+    } else {
+      document.getElementById('event-panel-team').textContent = 'Global (all teams)';
+      $teamRow.classList.remove('hidden');
+    }
+
+    // Description
+    var $descRow = document.getElementById('event-panel-description-row');
+    if (ev.description) {
+      document.getElementById('event-panel-description').textContent = ev.description;
+      $descRow.classList.remove('hidden');
+    } else {
+      $descRow.classList.add('hidden');
+    }
+
+    // Auto notice
+    var $autoNotice = document.getElementById('event-panel-auto-notice');
+    if (ev.source === 'auto' && ev.availability_request_id) {
+      document.getElementById('event-panel-avail-link').href = '/dashboard/availability/' + encodeURIComponent(ev.availability_request_id);
+      $autoNotice.classList.remove('hidden');
+    } else {
+      $autoNotice.classList.add('hidden');
+    }
+
+    // Actions (only for manual events, if user can edit)
+    if (CAN_EDIT) {
+      var $actions = document.getElementById('event-panel-actions');
+      if (ev.source === 'manual') {
+        $actions.classList.remove('hidden');
+      } else {
+        $actions.classList.add('hidden');
+      }
+    }
+
+    $eventPanel.classList.remove('hidden');
+    $eventPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ═══════════════════════════════════════════
+     Modal helpers (coach/admin only)
+     ═══════════════════════════════════════════ */
+  function openCreateModal(presetDate) {
+    if (!CAN_EDIT) return;
+    var modal = document.getElementById('event-modal');
+    if (!modal) return;
+
+    document.getElementById('event-modal-heading').innerHTML = 'Add Event<span class="text-secondary">.</span>';
+    document.getElementById('event-form-submit-text').textContent = 'Create Event';
+    document.getElementById('event-form-id').value = '';
+    document.getElementById('event-modal-error').classList.add('hidden');
+
+    // Reset form
+    var form = document.getElementById('event-form');
+    form.reset();
+
+    if (presetDate) {
+      document.getElementById('event-date').value = presetDate;
+    }
+
+    modal.showModal();
+  }
+
+  function openEditModal(ev) {
+    if (!CAN_EDIT || !ev) return;
+    var modal = document.getElementById('event-modal');
+    if (!modal) return;
+
+    document.getElementById('event-modal-heading').innerHTML = 'Edit Event<span class="text-secondary">.</span>';
+    document.getElementById('event-form-submit-text').textContent = 'Update Event';
+    document.getElementById('event-form-id').value = ev.id;
+    document.getElementById('event-modal-error').classList.add('hidden');
+
+    document.getElementById('event-title').value = ev.title || '';
+    document.getElementById('event-date').value = ev.event_date || '';
+    document.getElementById('event-type').value = ev.event_type || '';
+    document.getElementById('event-team').value = ev.team_id || '';
+    document.getElementById('event-time').value = ev.event_time ? ev.event_time.substring(0, 5) : '';
+    document.getElementById('event-end-time').value = ev.end_time ? ev.end_time.substring(0, 5) : '';
+    document.getElementById('event-location').value = ev.location || '';
+    document.getElementById('event-description').value = ev.description || '';
+
+    modal.showModal();
+  }
+
+  /* ═══════════════════════════════════════════
+     Event Handlers
+     ═══════════════════════════════════════════ */
+
+  // Month navigation
+  $prevBtn.addEventListener('click', function () {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  $nextBtn.addEventListener('click', function () {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  $todayBtn.addEventListener('click', function () {
+    currentDate = new Date();
+    $dayEvents.classList.add('hidden');
+    $eventPanel.classList.add('hidden');
+    fetchEvents();
+  });
+
+  // Team filter
+  if ($teamFilter) {
+    $teamFilter.addEventListener('change', function () {
+      $dayEvents.classList.add('hidden');
+      $eventPanel.classList.add('hidden');
+      fetchEvents();
+    });
+  }
+
+  // Calendar day click (delegated)
+  $grid.addEventListener('click', function (e) {
+    var dayCell = e.target.closest('.cal-day');
+    if (!dayCell) return;
+    var dateStr = dayCell.dataset.date;
+    if (!dateStr) return;
+    showDayEvents(dateStr);
+  });
+
+  // Event card click in day list (delegated)
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest('.cal-event-card');
+    if (!card) return;
+    var eventId = card.dataset.eventId;
+    if (eventId) showEventPanel(eventId);
+  });
+
+  // Close event panel
+  var $closePanel = document.getElementById('event-panel-close');
+  if ($closePanel) {
+    $closePanel.addEventListener('click', function () {
+      $eventPanel.classList.add('hidden');
+      selectedEvent = null;
+    });
+  }
+
+  // Add event button
+  var $addBtn = document.getElementById('add-event-btn');
+  if ($addBtn) {
+    $addBtn.addEventListener('click', function () {
+      openCreateModal();
+    });
+  }
+
+  // Edit button in panel
+  var $editBtn = document.getElementById('event-panel-edit');
+  if ($editBtn) {
+    $editBtn.addEventListener('click', function () {
+      if (selectedEvent) openEditModal(selectedEvent);
+    });
+  }
+
+  // Delete button in panel
+  var $deleteBtn = document.getElementById('event-panel-delete');
+  if ($deleteBtn) {
+    $deleteBtn.addEventListener('click', function () {
+      if (!selectedEvent) return;
+      var deleteModal = document.getElementById('delete-modal');
+      if (deleteModal) deleteModal.showModal();
+    });
+  }
+
+  // Delete confirmation
+  var $deleteConfirm = document.getElementById('delete-confirm');
+  if ($deleteConfirm) {
+    $deleteConfirm.addEventListener('click', function () {
+      if (!selectedEvent) return;
+      var id = selectedEvent.id;
+
+      $deleteConfirm.disabled = true;
+      $deleteConfirm.classList.add('loading');
+
+      fetch('/dashboard/calendar/events/' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        $deleteConfirm.disabled = false;
+        $deleteConfirm.classList.remove('loading');
+        var deleteModal = document.getElementById('delete-modal');
+        if (deleteModal) deleteModal.close();
+
+        if (data.success) {
+          showToast('Event deleted successfully.', 'success');
+          selectedEvent = null;
+          $eventPanel.classList.add('hidden');
+          fetchEvents();
+        } else {
+          showToast(data.error || 'Failed to delete event.', 'error');
+        }
+      })
+      .catch(function () {
+        $deleteConfirm.disabled = false;
+        $deleteConfirm.classList.remove('loading');
+        showToast('Network error — please try again.', 'error');
+      });
+    });
+  }
+
+  // Form submission (create / edit)
+  var $form = document.getElementById('event-form');
+  if ($form) {
+    $form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var id        = document.getElementById('event-form-id').value;
+      var title     = document.getElementById('event-title').value.trim();
+      var eventDate = document.getElementById('event-date').value;
+      var eventType = document.getElementById('event-type').value;
+      var teamId    = document.getElementById('event-team').value;
+      var eventTime = document.getElementById('event-time').value;
+      var endTime   = document.getElementById('event-end-time').value;
+      var location  = document.getElementById('event-location').value.trim();
+      var desc      = document.getElementById('event-description').value.trim();
+      var honey     = $form.querySelector('[name="website"]').value;
+
+      var $errorDiv  = document.getElementById('event-modal-error');
+      var $errorText = document.getElementById('event-modal-error-text');
+      var $submitBtn = document.getElementById('event-form-submit');
+
+      // Client-side pre-check
+      if (!title || !eventDate || !eventType) {
+        $errorText.textContent = 'Please fill in all required fields.';
+        $errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      $errorDiv.classList.add('hidden');
+      $submitBtn.disabled = true;
+      $submitBtn.classList.add('loading');
+
+      var body = {
+        title: title,
+        event_date: eventDate,
+        event_type: eventType,
+        team_id: teamId || undefined,
+        event_time: eventTime || undefined,
+        end_time: endTime || undefined,
+        location: location || undefined,
+        description: desc || undefined,
+        website: honey
+      };
+
+      var method = id ? 'PUT' : 'POST';
+      var url = id
+        ? '/dashboard/calendar/events/' + encodeURIComponent(id)
+        : '/dashboard/calendar/events';
+
+      fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        $submitBtn.disabled = false;
+        $submitBtn.classList.remove('loading');
+
+        if (data.success) {
+          var modal = document.getElementById('event-modal');
+          if (modal) modal.close();
+          showToast(id ? 'Event updated successfully.' : 'Event created successfully.', 'success');
+          selectedEvent = null;
+          $eventPanel.classList.add('hidden');
+          fetchEvents();
+        } else {
+          $errorText.textContent = data.error || 'Something went wrong.';
+          $errorDiv.classList.remove('hidden');
+        }
+      })
+      .catch(function () {
+        $submitBtn.disabled = false;
+        $submitBtn.classList.remove('loading');
+        $errorText.textContent = 'Network error — please try again.';
+        $errorDiv.classList.remove('hidden');
+      });
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     Init
+     ═══════════════════════════════════════════ */
+  fetchEvents();
+
+})();
+</script>
+{% endblock %}
