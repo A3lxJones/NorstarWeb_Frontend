@@ -25,6 +25,7 @@ import drillsRoutes from './routes/drills';
 import childrenRoutes from './routes/children';
 import usersRoutes from './routes/users';
 import availabilityRoutes from './routes/availability';
+import calendarRoutes from './routes/calendar';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -149,6 +150,7 @@ app.use('/dashboard/drills', drillsRoutes);
 app.use('/dashboard/children', childrenRoutes);
 app.use('/dashboard/users', usersRoutes);
 app.use('/dashboard/availability', availabilityRoutes);
+app.use('/dashboard/calendar', calendarRoutes);
 
 // ─── PATCH /api/children/:id/team-details — update child skill level & position ───
 app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, res: Response) => {
@@ -199,6 +201,8 @@ app.post('/dashboard/children/add', formLimiter);
 app.post('/dashboard/users/:id/role', formLimiter);
 app.post('/dashboard/availability/create', formLimiter);
 app.post('/dashboard/availability/:id/respond', formLimiter);
+app.post('/dashboard/calendar/events', formLimiter);
+app.post('/dashboard/calendar/cleanup', formLimiter);
 
 // --- 404 Handler ---
 app.use((_req: Request, res: Response) => {
