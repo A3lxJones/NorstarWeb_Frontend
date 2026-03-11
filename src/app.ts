@@ -8,7 +8,8 @@ import crypto from 'crypto';
 
 // Session & auth middleware
 import { configureSession } from './middleware/session';
-import { injectUser } from './middleware/auth';
+import { injectUser, requireAuth } from './middleware/auth';
+import { apiRequest } from './utils/api';
 
 // Import routes
 import homeRoutes from './routes/index';
@@ -148,6 +149,47 @@ app.use('/dashboard/drills', drillsRoutes);
 app.use('/dashboard/children', childrenRoutes);
 app.use('/dashboard/users', usersRoutes);
 app.use('/dashboard/availability', availabilityRoutes);
+
+// ─── PATCH /api/children/:id/team-details — update child skill level & position ───
+app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, res: Response) => {
+    const token = req.session.accessToken!;
+    const childId = req.params.id;
+    const { skill_level, position } = req.body;
+
+    try {
+        const result = await apiRequest<unknown>(
+            `/api/children/${childId}/team-details`,
+            {
+                method: 'PATCH',
+                token,
+                body: {
+                    skill_level: skill_level || undefined,
+                    position: position || undefined,
+                },
+            }
+        );
+
+        if (!result.success) {
+            res.status(400).json({
+                success: false,
+                error: result.error || 'Failed to update member.',
+            });
+            return;
+        }
+
+        res.json({
+            success: true,
+            message: 'Member updated successfully.',
+            data: result.data,
+        });
+    } catch (error) {
+        console.error('Update member error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'An error occurred while updating the member.',
+        });
+    }
+});
 
 // Apply stricter rate limiter to form POST routes
 app.post('/contact', formLimiter);
