@@ -94,3 +94,27 @@ export async function refreshToken(refresh_token: string) {
         { method: "POST", body: { refresh_token } }
     );
 }
+
+// ─── Password reset helpers ────────────────────────────────
+
+export async function forgotPassword(email: string, redirectTo: string) {
+    return apiRequest<{ message: string }>("/api/auth/forgot-password", {
+        method: "POST",
+        body: { email, redirectTo },
+    });
+}
+
+export async function resetPassword(accessToken: string, newPassword: string) {
+    return apiRequest<{ message: string }>("/api/auth/reset-password", {
+        method: "POST",
+        token: accessToken,
+        body: { password: newPassword },
+    });
+}
+
+export async function exchangeRecoveryCode(code: string) {
+    return apiRequest<{ accessToken: string }>("/api/auth/exchange-recovery-code", {
+        method: "POST",
+        body: { code },
+    });
+}
