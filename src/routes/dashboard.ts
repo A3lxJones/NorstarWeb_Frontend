@@ -145,11 +145,37 @@ router.get('/', async (req: Request, res: Response) => {
                 viewAsRole: viewAsRole || null,
             });
         } else if (effectiveRole === 'admin') {
+            // Fetch children separately since /api/dashboard doesn't return them
+            let children: unknown[] = [];
+            try {
+                const childrenRes = await apiRequest<unknown[]>(
+                    '/api/admin/children',
+                    { token }
+                );
+                const childrenPayload = childrenRes.data;
+                children = Array.isArray(childrenPayload)
+                    ? childrenPayload
+                    : childrenPayload && typeof childrenPayload === 'object'
+                    ? ((childrenPayload as Record<string, unknown>).data as unknown[]) ||
+                      ((childrenPayload as Record<string, unknown>).children as unknown[]) ||
+                      ((childrenPayload as Record<string, unknown>).items as unknown[]) ||
+                      ((childrenPayload as Record<string, unknown>).rows as unknown[]) ||
+                      []
+                    : [];
+            } catch (err) {
+                console.warn('[Admin Dashboard] Failed to fetch children:', err);
+                // Continue without children — non-critical
+            }
+
+            const playerCount = Number(children.length || 0);
+
             res.render('dashboard/admin.njk', {
                 title: 'Admin Dashboard — Norstar',
                 userCounts: dashData.userCounts || {},
                 teams: dashData.teams || [],
                 teamCount: dashData.teamCount || 0,
+                playerCount,
+                players: children,
                 games: dashData.upcomingGames || dashData.games || [],
                 reports: dashData.recentReports || dashData.reports || [],
                 isImpersonating: false,

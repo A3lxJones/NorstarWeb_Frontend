@@ -156,6 +156,9 @@
         </div>
         {% endif %}
 
+        <!-- Drill Visualization -->
+        {% include "partials/drill-visualization.njk" %}
+
         <!-- Step-by-step Instructions -->
         {% if drill.instructions and drill.instructions.length > 0 %}
         <div class="card bg-base-200 border border-base-300 shadow-lg scroll-reveal opacity-0">

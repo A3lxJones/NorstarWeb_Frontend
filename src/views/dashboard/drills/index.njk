@@ -180,13 +180,28 @@
             {{ drill.name }}
           </h3>
 
+          <!-- Mini court visualization -->
+          <div class="my-3 overflow-hidden rounded-md bg-base-300/30 border border-base-300">
+            {% if drill.mini_visual_representation %}
+              {{ drill.mini_visual_representation | safe }}
+            {% else %}
+              <svg viewBox="0 0 300 150" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="280" height="130" fill="none" stroke="#a855f7" stroke-width="1.5" rx="4" opacity="0.4"/>
+                <line x1="150" y1="10" x2="150" y2="140" stroke="#a855f7" stroke-width="1" opacity="0.2" stroke-dasharray="3,3"/>
+                <circle cx="80" cy="40" r="4" fill="#a855f7" opacity="0.6"/>
+                <circle cx="150" cy="75" r="4" fill="#f59e0b" opacity="0.6"/>
+                <circle cx="220" cy="110" r="4" fill="#3b1d8e" opacity="0.5"/>
+              </svg>
+            {% endif %}
+          </div>
+
           <!-- Description preview -->
-          <p class="text-sm text-base-content/50 mt-1 line-clamp-2">
+          <p class="text-sm text-base-content/50 line-clamp-2">
             {{ drill.description }}
           </p>
 
           <!-- Meta info -->
-          <div class="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-base-300 text-xs text-base-content/40">
+          <div class="flex flex-wrap items-center gap-3 mt-2 pt-2 border-t border-base-300 text-xs text-base-content/40">
             <span class="flex items-center gap-1" title="Duration">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

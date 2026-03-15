@@ -39,11 +39,28 @@ router.get('/all', requireRole('admin'), async (req: Request, res: Response) => 
         const queryString = params.toString();
         const endpoint = `/api/admin/children${queryString ? `?${queryString}` : ''}`;
 
-        const result = await apiRequest<ChildRecord[]>(endpoint, { token });
+        const result = await apiRequest<
+            ChildRecord[] |
+            {
+                data?: ChildRecord[];
+                children?: ChildRecord[];
+                items?: ChildRecord[];
+                rows?: ChildRecord[];
+            }
+        >(endpoint, { token });
+
+        const payload = result.data;
+        const children = Array.isArray(payload)
+            ? payload
+            : payload?.data || payload?.children || payload?.items || payload?.rows || [];
+
+        if (!Array.isArray(children)) {
+            console.warn('Admin children payload was not an array-like shape:', payload);
+        }
 
         res.render('dashboard/children/index.njk', {
             title: 'Registered Children — Norstar',
-            children: result.data || [],
+            children: Array.isArray(children) ? children : [],
             search,
         });
     } catch (error) {

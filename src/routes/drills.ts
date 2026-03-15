@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth, requireRole } from '../middleware/auth';
 import { apiRequest } from '../utils/api';
+import { generateDrillVisualization } from '../utils/drill-visualization';
+import { generateMiniDrillVisualization } from '../utils/mini-drill-visualization';
 
 const router = Router();
 
@@ -26,6 +28,8 @@ interface Drill {
     coaching_points: string[];
     variations: string[];
     suitable_for: string[];
+    visual_representation?: string; // SVG or encoded diagram
+    mini_visual_representation?: string; // SVG for list card thumbnails
 }
 
 interface DrillsApiResponse {
@@ -74,11 +78,31 @@ router.get('/', async (req: Request, res: Response) => {
             age_groups: [],
         };
 
+        // Generate visualizations for drills that don't have one
+        const drillsWithVisuals = data.drills.map((drill) => {
+            if (!drill.visual_representation) {
+                drill.visual_representation = generateDrillVisualization({
+                    name: drill.name,
+                    category: drill.category,
+                    difficulty: drill.difficulty,
+                    min_players: drill.min_players,
+                    max_players: drill.max_players,
+                });
+            }
+            if (!drill.mini_visual_representation) {
+                drill.mini_visual_representation = generateMiniDrillVisualization({
+                    name: drill.name,
+                    category: drill.category,
+                });
+            }
+            return drill;
+        });
+
         const totalPages = Math.ceil(data.total / limit);
 
         res.render('dashboard/drills/index.njk', {
             title: 'Drill Library — Norstar',
-            drills: data.drills,
+            drills: drillsWithVisuals,
             total: data.total,
             categories: data.categories,
             difficulties: data.difficulties,
@@ -133,9 +157,22 @@ router.get('/:id', async (req: Request, res: Response) => {
             return;
         }
 
+        const drill = result.data;
+
+        // Generate visualization if not provided by API
+        if (!drill.visual_representation) {
+            drill.visual_representation = generateDrillVisualization({
+                name: drill.name,
+                category: drill.category,
+                difficulty: drill.difficulty,
+                min_players: drill.min_players,
+                max_players: drill.max_players,
+            });
+        }
+
         res.render('dashboard/drills/detail.njk', {
-            title: `${result.data.name} — Drill Library`,
-            drill: result.data,
+            title: `${drill.name} — Drill Library`,
+            drill,
             isImpersonating: user.role === 'admin' && !!viewAsRole,
             viewAsRole: viewAsRole || null,
             realRole: user.role,

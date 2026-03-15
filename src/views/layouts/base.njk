@@ -6,6 +6,7 @@
   <meta name="robots" content="index, follow" />
   <meta name="description" content="{{ description | default('Norstar Inline Hockey Club — Ballymena\'s home of inline hockey. Junior U13, Learn to Play, and Learn to Skate programmes.') }}" />
   <meta name="theme-color" content="#3b1d8e" />
+  <meta name="color-scheme" content="dark light" />
 
   <!-- Security meta tags -->
   <!-- X-Frame-Options and X-Content-Type-Options are set via HTTP headers by Helmet -->
@@ -140,6 +141,9 @@
 
   <!-- Toast container -->
   <div id="toast-container" class="toast toast-end toast-bottom z-[9999]"></div>
+
+  <!-- Theme Management (must be before main.js) -->
+  <script src="/js/theme.js" defer></script>
 
   <!-- Client JS -->
   <script src="/js/main.js" defer></script>

@@ -10,9 +10,8 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
       <div>
         <h1 class="font-heading text-3xl font-bold">
-          Welcome back<span class="text-secondary">.</span>
+          Welcome back<span class="text-secondary">!</span>
         </h1>
-        <h2>Welcome back, {{ user.name }}!</h2>
         <p class="text-base-content/60 mt-1">Manage your children's inline hockey activities</p>
       </div>
       <a href="/dashboard/children/add" class="btn btn-secondary btn-sm gap-2">
@@ -54,6 +53,128 @@
         </svg>
       </div>
     </a>
+
+    <!-- New Joiners Section -->
+    <div class="mt-10">
+      <h2 class="font-heading text-2xl font-bold mb-2">
+        New to Norstar<span class="text-secondary">?</span>
+      </h2>
+      <p class="text-base-content/60 mb-6">Welcome! Here are the forms and information you need to get started</p>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <!-- Welcome Letter -->
+        <a href="/documents/WelcomeLetter.pdf" target="_blank" rel="noopener noreferrer"
+           class="card bg-gradient-to-br from-accent/10 via-base-200 to-accent/5 border border-accent/20 shadow-lg hover:shadow-xl hover:border-accent/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
+          <div class="card-body p-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0 group-hover:bg-accent/30 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-heading font-semibold text-lg group-hover:text-accent transition-colors">
+                  Welcome Letter
+                </h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  Download our welcome pack with club information and expectations
+                </p>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Parent Agreement Form -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScVRKtPwO7Bh2tmfubT1xCBQJ3PSlNPGI3YQTwkdQ7V_OGf2A/viewform" target="_blank" rel="noopener noreferrer"
+           class="card bg-gradient-to-br from-secondary/10 via-base-200 to-secondary/5 border border-secondary/20 shadow-lg hover:shadow-xl hover:border-secondary/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
+          <div class="card-body p-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center shrink-0 group-hover:bg-secondary/30 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-heading font-semibold text-lg group-hover:text-secondary transition-colors">
+                  Parent Charter
+                </h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  Please read and sign our parent charter form
+                </p>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Medical & Consent Form -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" target="_blank" rel="noopener noreferrer"
+           class="card bg-gradient-to-br from-warning/10 via-base-200 to-warning/5 border border-warning/20 shadow-lg hover:shadow-xl hover:border-warning/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
+          <div class="card-body p-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center shrink-0 group-hover:bg-warning/30 transition-colors">
+                <svg xmlns="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-heading font-semibold text-lg group-hover:text-warning transition-colors">
+                  Medical & Club Form
+                </h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  Provide medical information, allergies, and media consent details
+                </p>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Equipment Information -->
+        <a href="https://ihi.vensport.com/memberships" target="_blank" rel="noopener noreferrer"
+           class="card bg-gradient-to-br from-success/10 via-base-200 to-success/5 border border-success/20 shadow-lg hover:shadow-xl hover:border-success/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
+          <div class="card-body p-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center shrink-0 group-hover:bg-success/30 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-heading font-semibold text-lg group-hover:text-success transition-colors">
+                  Inline Hockey Ireland Registration
+                </h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  Get registered with Inline Hockey Ireland to play and train in our leagues and tournaments
+                </p>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Helpful Info -->
+      <div class="card bg-base-200 border border-base-300 shadow-lg mt-6 scroll-reveal opacity-0">
+        <div class="card-body">
+          <h3 class="font-heading font-semibold text-lg mb-3">Questions?</h3>
+          <p class="text-base-content/60 text-sm mb-4">
+            If you have any questions about getting started or need help, please reach out to us:
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/contact" class="btn btn-secondary btn-sm gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Contact Us
+            </a>
+            <a href="https://www.norstarih.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-secondary btn-sm gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Visit Website
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Children list -->
     {% if children.length === 0 %}

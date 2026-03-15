@@ -10,6 +10,11 @@
         scroll-behavior: smooth;
     }
 
+    /* Smooth color transitions when theme changes */
+    html, body {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
         width: 8px;
@@ -22,6 +27,7 @@
     ::-webkit-scrollbar-thumb {
         background: oklch(var(--s) / 0.3);
         border-radius: 4px;
+        transition: background-color 0.2s ease;
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -45,6 +51,28 @@
    Component Styles
    ═══════════════════════════════════════════ */
 @layer components {
+
+    /* Logo styling - seamless theme integration */
+    .navbar img[alt="Norstar"] {
+        @apply bg-transparent;
+        mix-blend-mode: multiply;
+    }
+
+    html[data-theme="norstar_light"] .navbar img[alt="Norstar"] {
+        mix-blend-mode: screen;
+        opacity: 0.95;
+    }
+
+    /* Hero section logo - remove white background */
+    .hero img[alt="Norstar Inline Hockey Club Logo"] {
+        mix-blend-mode: darken;
+        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.1));
+    }
+
+    html[data-theme="norstar_light"] .hero img[alt="Norstar Inline Hockey Club Logo"] {
+        mix-blend-mode: multiply;
+        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.05));
+    }
 
     /* Calendar grid events */
     .cal-event {
@@ -112,6 +140,7 @@
 @layer utilities {
     .scroll-reveal.is-visible {
         animation: fadeInUp 0.6s ease-out forwards;
+        animation-delay: var(--animation-delay, 0s);
     }
 }
 

@@ -1,0 +1,113 @@
+{# 
+  Drill Visualization Partial
+  Displays a visual representation of a drill on an inline hockey court
+  
+  Expected variables:
+  - drill: Drill object with optional visual_representation field
+#}
+
+{% if drill.visual_representation %}
+  {# Use custom SVG if provided by the API #}
+  <div class="card bg-base-200 border border-base-300 shadow-lg scroll-reveal opacity-0">
+    <div class="card-body p-6">
+      <h2 class="font-heading text-xl font-semibold flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6m0 0l6 6m-6-6l-6 6m6-6l6-6" />
+        </svg>
+        Drill Visualization
+      </h2>
+      <div class="overflow-x-auto flex justify-center">
+        {{ drill.visual_representation | safe }}
+      </div>
+    </div>
+  </div>
+{% else %}
+  {# Default court visualization #}
+  <div class="card bg-base-200 border border-base-300 shadow-lg scroll-reveal opacity-0">
+    <div class="card-body p-6">
+      <h2 class="font-heading text-xl font-semibold flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6m0 0l6 6m-6-6l-6 6m6-6l6-6" />
+        </svg>
+        Drill Court Layout
+      </h2>
+      <p class="text-sm text-base-content/60 mb-4">Visual representation shows typical positioning and flow for this drill.</p>
+      
+      <div class="overflow-x-auto flex justify-center bg-base-300/30 rounded-lg p-4">
+        <svg 
+          viewBox="0 0 1200 600" 
+          class="w-full max-w-2xl h-auto" 
+          xmlns="http://www.w3.org/2000/svg"
+          style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(59, 29, 142, 0.05) 100%);"
+        >
+          <!-- Court background -->
+          <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
+          
+          <!-- Center line -->
+          <line x1="600" y1="50" x2="600" y2="550" stroke="#a855f7" stroke-width="2" stroke-dasharray="10,10" opacity="0.5"/>
+          
+          <!-- Center circle -->
+          <circle cx="600" cy="300" r="40" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
+          
+          <!-- Goal zones -->
+          <rect x="50" y="150" width="150" height="300" fill="#3b1d8e" opacity="0.1" stroke="#3b1d8e" stroke-width="2"/>
+          <rect x="1000" y="150" width="150" height="300" fill="#3b1d8e" opacity="0.1" stroke="#3b1d8e" stroke-width="2"/>
+          
+          <!-- Goal markers -->
+          <circle cx="50" cy="300" r="8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+          <circle cx="1150" cy="300" r="8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+          
+          <!-- Player 1 (Red/Secondary) -->
+          <circle cx="200" cy="200" r="25" fill="#a855f7" opacity="0.7"/>
+          <text x="200" y="210" text-anchor="middle" fill="white" font-size="16" font-weight="bold">1</text>
+          
+          <!-- Player 2 (Red/Secondary) -->
+          <circle cx="200" cy="400" r="25" fill="#a855f7" opacity="0.7"/>
+          <text x="200" y="410" text-anchor="middle" fill="white" font-size="16" font-weight="bold">2</text>
+          
+          <!-- Player 3 (Orange/Accent) -->
+          <circle cx="600" cy="300" r="25" fill="#f59e0b" opacity="0.7"/>
+          <text x="600" y="310" text-anchor="middle" fill="white" font-size="16" font-weight="bold">3</text>
+          
+          <!-- Movement arrows -->
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="#a855f7" opacity="0.6"/>
+            </marker>
+          </defs>
+          
+          <!-- Arrow 1: Player 1 moving -->
+          <path d="M 225 200 Q 400 150 600 300" stroke="#a855f7" stroke-width="2" fill="none" marker-end="url(#arrowhead)" opacity="0.6" stroke-dasharray="5,5"/>
+          
+          <!-- Arrow 2: Player 2 moving -->
+          <path d="M 225 400 Q 400 450 600 300" stroke="#a855f7" stroke-width="2" fill="none" marker-end="url(#arrowhead)" opacity="0.6" stroke-dasharray="5,5"/>
+          
+          <!-- Pass indication -->
+          <path d="M 625 275 L 975 150" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" opacity="0.7"/>
+          
+          <!-- Defender (Blue) -->
+          <circle cx="950" cy="150" r="25" fill="#3b1d8e" opacity="0.7"/>
+          <text x="950" y="160" text-anchor="middle" fill="white" font-size="16" font-weight="bold">D</text>
+          
+          <!-- Legend -->
+          <text x="50" y="580" font-size="12" fill="#a855f7" font-weight="bold">Offensive Players</text>
+          <circle cx="100" cy="573" r="5" fill="#a855f7" opacity="0.7"/>
+          
+          <text x="350" y="580" font-size="12" fill="#f59e0b" font-weight="bold">Puck/Ball</text>
+          <circle cx="380" cy="573" r="5" fill="#f59e0b" opacity="0.7"/>
+          
+          <text x="650" y="580" font-size="12" fill="#3b1d8e" font-weight="bold">Defensive Players</text>
+          <circle cx="720" cy="573" r="5" fill="#3b1d8e" opacity="0.7"/>
+          
+          <text x="1000" y="580" font-size="12" fill="#a855f7" font-weight="bold">Movement</text>
+        </svg>
+      </div>
+      
+      <div class="mt-4 p-4 bg-base-300/20 rounded-lg">
+        <p class="text-sm text-base-content/70">
+          <strong>Key:</strong> Purple circles represent offensive players, orange circle represents the puck/ball, blue circle represents defenders, and dashed lines show player movement.
+        </p>
+      </div>
+    </div>
+  </div>
+{% endif %}
