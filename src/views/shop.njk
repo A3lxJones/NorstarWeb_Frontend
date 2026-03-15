@@ -1,0 +1,48 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  <!-- ======== HERO SECTION ======== -->
+  <section class="min-h-screen flex items-center justify-center py-16 md:py-24 relative overflow-hidden">
+    <!-- Decorative gradient blobs -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="relative z-10 max-w-2xl mx-auto px-4 text-center">
+      <!-- Icon -->
+      <div class="mb-8 flex justify-center">
+        <div class="p-6 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-full border border-secondary/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="font-heading text-4xl md:text-6xl font-bold mb-4 leading-tight">
+        Coming <span class="text-secondary">Soon</span>
+      </h1>
+
+      <!-- Subheading -->
+      <p class="text-lg md:text-xl text-base-content/80 mb-8 leading-relaxed">
+        Our Norstar Inline Hockey Shop is launching soon! Get ready to gear up with exclusive team merchandise, equipment, and apparel.
+      </p>
+
+      <!-- Description -->
+      <div class="bg-base-200/50 border border-base-300/50 rounded-lg p-6 mb-8 backdrop-blur-sm">
+        <p class="text-base-content/70">
+          We're working hard to bring you an amazing selection of quality products. Check back soon for exciting announcements!
+        </p>
+      </div>
+
+      <!-- CTA Button -->
+      <a href="/" class="btn btn-secondary gap-2 hover:scale-105 transition-transform duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 009-9 9.75 9.75 0 016.74-2.74C21 .97 24 3.26 24 6c0 5.55-4.2 10.74-9 11.9a9.75 9.75 0 01-4.35-.74" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </section>
+{% endblock %}

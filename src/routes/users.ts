@@ -27,13 +27,22 @@ interface UserRecord {
     phone?: string;
     created_at?: string;
     children?: UserChild[];
+    items?: UserChild[];
+    rows?: UserChild[];
+    totalChildren?: number;
+}
+
+interface UserListPayload {
+    data?: UserRecord[];
+    items?: UserRecord[];
+    rows?: UserRecord[];
 }
 
 // ─── GET /dashboard/users — list all users ──────────────────
 
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
-    const roleFilter = (req.query.role as string) || '';
+    const roleFilter = (req.query.role as string) || 'parent';
     const search = (req.query.search as string) || '';
 
     try {
@@ -45,11 +54,29 @@ router.get('/', async (req: Request, res: Response) => {
         const queryString = params.toString();
         const endpoint = `/api/admin/users${queryString ? `?${queryString}` : ''}`;
 
-        const result = await apiRequest<UserRecord[]>(endpoint, { token });
+        const result = await apiRequest<UserRecord[] | UserListPayload>(endpoint, { token });
+        const payload = result.data;
+        const rootUsers = Array.isArray(payload)
+            ? payload
+            : payload?.data || payload?.items || payload?.rows || [];
+
+        const users = (Array.isArray(rootUsers) ? rootUsers : []).map((user) => {
+            const normalizedChildren = user.children || user.items || user.rows || [];
+            return {
+                ...user,
+                children: Array.isArray(normalizedChildren) ? normalizedChildren : [],
+            };
+        });
+
+        const totalChildren = users.reduce(
+            (sum, user) => sum + (typeof user.totalChildren === 'number' ? user.totalChildren : user.children.length),
+            0
+        );
 
         res.render('dashboard/users/index.njk', {
             title: 'Manage Users — Norstar',
-            users: result.data || [],
+            users,
+            totalChildren,
             roleFilter,
             search,
         });
@@ -58,8 +85,9 @@ router.get('/', async (req: Request, res: Response) => {
         res.render('dashboard/users/index.njk', {
             title: 'Manage Users — Norstar',
             users: [],
+            totalChildren: 0,
             error: 'Unable to load users.',
-            roleFilter: '',
+            roleFilter: 'parent',
             search: '',
         });
     }
@@ -72,19 +100,38 @@ router.get('/:id', async (req: Request, res: Response) => {
     const userId = req.params.id;
 
     try {
-        const result = await apiRequest<UserRecord>(
+        const result = await apiRequest<UserRecord | { data?: UserRecord; item?: UserRecord; row?: UserRecord }>(
             `/api/admin/users/${userId}`,
             { token }
         );
 
-        if (!result.success || !result.data) {
+        const payload = result.data;
+        const member = (payload && 'id' in (payload as Record<string, unknown>))
+            ? (payload as UserRecord)
+            : ((payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.data ||
+               (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.item ||
+               (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.row);
+
+        const normalizedChildren = member?.children || member?.items || member?.rows || [];
+        const normalizedMember = member
+            ? {
+                ...member,
+                children: Array.isArray(normalizedChildren) ? normalizedChildren : [],
+                totalChildren:
+                    typeof member.totalChildren === 'number'
+                        ? member.totalChildren
+                        : (Array.isArray(normalizedChildren) ? normalizedChildren.length : 0),
+            }
+            : null;
+
+        if (!result.success || !normalizedMember) {
             res.status(404).render('404.njk', { title: 'User Not Found' });
             return;
         }
 
         res.render('dashboard/users/detail.njk', {
-            title: `${result.data.full_name} — Norstar`,
-            member: result.data,
+            title: `${normalizedMember.full_name} — Norstar`,
+            member: normalizedMember,
         });
     } catch (error) {
         console.error('User detail error:', error);
