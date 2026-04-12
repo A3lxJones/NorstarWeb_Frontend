@@ -118,3 +118,19 @@ export async function exchangeRecoveryCode(code: string) {
         body: { code },
     });
 }
+
+// ─── Get current user info ────────────────────────────────
+
+export interface CurrentUserResponse {
+    id: string;
+    email: string;
+    role: string;
+    full_name?: string;
+}
+
+export async function getCurrentUser(token: string) {
+    return apiRequest<CurrentUserResponse>("/api/auth/me", {
+        method: "GET",
+        token,
+    });
+}

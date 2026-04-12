@@ -42,7 +42,7 @@ interface UserListPayload {
 
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
-    const roleFilter = (req.query.role as string) || 'parent';
+    const roleFilter = (req.query.role as string) || ''; // Empty string = all roles
     const search = (req.query.search as string) || '';
 
     try {
@@ -87,7 +87,7 @@ router.get('/', async (req: Request, res: Response) => {
             users: [],
             totalChildren: 0,
             error: 'Unable to load users.',
-            roleFilter: 'parent',
+            roleFilter: '',
             search: '',
         });
     }
