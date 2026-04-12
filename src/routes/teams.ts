@@ -59,9 +59,9 @@ router.post(
     '/create',
     requireRole('admin', 'coach'),
     async (req: Request, res: Response) => {
-        const { name, age_group, max_players } = req.body;
+        const { name, age_group } = req.body;
         const token = req.session.accessToken!;
-        const values = { name, age_group, max_players };
+        const values = { name, age_group };
 
         if (!name || !age_group) {
             res.render('dashboard/teams/create.njk', {
@@ -78,7 +78,6 @@ router.post(
             body: {
                 name,
                 age_group,
-                ...(max_players ? { max_players: parseInt(max_players, 10) } : {}),
             },
         });
 
@@ -155,6 +154,8 @@ router.get(
     async (req: Request, res: Response) => {
         const token = req.session.accessToken!;
         const teamId = req.params.id;
+        const user = req.session.user!;
+        const isAdmin = user.role === 'admin';
 
         const result = await apiRequest<Record<string, unknown>>(`/api/teams/${teamId}`, { token });
 
@@ -163,11 +164,20 @@ router.get(
             return;
         }
 
+        // Only fetch coaches for admins
+        let availableCoaches: unknown[] = [];
+        if (isAdmin) {
+            const coachesResult = await apiRequest<unknown[]>('/api/coaches', { token });
+            availableCoaches = coachesResult.data || [];
+        }
+
         res.render('dashboard/teams/edit.njk', {
             title: `Edit ${(result.data as Record<string, unknown>).name} — Norstar`,
             error: null,
             values: result.data,
             teamId,
+            isAdmin,
+            availableCoaches,
         });
     }
 );
@@ -178,17 +188,22 @@ router.post(
     '/:id/edit',
     requireRole('admin', 'coach'),
     async (req: Request, res: Response) => {
-        const { name, age_group, max_players } = req.body;
+        const { name, age_group, coach_id } = req.body;
         const token = req.session.accessToken!;
         const teamId = req.params.id;
-        const values = { name, age_group, max_players };
+        const user = req.session.user!;
+        const isAdmin = user.role === 'admin';
+        const values = { name, age_group, coach_id };
 
         if (!name || !age_group) {
+            const coachesResult = await apiRequest<unknown[]>('/api/coaches', { token });
             res.render('dashboard/teams/edit.njk', {
                 title: 'Edit Team — Norstar',
                 error: 'Team name and age group are required.',
                 values,
                 teamId,
+                isAdmin,
+                availableCoaches: coachesResult.data || [],
             });
             return;
         }
@@ -199,18 +214,46 @@ router.post(
             body: {
                 name,
                 age_group,
-                ...(max_players ? { max_players: parseInt(max_players, 10) } : {}),
             },
         });
 
         if (!result.success) {
+            const coachesResult = await apiRequest<unknown[]>('/api/coaches', { token });
             res.render('dashboard/teams/edit.njk', {
                 title: 'Edit Team — Norstar',
                 error: result.error || 'Failed to update team.',
                 values,
                 teamId,
+                isAdmin,
+                availableCoaches: coachesResult.data || [],
             });
             return;
+        }
+
+        // Update coach assignment if admin and coach_id provided
+        if (isAdmin && coach_id !== undefined) {
+            const coachUpdateResult = await apiRequest<unknown>(
+                `/api/teams/${teamId}/coach`,
+                {
+                    method: 'PATCH',
+                    token,
+                    body: { coach_id: coach_id || null },
+                }
+            );
+
+            if (!coachUpdateResult.success) {
+                // Coach assignment failed, show error but team was updated
+                const coachesResult = await apiRequest<unknown[]>('/api/coaches', { token });
+                res.render('dashboard/teams/edit.njk', {
+                    title: 'Edit Team — Norstar',
+                    error: coachUpdateResult.error || 'Team updated but failed to assign coach.',
+                    values,
+                    teamId,
+                    isAdmin,
+                    availableCoaches: coachesResult.data || [],
+                });
+                return;
+            }
         }
 
         res.redirect(`/dashboard/teams/${teamId}`);

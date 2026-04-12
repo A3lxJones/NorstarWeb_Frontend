@@ -9,7 +9,7 @@ import crypto from 'crypto';
 // Session & auth middleware
 import { configureSession } from './middleware/session';
 import { injectUser, requireAuth } from './middleware/auth';
-import { apiRequest } from './utils/api';
+import { apiRequest, getCurrentUser } from './utils/api';
 
 // Import routes
 import homeRoutes from './routes/index';
@@ -159,6 +159,111 @@ app.use('/dashboard/children', childrenRoutes);
 app.use('/dashboard/users', usersRoutes);
 app.use('/dashboard/availability', availabilityRoutes);
 app.use('/dashboard/calendar', calendarRoutes);
+
+// ─── GET /api/auth/me — fetch current user and update cached role ───
+app.get('/api/auth/me', requireAuth, async (req: Request, res: Response) => {
+    try {
+        const token = req.session.accessToken!;
+        const result = await getCurrentUser(token);
+
+        if (!result.success || !result.data) {
+            res.status(401).json({
+                success: false,
+                error: 'Failed to fetch current user data.',
+            });
+            return;
+        }
+
+        const updatedUser = result.data;
+        const oldRole = req.session.user?.role;
+        const newRole = updatedUser.role;
+
+        // Update session with latest user data
+        if (req.session.user) {
+            req.session.user.role = newRole;
+            req.session.user.email = updatedUser.email;
+            if (updatedUser.full_name) {
+                req.session.user.full_name = updatedUser.full_name;
+            }
+        }
+
+        // Log role change if it occurred
+        if (oldRole && oldRole !== newRole) {
+            console.log(`[Auth] Role updated for user ${req.session.user?.id}: ${oldRole} → ${newRole}`);
+        }
+
+        res.json({
+            success: true,
+            data: {
+                id: updatedUser.id,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                full_name: updatedUser.full_name,
+                roleChanged: oldRole !== newRole,
+                oldRole,
+                newRole,
+            },
+        });
+    } catch (error) {
+        console.error('Auth ME error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'An error occurred while fetching user data.',
+        });
+    }
+});
+
+// ─── POST /api/auth/refresh-role — sync user role from backend ───
+app.post('/api/auth/refresh-role', requireAuth, async (req: Request, res: Response) => {
+    try {
+        const token = req.session.accessToken!;
+        const result = await getCurrentUser(token);
+
+        if (!result.success || !result.data) {
+            res.status(401).json({
+                success: false,
+                error: 'Failed to fetch current user data.',
+            });
+            return;
+        }
+
+        const oldRole = req.session.user?.role;
+        const newRole = result.data.role;
+
+        // Update session with latest role
+        if (req.session.user) {
+            req.session.user.role = newRole;
+            req.session.user.email = result.data.email;
+            if (result.data.full_name) {
+                req.session.user.full_name = result.data.full_name;
+            }
+        }
+
+        // Log role change if it occurred
+        if (oldRole && oldRole !== newRole) {
+            console.log(`[Auth] Role updated for user ${req.session.user?.id}: ${oldRole} → ${newRole}`);
+        }
+
+        res.json({
+            success: true,
+            data: {
+                id: result.data.id,
+                email: result.data.email,
+                role: result.data.role,
+                full_name: result.data.full_name,
+                roleChanged: oldRole !== newRole,
+                oldRole,
+                newRole,
+            },
+        });
+    } catch (error) {
+        console.error('Role refresh error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'An error occurred while refreshing role.',
+        });
+    }
+});
 
 // ─── PATCH /api/children/:id/team-details — update child skill level & position ───
 app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, res: Response) => {

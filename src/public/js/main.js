@@ -192,3 +192,42 @@ function initLoginModal() {
         sessionStorage.setItem('norstar-login-shown', 'true');
     });
 }
+
+/* ═══════════════════════════════════════════
+   Role Refresh — Sync user role from backend
+   ═══════════════════════════════════════════ */
+/**
+ * Refresh the user's role from the backend.
+ * Call this after changing a user's role in Supabase to sync permissions.
+ * @returns {Promise<Object>} Response with user data and roleChanged flag
+ */
+async function refreshUserRole() {
+    try {
+        const response = await fetch('/api/auth/refresh-role', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.data?.roleChanged) {
+            console.log(`✅ Role refreshed: ${data.data.oldRole} → ${data.data.newRole}`);
+            // Reload the page to apply the new role's dashboard/permissions
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+            return data;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('❌ Failed to refresh role:', error);
+        return {
+            success: false,
+            error: error.message,
+        };
+    }
+}
+

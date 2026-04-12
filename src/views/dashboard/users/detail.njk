@@ -33,6 +33,21 @@
       </div>
     </div>
 
+    <!-- Role Refresh Notice (when role changes) -->
+    <div class="alert alert-info mb-6 gap-3" role="alert">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <p class="font-semibold text-sm">Role Updates</p>
+        <p class="text-xs">If you change this user's role, click the button below to reload and see the updated role.</p>
+        <button id="refreshRoleBtn" class="btn btn-sm btn-secondary mt-2 gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh Role Now
+        </button>
+      </div>
+    </div>
+
     <div class="grid gap-6 lg:grid-cols-2">
 
       <!-- User Details Card -->
@@ -176,4 +191,125 @@
 
   </div>
 </section>
+
+<script nonce="{{ cspNonce }}">
+  /**
+   * Refresh user role from server.
+   * 
+   * If the user is viewing their own profile and their role changed:
+   * - Fetch updated role via GET /api/auth/me
+   * - Update cached state
+   * - Redirect to dashboard to see new role-based view
+   * 
+   * If an admin is viewing another user's profile:
+   * - Reload the page to see fresh server-rendered data
+   */
+  document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('refreshRoleBtn');
+    
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        const btn = this;
+        btn.disabled = true;
+        btn.classList.add('loading');
+        
+        try {
+          // Show loading toast
+          const loadingToast = document.createElement('div');
+          loadingToast.className = 'toast toast-top toast-center';
+          loadingToast.id = 'refresh-loading-toast';
+          loadingToast.innerHTML = `
+            <div class="alert alert-info">
+              <span>⏳ Refreshing user data...</span>
+            </div>
+          `;
+          document.body.appendChild(loadingToast);
+          
+          // Fetch the logged-in user's current role
+          const response = await fetch('/api/auth/me', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch user data (${response.status})`);
+          }
+          
+          const result = await response.json();
+          
+          if (!result.success || !result.data) {
+            throw new Error(result.error || 'Failed to fetch updated role');
+          }
+          
+          const updatedUser = result.data;
+          const loggedInUserId = updatedUser.id;
+          
+          // Extract the member ID being viewed from the URL
+          const memberId = window.location.pathname.split('/').filter(Boolean).pop();
+          
+          // Show success toast
+          const successToast = document.createElement('div');
+          successToast.className = 'toast toast-top toast-center';
+          successToast.id = 'refresh-success-toast';
+          
+          // If viewing own profile and role changed, redirect to dashboard
+          if (loggedInUserId === memberId && result.data.roleChanged) {
+            successToast.innerHTML = `
+              <div class="alert alert-success">
+                <span>✅ Your role updated to "${updatedUser.role}"! Redirecting to dashboard...</span>
+              </div>
+            `;
+            document.body.appendChild(successToast);
+            
+            // Remove loading toast
+            const loadingToast = document.getElementById('refresh-loading-toast');
+            if (loadingToast) loadingToast.remove();
+            
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 1500);
+          } else {
+            // Admin viewing another user's profile - reload to get fresh data
+            successToast.innerHTML = `
+              <div class="alert alert-info">
+                <span>⏳ Reloading user data...</span>
+              </div>
+            `;
+            document.body.appendChild(successToast);
+            
+            // Remove loading toast
+            const loadingToast = document.getElementById('refresh-loading-toast');
+            if (loadingToast) loadingToast.remove();
+            
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
+        } catch (error) {
+          console.error('Error refreshing role:', error);
+          
+          const errorToast = document.createElement('div');
+          errorToast.className = 'toast toast-top toast-center';
+          errorToast.innerHTML = `
+            <div class="alert alert-error">
+              <span>❌ Error: ${error.message}. Reloading page...</span>
+            </div>
+          `;
+          
+          const loadingToast = document.getElementById('refresh-loading-toast');
+          if (loadingToast) loadingToast.remove();
+          
+          document.body.appendChild(errorToast);
+          
+          // Fall back to reload
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

@@ -56,20 +56,24 @@
             </select>
           </div>
 
-          <!-- Max Players -->
+          <!-- Coach Assignment (Admin Only) -->
+          {% if isAdmin %}
           <div class="form-control">
-            <label class="label" for="team-max-players">
-              <span class="label-text font-medium">Max Players <span class="text-base-content/40">(optional)</span></span>
+            <label class="label" for="team-coach">
+              <span class="label-text font-medium">Assign Coach</span>
             </label>
-            <input type="number" id="team-max-players" name="max_players"
-                   value="{{ values.max_players or '' }}"
-                   placeholder="e.g. 12 including goalies"
-                   class="input input-bordered w-full focus:input-secondary transition-colors"
-                   min="1" max="50" />
-            <label class="label">
-              <span class="label-text-alt text-base-content/40">Leave blank for no limit</span>
-            </label>
+            <select id="team-coach" name="coach_id" class="select select-bordered w-full focus:select-secondary transition-colors">
+              <option value="">Unassigned</option>
+              {% if availableCoaches %}
+                {% for coach in availableCoaches %}
+                  <option value="{{ coach.id }}" {% if values.coach_id === coach.id %}selected{% endif %}>
+                    {{ coach.full_name }} {% if coach.team_id and coach.team_id !== values.id %}<span class="text-accent text-xs">(currently assigned)</span>{% endif %}
+                  </option>
+                {% endfor %}
+              {% endif %}
+            </select>
           </div>
+          {% endif %}
 
           <!-- Actions -->
           <div class="flex gap-3 pt-2">
