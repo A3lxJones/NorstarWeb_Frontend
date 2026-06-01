@@ -3,16 +3,15 @@
 {% block content %}
 
 <!-- Page Header -->
-<section class="py-16 lg:py-20 bg-base-200/50 border-b border-base-300/50 relative overflow-hidden">
-  <div class="absolute top-10 right-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl"></div>
-  <div class="container mx-auto px-4 max-w-6xl text-center relative z-10">
-    <span class="scroll-reveal opacity-0 badge badge-secondary badge-outline badge-sm font-medium tracking-wider uppercase mb-4">Season Schedule</span>
-    <h1 class="scroll-reveal opacity-0 font-heading text-4xl md:text-6xl font-bold mb-4">
-      Fixtures & <span class="text-secondary">Calendar</span>
-    </h1>
-    <p class="scroll-reveal opacity-0 text-base-content/60 max-w-lg mx-auto">
-      Stay on top of all upcoming matches, training sessions, and club events.
-    </p>
+<section class="bg-base-200/60 border-b border-base-300">
+  <div class="container mx-auto px-4 lg:px-8 max-w-7xl py-14 lg:py-20">
+    <div class="max-w-3xl">
+      <span class="eyebrow mb-3 block">Season schedule</span>
+      <h1 class="font-heading text-4xl md:text-5xl font-bold mb-4">Fixtures &amp; calendar</h1>
+      <p class="text-base-content/65 text-lg max-w-xl">
+        Stay on top of all upcoming matches, training sessions, and club events.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -60,7 +59,7 @@
     </div>
 
     <!-- Calendar grid -->
-    <div class="scroll-reveal opacity-0 card bg-base-200 border border-base-300 shadow-xl overflow-hidden">
+    <div class="scroll-reveal opacity-0 card bg-base-100 border border-base-300 overflow-hidden">
       <!-- Day headers -->
       <div class="grid grid-cols-7 bg-base-300/50 border-b border-base-300">
         <div class="py-3 text-center text-xs font-bold uppercase tracking-wider text-base-content/50">Mon</div>
@@ -84,7 +83,7 @@
 
     <!-- Event detail panel -->
     <div id="event-panel" class="mt-6 hidden">
-      <div class="card bg-base-200 border border-base-300 shadow-xl">
+      <div class="card bg-base-100 border border-base-300">
         <div class="card-body">
           <div class="flex items-start justify-between">
             <div>
@@ -132,8 +131,7 @@
 </section>
 
 <!-- Upcoming Fixtures List (dynamically populated) -->
-<section class="py-16 lg:py-20 bg-base-200/50 relative">
-  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent"></div>
+<section class="py-16 lg:py-20 bg-base-200/60 border-t border-base-300">
   <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
     <div class="flex items-end justify-between mb-10">
       <div>

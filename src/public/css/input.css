@@ -10,40 +10,63 @@
         scroll-behavior: smooth;
     }
 
-    /* Smooth color transitions when theme changes */
-    html, body {
-        transition: background-color 0.3s ease, color 0.3s ease;
+    /* Editorial body — slightly tighter line height, balanced text */
+    body {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Custom scrollbar */
+    /* Smooth color transitions when theme changes */
+    html,
+    body {
+        transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Headings — slightly tighter tracking for an editorial feel */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        letter-spacing: -0.01em;
+    }
+
+    /* Custom scrollbar — subtle */
     ::-webkit-scrollbar {
-        width: 8px;
+        width: 10px;
+        height: 10px;
     }
 
     ::-webkit-scrollbar-track {
-        background: oklch(var(--b2));
+        background: transparent;
     }
 
     ::-webkit-scrollbar-thumb {
-        background: oklch(var(--s) / 0.3);
-        border-radius: 4px;
-        transition: background-color 0.2s ease;
+        background: oklch(var(--bc) / 0.15);
+        border-radius: 6px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: oklch(var(--s) / 0.5);
+        background: oklch(var(--bc) / 0.3);
+        background-clip: padding-box;
+        border: 2px solid transparent;
     }
 
-    /* Selection color */
+    /* Selection — quiet, branded */
     ::selection {
-        background-color: oklch(var(--s) / 0.3);
-        color: oklch(var(--sc));
+        background-color: oklch(var(--s) / 0.18);
+        color: oklch(var(--bc));
     }
 
-    /* Focus styles for accessibility */
+    /* Focus visible — clean ring */
     :focus-visible {
         outline: 2px solid oklch(var(--s));
         outline-offset: 2px;
+        border-radius: 4px;
     }
 }
 
@@ -52,68 +75,65 @@
    ═══════════════════════════════════════════ */
 @layer components {
 
-    /* Logo styling - seamless theme integration */
-    .navbar img[alt="Norstar"] {
+    /* Logo — let it sit on light backgrounds without colour blending */
+    .navbar img[alt="Norstar"],
+    .hero img[alt="Norstar Inline Hockey Club Logo"] {
         @apply bg-transparent;
-        mix-blend-mode: multiply;
     }
 
-    html[data-theme="norstar_light"] .navbar img[alt="Norstar"] {
+    html[data-theme="norstar"] .navbar img[alt="Norstar"] {
         mix-blend-mode: screen;
         opacity: 0.95;
     }
 
-    /* Hero section logo - remove white background */
-    .hero img[alt="Norstar Inline Hockey Club Logo"] {
-        mix-blend-mode: darken;
-        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.1));
+    html[data-theme="norstar"] .hero img[alt="Norstar Inline Hockey Club Logo"] {
+        mix-blend-mode: screen;
     }
 
-    html[data-theme="norstar_light"] .hero img[alt="Norstar Inline Hockey Club Logo"] {
-        mix-blend-mode: multiply;
-        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.05));
-    }
-
-    /* Calendar grid events */
+    /* Calendar grid event dots */
     .cal-event {
         @apply w-1.5 h-1.5 rounded-full inline-block;
     }
 
-    /* Gradient top bar for cards */
-    .card-gradient-bar {
-        @apply h-1 w-full rounded-t-2xl;
-        background: linear-gradient(90deg, oklch(var(--s)), oklch(var(--a)));
+    /* Editorial eyebrow label */
+    .eyebrow {
+        @apply inline-block text-xs font-semibold tracking-[0.18em] uppercase text-secondary;
     }
 
-    /* Section heading with decorative underline */
+    /* Editorial divider */
+    .rule {
+        @apply h-px w-full bg-base-300;
+    }
+
+    /* Section heading underline accent */
     .section-heading {
         @apply font-heading text-3xl md:text-4xl font-bold relative inline-block;
     }
 
     .section-heading::after {
         content: '';
-        @apply absolute -bottom-2 left-0 w-12 h-1 rounded-full;
+        @apply absolute -bottom-2 left-0 w-12 h-[3px] rounded-full;
         background: oklch(var(--s));
     }
 
-    /* Image placeholder boxes */
+    /* Plain placeholder boxes */
     .img-placeholder {
-        @apply bg-base-300/50 flex items-center justify-center text-base-content/20;
+        @apply bg-base-200 flex items-center justify-center text-base-content/30;
     }
 
-    /* Badge variants for fixture status */
+    /* Fixture status badges */
     .badge-home {
-        @apply badge badge-sm font-bold;
-        background: oklch(var(--s) / 0.15);
+        @apply badge badge-sm font-semibold;
+        background: oklch(var(--s) / 0.12);
         color: oklch(var(--s));
-        border: 1px solid oklch(var(--s) / 0.3);
+        border: 1px solid oklch(var(--s) / 0.25);
     }
 
     .badge-away {
-        @apply badge badge-sm font-bold;
-        background: oklch(var(--a) / 0.15);
+        @apply badge badge-sm font-semibold;
+        background: oklch(var(--a) / 0.12);
         color: oklch(var(--a));
-        border: 1px solid oklch(var(--a) / 0.3);
+        border: 1px solid oklch(var(--a) / 0.25);
     }
 
     /* FAQ accordion smooth open */
@@ -121,16 +141,16 @@
         transition: padding 0.2s ease;
     }
 
-    /* Form input focus glow */
+    /* Form focus ring — soft and quiet */
     .input:focus,
     .textarea:focus,
     .select:focus {
-        box-shadow: 0 0 0 3px oklch(var(--s) / 0.1);
+        box-shadow: 0 0 0 3px oklch(var(--s) / 0.12);
     }
 
-    /* Stat counter highlight */
-    .stat-value-glow {
-        text-shadow: 0 0 40px oklch(var(--s) / 0.3);
+    /* Editorial card — flatter, no heavy shadow */
+    .card-flat {
+        @apply bg-base-100 border border-base-300 rounded-box;
     }
 }
 
@@ -139,19 +159,16 @@
    ═══════════════════════════════════════════ */
 @layer utilities {
     .scroll-reveal.is-visible {
-        animation: fadeInUp 0.6s ease-out forwards;
+        animation: fadeInUp 0.5s ease-out forwards;
         animation-delay: var(--animation-delay, 0s);
     }
 }
 
-/* ═══════════════════════════════════════════
-   Keyframes used by scroll-reveal
-   (defined outside @layer to prevent tree-shaking)
-   ═══════════════════════════════════════════ */
+/* Keyframes outside @layer so they survive tree-shaking */
 @keyframes fadeInUp {
     0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(12px);
     }
 
     100% {
@@ -191,7 +208,7 @@
         animation-delay: 0.7s;
     }
 
-    /* Reduced motion: disable all animations */
+    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
 
         .scroll-reveal,
@@ -209,7 +226,7 @@
 }
 
 /* ═══════════════════════════════════════════
-   Active nav link highlight
+   Active nav link
    ═══════════════════════════════════════════ */
 .nav-active {
     color: oklch(var(--s));

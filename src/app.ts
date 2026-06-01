@@ -80,7 +80,7 @@ app.use(
 // ───────────────────────────────────────────
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 200, // limit each IP to 200 requests per window
+    max: 400, // limit each IP to 400 requests per window
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Too many requests — please try again later.',
@@ -90,7 +90,7 @@ app.use(globalLimiter);
 // Stricter limiter for login & contact (anti-brute-force / anti-spam)
 const formLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 15,
+    max: 30,
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Too many form submissions — please try again later.',
@@ -142,7 +142,7 @@ app.use(injectUser);
 
 // --- Routes ---
 app.use('/', homeRoutes);
-app.use('/fixtures', fixturesRoutes);
+app.use('/fixtures', requireAuth, fixturesRoutes);
 app.use('/news', newsRoutes);
 app.use('/contact', contactRoutes);
 app.use('/privacy-policy', privacyPolicyRoutes);

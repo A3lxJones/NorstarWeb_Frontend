@@ -2,45 +2,44 @@
 
 {% block content %}
 
-<!-- Page Header -->
-<section class="py-16 lg:py-20 bg-base-200/50 border-b border-base-300/50 relative overflow-hidden">
-  <div class="absolute top-10 left-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl"></div>
-  <div class="container mx-auto px-4 max-w-6xl text-center relative z-10">
-    <span class="scroll-reveal opacity-0 badge badge-secondary badge-outline badge-sm font-medium tracking-wider uppercase mb-4">Get In Touch</span>
-    <h1 class="scroll-reveal opacity-0 font-heading text-4xl md:text-6xl font-bold mb-4">
-      Contact <span class="text-secondary">Us</span>
-    </h1>
-    <p class="scroll-reveal opacity-0 text-base-content/60 max-w-lg mx-auto">
-      Have a question, want to register, or just want to say hello? We'd love to hear from you.
-    </p>
+<!-- Page header -->
+<section class="bg-base-200/60 border-b border-base-300">
+  <div class="container mx-auto px-4 lg:px-8 max-w-7xl py-14 lg:py-20">
+    <div class="max-w-3xl">
+      <span class="eyebrow mb-3 block">Get in touch</span>
+      <h1 class="font-heading text-4xl md:text-5xl font-bold mb-4">Contact us</h1>
+      <p class="text-base-content/65 text-lg max-w-xl">
+        Have a question, want to register, or just want to say hello? We'd love to hear from you.
+      </p>
+    </div>
   </div>
 </section>
 
-<!-- Contact Section -->
-<section class="py-16 lg:py-24">
-  <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
 
-      <!-- Contact Info (wider column) -->
+<!-- Contact -->
+<section class="py-16 lg:py-20 bg-base-100">
+  <div class="container mx-auto px-4 lg:px-8 max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
+
+      <!-- Main column -->
       <div class="lg:col-span-3 scroll-reveal opacity-0">
-        <h2 class="font-heading text-2xl font-bold mb-6">How to <span class="text-secondary">Contact Us</span></h2>
-
-        <div class="card bg-base-200 border border-base-300 shadow-xl overflow-hidden">
-          <figure class="px-6 pt-6">
+        <div class="bg-base-100 border border-base-300 rounded-box overflow-hidden">
+          <figure class="aspect-[16/9] bg-base-200">
             <img
               src="/images/NortstarTeams2.png"
               alt="Norstar Inline Hockey Club"
-              class="w-full rounded-xl border border-base-300 object-cover"
+              class="w-full h-full object-cover"
               loading="lazy"
             />
           </figure>
-          <div class="card-body">
-            <p class="text-base-content/70">
+          <div class="p-6 lg:p-8">
+            <h2 class="font-heading text-2xl font-bold mb-3">How to reach us</h2>
+            <p class="text-base-content/70 leading-relaxed mb-6">
               We don't currently use a website contact form. The best way to get in touch with the club is by email.
             </p>
-            <div class="bg-base-300/40 border border-base-300 rounded-lg p-4">
-              <p class="text-sm uppercase tracking-wide text-base-content/50 mb-1">Club Email</p>
-              <a href="mailto:info@norstarinline.com" class="font-semibold text-secondary hover:text-accent transition-colors break-all">
+            <div class="bg-base-200 border border-base-300 rounded-box p-5">
+              <p class="text-xs uppercase tracking-[0.18em] text-base-content/50 mb-2">Club Email</p>
+              <a href="mailto:info@norstarinline.com" class="font-heading text-xl font-bold text-secondary hover:text-accent transition-colors break-all">
                 info@norstarinline.com
               </a>
             </div>
@@ -48,121 +47,105 @@
         </div>
       </div>
 
-      <!-- Contact Info sidebar -->
-      <div class="lg:col-span-2 scroll-reveal opacity-0 space-y-6" style="animation-delay: 0.15s;">
-        <h2 class="font-heading text-2xl font-bold mb-6">Club <span class="text-secondary">Info</span></h2>
+      <!-- Sidebar -->
+      <aside class="lg:col-span-2 scroll-reveal opacity-0 space-y-4" style="--animation-delay: 0.1s;">
+        <h2 class="font-heading text-2xl font-bold mb-2">Club info</h2>
 
-        <!-- Info cards -->
-        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
-          <div class="card-body flex-row items-center gap-4 p-5">
-            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-heading font-bold text-lg">Location</h3>
-              <p class="text-base-content/60 text-sm">Ballymena North Centre, Ballymena, Co. Antrim</p>
-            </div>
+        <div class="bg-base-100 border border-base-300 rounded-box p-5 flex items-start gap-4">
+          <div class="bg-secondary/10 text-secondary rounded-lg p-2.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base mb-0.5">Location</h3>
+            <p class="text-base-content/65 text-sm">Ballymena North Centre, Ballymena, Co. Antrim</p>
           </div>
         </div>
 
-        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
-          <div class="card-body flex-row items-center gap-4 p-5">
-            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-heading font-bold text-lg">Email</h3>
-              <a href="mailto:info@norstarinline.com" class="text-secondary hover:text-accent transition-colors text-sm">info@norstarinline.com</a>
-            </div>
+        <div class="bg-base-100 border border-base-300 rounded-box p-5 flex items-start gap-4">
+          <div class="bg-secondary/10 text-secondary rounded-lg p-2.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base mb-0.5">Email</h3>
+            <a href="mailto:info@norstarinline.com" class="text-secondary hover:text-accent transition-colors text-sm break-all">info@norstarinline.com</a>
           </div>
         </div>
 
-        <div class="card bg-base-200 border border-base-300 shadow-md hover:border-secondary/20 transition-all duration-300">
-          <div class="card-body flex-row items-center gap-4 p-5">
-            <div class="bg-secondary/10 rounded-xl p-3 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-heading font-bold text-lg">Training Times</h3>
-              <p class="text-base-content/60 text-sm">Saturdays 12:00 – 16:00</p>
-              <p class="text-base-content/60 text-sm">From 12:00-14:00 is our U13 and LTP and from 14:00-16:00 is our Academy Training.</p>
-            </div>
+        <div class="bg-base-100 border border-base-300 rounded-box p-5 flex items-start gap-4">
+          <div class="bg-secondary/10 text-secondary rounded-lg p-2.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base mb-0.5">Training times</h3>
+            <p class="text-base-content/65 text-sm">Saturdays 12:00 – 16:00</p>
+            <p class="text-base-content/50 text-xs mt-1">12:00–14:00 U13 &amp; LTP &middot; 14:00–16:00 Academy</p>
           </div>
         </div>
 
-        <!-- Social links -->
+        <!-- Social -->
         <div class="pt-2">
-          <h3 class="font-heading font-bold text-lg mb-3">Follow Us</h3>
-          <div class="flex gap-3">
-            <a href="https://www.facebook.com/p/Ballymena-Norstar-Inline-Hockey-Club-100086120628419/" class="btn btn-circle btn-outline btn-secondary btn-sm hover:scale-110 transition-transform duration-200" aria-label="Facebook">
-              <svg xmlns="https://www.facebook.com/p/Ballymena-Norstar-Inline-Hockey-Club-100086120628419/" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <h3 class="font-heading font-bold text-base mb-3">Follow us</h3>
+          <div class="flex gap-2">
+            <a href="https://www.facebook.com/p/Ballymena-Norstar-Inline-Hockey-Club-100086120628419/" class="btn btn-sm btn-outline gap-2" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
               </svg>
+              Facebook
             </a>
           </div>
         </div>
-
-      </div>
+      </aside>
 
     </div>
   </div>
 </section>
 
-<!-- FAQ Section -->
-<section class="py-16 lg:py-20">
+
+<!-- FAQ -->
+<section class="py-16 lg:py-20 bg-base-200/60 border-t border-base-300">
   <div class="container mx-auto px-4 lg:px-8 max-w-3xl">
-    <div class="text-center mb-12">
-      <span class="scroll-reveal opacity-0 badge badge-accent badge-outline badge-sm font-medium tracking-wider uppercase mb-3">Questions?</span>
-      <h2 class="scroll-reveal opacity-0 font-heading text-2xl md:text-4xl font-bold">
-        Frequently Asked <span class="text-secondary">Questions</span>
-      </h2>
+    <div class="text-center mb-10">
+      <span class="eyebrow mb-3 block">Questions?</span>
+      <h2 class="font-heading text-3xl md:text-4xl font-bold">Frequently asked questions</h2>
     </div>
 
     <div class="space-y-3">
-      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300">
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-100 border border-base-300">
         <input type="radio" name="faq" checked="checked" />
-        <div class="collapse-title font-heading font-bold text-lg">
-          What age can my child start?
-        </div>
+        <div class="collapse-title font-heading font-bold text-base">What age can my child start?</div>
         <div class="collapse-content">
           <p class="text-base-content/70">Our Learn to Skate programme is open to children aged 5 and up. Once they're comfortable on skates, they can progress to Learn to Play (ages 6+) and eventually to the competitive Junior U13 squad.</p>
         </div>
       </div>
 
-      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.1s;">
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-100 border border-base-300">
         <input type="radio" name="faq" />
-        <div class="collapse-title font-heading font-bold text-lg">
-          Do I need my own equipment?
-        </div>
+        <div class="collapse-title font-heading font-bold text-base">Do I need my own equipment?</div>
         <div class="collapse-content">
           <p class="text-base-content/70">For Learn to Skate sessions we provide all the equipment you need. For Learn to Play and U13, we recommend having your own inline skates and a hockey stick. Full protective gear is required for competitive play — we can advise on brands and sizing.</p>
         </div>
       </div>
 
-      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.2s;">
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-100 border border-base-300">
         <input type="radio" name="faq" />
-        <div class="collapse-title font-heading font-bold text-lg">
-          What does it cost?
-        </div>
+        <div class="collapse-title font-heading font-bold text-base">What does it cost?</div>
         <div class="collapse-content">
           <p class="text-base-content/70">Pricing varies by programme. Contact us for the latest fees and sibling deals. We aim to keep costs accessible for all families.</p>
         </div>
       </div>
 
-      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-200 border border-base-300" style="animation-delay: 0.3s;">
+      <div class="scroll-reveal opacity-0 collapse collapse-arrow bg-base-100 border border-base-300">
         <input type="radio" name="faq" />
-        <div class="collapse-title font-heading font-bold text-lg">
-          Where do you train?
-        </div>
+        <div class="collapse-title font-heading font-bold text-base">Where do you train?</div>
         <div class="collapse-content">
-          <p class="text-base-content/70">All sessions take place at Ballymena North Centre in Ballymena. Saturdays 12:00-16:00. Away matches are played at various venues across Northern Ireland and Ireland.</p>
+          <p class="text-base-content/70">All sessions take place at Ballymena North Centre in Ballymena, Saturdays 12:00–16:00. Away matches are played at various venues across Northern Ireland and Ireland.</p>
         </div>
       </div>
     </div>
