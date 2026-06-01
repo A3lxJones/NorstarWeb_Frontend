@@ -134,12 +134,85 @@ router.get('/', async (req: Request, res: Response) => {
                 // Non-critical
             }
 
+            // Fetch the coach's own children (coaches may also be parents)
+            let coachChildren: Array<Record<string, unknown>> = [];
+            try {
+                const childrenRes = await apiRequest<Array<Record<string, unknown>>>(
+                    '/api/children',
+                    { token }
+                );
+                coachChildren = (childrenRes.data as Array<Record<string, unknown>>) || [];
+            } catch {
+                // Non-critical — coach may have no children
+            }
+
+            // Fetch pending availability requests for the coach's children
+            let childAvailabilityRequests: unknown[] = [];
+            if (coachChildren.length > 0) {
+                try {
+                    const availRes = await apiRequest<unknown[]>(
+                        '/api/availability-requests/pending',
+                        { token }
+                    );
+                    const pendingRequests = availRes.data || [];
+
+                    // Enrich each request with child data and existing response status
+                    const enriched: unknown[] = [];
+                    for (const rawReq of pendingRequests as Array<Record<string, unknown>>) {
+                        if (rawReq.children && Array.isArray(rawReq.children) && (rawReq.children as unknown[]).length > 0) {
+                            enriched.push(rawReq);
+                            continue;
+                        }
+
+                        let existingResponses: Array<Record<string, unknown>> = [];
+                        try {
+                            const detailRes = await apiRequest<Record<string, unknown>>(
+                                `/api/availability-requests/${rawReq.id}`,
+                                { token }
+                            );
+                            if (detailRes.success && detailRes.data) {
+                                existingResponses = (detailRes.data.responses || []) as Array<Record<string, unknown>>;
+                            }
+                        } catch {
+                            // Continue without response data
+                        }
+
+                        const statusByChildId = new Map<string, string>();
+                        for (const resp of existingResponses) {
+                            if (resp.child_id) {
+                                statusByChildId.set(String(resp.child_id), String(resp.status));
+                            }
+                        }
+
+                        const pendingChildren = coachChildren
+                            .filter((child) => !statusByChildId.has(String(child.id)))
+                            .map((child) => ({
+                                id: child.id,
+                                first_name: child.first_name,
+                                last_name: child.last_name,
+                                current_status: null,
+                            }));
+
+                        if (pendingChildren.length === 0) {
+                            continue;
+                        }
+
+                        enriched.push({ ...rawReq, children: pendingChildren });
+                    }
+                    childAvailabilityRequests = enriched;
+                } catch {
+                    // Non-critical
+                }
+            }
+
             res.render('dashboard/coach.njk', {
-                title: 'Coach Dashboard — Norstar',
+                title: 'Coach / Team Manager Dashboard — Norstar',
                 teams: dashData.teams || [],
                 pendingRegistrations: dashData.pendingRegistrations || [],
                 games: dashData.upcomingGames || dashData.games || [],
                 availabilityCount,
+                children: coachChildren,
+                childAvailabilityRequests,
                 isImpersonating,
                 realRole: user.role,
                 viewAsRole: viewAsRole || null,
@@ -156,12 +229,12 @@ router.get('/', async (req: Request, res: Response) => {
                 children = Array.isArray(childrenPayload)
                     ? childrenPayload
                     : childrenPayload && typeof childrenPayload === 'object'
-                    ? ((childrenPayload as Record<string, unknown>).data as unknown[]) ||
-                      ((childrenPayload as Record<string, unknown>).children as unknown[]) ||
-                      ((childrenPayload as Record<string, unknown>).items as unknown[]) ||
-                      ((childrenPayload as Record<string, unknown>).rows as unknown[]) ||
-                      []
-                    : [];
+                        ? ((childrenPayload as Record<string, unknown>).data as unknown[]) ||
+                        ((childrenPayload as Record<string, unknown>).children as unknown[]) ||
+                        ((childrenPayload as Record<string, unknown>).items as unknown[]) ||
+                        ((childrenPayload as Record<string, unknown>).rows as unknown[]) ||
+                        []
+                        : [];
             } catch (err) {
                 console.warn('[Admin Dashboard] Failed to fetch children:', err);
                 // Continue without children — non-critical

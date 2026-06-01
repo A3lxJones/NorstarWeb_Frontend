@@ -10,11 +10,17 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
       <div>
         <h1 class="font-heading text-3xl font-bold">
-          Coach Dashboard<span class="text-secondary">.</span>
+          Coach / Team Manager Dashboard<span class="text-secondary">.</span>
         </h1>
-        <h2>Welcome back Coach!</h2>
+        <h2>Welcome back Coach / Team Manager!</h2>
         <p class="text-base-content/60 mt-1">Manage your teams and games</p>
       </div>
+      <a href="/dashboard/children/add" class="btn btn-secondary btn-sm gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Add Child
+      </a>
     </div>
 
     {% if error %}
@@ -39,6 +45,10 @@
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
         <div class="stat-title text-xs">Availability Requests</div>
         <div class="stat-value text-2xl text-secondary">{{ availabilityCount }}</div>
+      </div>
+      <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
+        <div class="stat-title text-xs">My Children</div>
+        <div class="stat-value text-2xl text-secondary">{{ children | length }}</div>
       </div>
     </div>
 
@@ -196,6 +206,303 @@
 
     </div>
 
+    <!-- ─── My Children ─────────────────────────────────── -->
+    <div class="mt-10">
+      <h2 class="font-heading text-2xl font-bold mb-2">
+        My Children<span class="text-secondary">.</span>
+      </h2>
+      <p class="text-base-content/60 mb-6">Register and manage your own children's hockey activities</p>
+
+      {% if children.length === 0 %}
+      <div class="card bg-base-200 border border-base-300 shadow-lg">
+        <div class="card-body items-center text-center py-12">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <h3 class="font-heading text-xl font-semibold mb-2">No children registered yet</h3>
+          <p class="text-base-content/60 mb-4">Add your child to get started with team registration and availability.</p>
+          <a href="/dashboard/children/add" class="btn btn-secondary">Add Your First Child</a>
+        </div>
+      </div>
+      {% else %}
+      <div class="grid gap-6 md:grid-cols-2">
+        {% for child in children %}
+        <div class="card bg-base-200 border border-base-300 shadow-lg hover:shadow-xl transition-shadow">
+          <div class="card-body">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="card-title font-heading text-lg">
+                  {{ child.first_name }} {{ child.last_name }}
+                </h3>
+                <p class="text-base-content/60 text-sm">
+                  DOB: {{ child.date_of_birth }}
+                  {% if child.skill_level %}
+                    · <span class="badge badge-sm badge-outline">{{ child.skill_level }}</span>
+                  {% endif %}
+                  {% if child.position %}
+                    · {{ child.position }}
+                  {% endif %}
+                </p>
+              </div>
+              <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-xs">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01" />
+                  </svg>
+                </label>
+                <ul tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-300 rounded-box w-48 z-50">
+                  <li><a href="/dashboard/children/{{ child.id }}">View Details</a></li>
+                  <li><a href="/dashboard/children/{{ child.id }}/edit">Edit</a></li>
+                  <li><a href="/dashboard/children/{{ child.id }}/availability">Set Availability</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="divider my-2"></div>
+
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <span class="text-base-content/50 text-xs uppercase tracking-wide">Emergency Contact</span>
+                <p class="font-medium">{{ child.emergency_contact_name }}</p>
+                <p class="text-base-content/60">{{ child.emergency_contact_phone }}</p>
+              </div>
+              <div>
+                <span class="text-base-content/50 text-xs uppercase tracking-wide">Consent</span>
+                <p class="flex items-center gap-1">
+                  {% if child.photo_consent %}
+                    <span class="badge badge-success badge-xs"></span> Photo consent given
+                  {% else %}
+                    <span class="badge badge-warning badge-xs"></span> No photo consent
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+
+            {% if child.medical_conditions or child.allergies %}
+            <div class="mt-3 p-3 bg-warning/10 rounded-lg text-sm">
+              {% if child.medical_conditions %}
+                <p><strong>Medical:</strong> {{ child.medical_conditions }}</p>
+              {% endif %}
+              {% if child.allergies %}
+                <p><strong>Allergies:</strong> {{ child.allergies }}</p>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- ─── Availability Requests for Children ───────────── -->
+    {% if childAvailabilityRequests.length > 0 %}
+    <div class="mt-10">
+      <h2 class="font-heading text-2xl font-bold mb-2">
+        Availability Requests<span class="text-secondary">.</span>
+      </h2>
+      <p class="text-base-content/60 mb-6">Respond on behalf of your children for upcoming sessions</p>
+
+      <div class="space-y-4">
+        {% for req in childAvailabilityRequests %}
+        <div class="card bg-base-200 border border-secondary/20 shadow-lg scroll-reveal opacity-0">
+          <div class="card-body p-5">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="badge badge-sm {% if req.request_type === 'match' %}badge-primary{% elif req.request_type === 'training' %}badge-accent{% else %}badge-ghost{% endif %}">
+                    {% if req.request_type === 'other' and req.custom_request_type %}
+                      {{ req.custom_request_type }}
+                    {% else %}
+                      {{ req.request_type | capitalize }}
+                    {% endif %}
+                  </span>
+                  {% if req.team_name %}
+                  <span class="text-xs text-base-content/40">{{ req.team_name }}</span>
+                  {% endif %}
+                </div>
+                <h3 class="font-heading font-semibold text-lg">{{ req.title }}</h3>
+                <p class="text-sm text-base-content/60 mt-1">
+                  📅 {{ req.event_date }}
+                  {% if req.deadline %}
+                    · ⏰ Respond by {{ req.deadline }}
+                  {% endif %}
+                </p>
+                {% if req.notes %}
+                <p class="text-sm text-base-content/50 mt-2 italic">{{ req.notes }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if req.children and req.children.length > 0 %}
+            <div class="divider my-3 text-xs text-base-content/40">RESPOND FOR YOUR CHILDREN</div>
+            <div class="space-y-3">
+              {% for child in req.children %}
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-base-300/50 rounded-lg">
+                <div>
+                  <span class="font-medium">{{ child.first_name }} {{ child.last_name }}</span>
+                  {% if child.current_status %}
+                    <span class="ml-2 badge badge-sm
+                      {% if child.current_status === 'available' %}badge-success
+                      {% elif child.current_status === 'unavailable' %}badge-error
+                      {% elif child.current_status === 'tentative' %}badge-warning
+                      {% endif %}">
+                      {{ child.current_status | capitalize }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                {% if not child.current_status %}
+                <div class="availability-response-row flex gap-2 flex-wrap" data-request-id="{{ req.id }}" data-child-id="{{ child.id }}" data-current-status="">
+                  <button type="button" data-status="available"
+                          class="btn btn-success btn-xs gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Available
+                  </button>
+                  <button type="button" data-status="tentative"
+                          class="btn btn-warning btn-xs gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
+                    </svg>
+                    Maybe
+                  </button>
+                  <button type="button" data-status="unavailable"
+                          class="btn btn-error btn-xs gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Unavailable
+                  </button>
+                </div>
+                {% else %}
+                <div class="availability-response-row flex gap-2 flex-wrap" data-request-id="{{ req.id }}" data-child-id="{{ child.id }}" data-current-status="{{ child.current_status }}">
+                  <span class="badge badge-sm
+                    {% if child.current_status === 'available' %}badge-success
+                    {% elif child.current_status === 'unavailable' %}badge-error
+                    {% elif child.current_status === 'tentative' %}badge-warning
+                    {% endif %} current-status-badge">
+                    {{ child.current_status | capitalize }}
+                  </span>
+                  {% if child.current_status !== 'available' %}
+                  <button type="button" data-status="available" class="btn btn-success btn-xs btn-outline gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    Available
+                  </button>
+                  {% endif %}
+                  {% if child.current_status !== 'tentative' %}
+                  <button type="button" data-status="tentative" class="btn btn-warning btn-xs btn-outline gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" /></svg>
+                    Maybe
+                  </button>
+                  {% endif %}
+                  {% if child.current_status !== 'unavailable' %}
+                  <button type="button" data-status="unavailable" class="btn btn-error btn-xs btn-outline gap-1 availability-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    Unavailable
+                  </button>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ cspNonce }}">
+(function () {
+  var STATUS_CONFIG = {
+    available:   { badge: 'badge-success', label: 'Available' },
+    tentative:   { badge: 'badge-warning', label: 'Maybe' },
+    unavailable: { badge: 'badge-error',   label: 'Unavailable' }
+  };
+
+  function showToast(message, type) {
+    var container = document.getElementById('toast-container');
+    if (!container) return;
+    var alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+    var alert = document.createElement('div');
+    alert.className = 'alert ' + alertClass + ' shadow-lg text-sm py-3 px-4 animate-fade-in';
+    alert.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+        (type === 'error'
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />') +
+      '</svg>' +
+      '<span>' + message + '</span>';
+    container.appendChild(alert);
+    setTimeout(function () {
+      alert.style.opacity = '0';
+      alert.style.transition = 'opacity 0.3s ease';
+      setTimeout(function () { alert.remove(); }, 300);
+    }, 4000);
+  }
+
+  function rebuildRow(row, newStatus) {
+    row.dataset.currentStatus = newStatus;
+    row.innerHTML = '';
+    var cfg = STATUS_CONFIG[newStatus];
+    var badge = document.createElement('span');
+    badge.className = 'badge badge-sm ' + cfg.badge + ' current-status-badge';
+    badge.textContent = cfg.label;
+    row.appendChild(badge);
+    var allStatuses = ['available', 'tentative', 'unavailable'];
+    allStatuses.forEach(function (s) {
+      if (s === newStatus) return;
+      var btnCfg = STATUS_CONFIG[s];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.status = s;
+      btn.className = 'btn btn-xs btn-outline gap-1 availability-btn btn-' +
+        (s === 'available' ? 'success' : s === 'tentative' ? 'warning' : 'error');
+      btn.textContent = btnCfg.label;
+      row.appendChild(btn);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.availability-btn');
+    if (!btn) return;
+    var row = btn.closest('.availability-response-row');
+    if (!row) return;
+    var requestId = row.dataset.requestId;
+    var childId   = row.dataset.childId;
+    var status    = btn.dataset.status;
+    if (!requestId || !childId || !status) return;
+    var buttons = row.querySelectorAll('.availability-btn');
+    buttons.forEach(function (b) { b.disabled = true; b.classList.add('loading', 'loading-xs'); });
+    fetch('/dashboard/availability/' + encodeURIComponent(requestId) + '/respond', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ child_id: childId, status: status })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.success) {
+        rebuildRow(row, status);
+        showToast('Availability recorded successfully.', 'success');
+      } else {
+        showToast(data.error || 'Something went wrong. Please try again.', 'error');
+        buttons.forEach(function (b) { b.disabled = false; b.classList.remove('loading', 'loading-xs'); });
+      }
+    })
+    .catch(function () {
+      showToast('Network error — please check your connection and try again.', 'error');
+      buttons.forEach(function (b) { b.disabled = false; b.classList.remove('loading', 'loading-xs'); });
+    });
+  });
+})();
+</script>
 {% endblock %}

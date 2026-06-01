@@ -2,13 +2,9 @@
 
 {% block content %}
 
-<section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
-  <!-- Background effects -->
-  <div class="absolute inset-0 bg-gradient-to-b from-base-100 via-primary/5 to-base-100"></div>
-  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-float"></div>
-  <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s;"></div>
+<section class="min-h-[80vh] flex items-center justify-center bg-base-200/40">
 
-  <div class="relative z-10 text-center px-4 max-w-2xl mx-auto">
+  <div class="relative z-10 text-center px-4 max-w-2xl mx-auto py-16">
     <!-- Large 404 -->
     <div class="scroll-reveal opacity-0 relative mb-6">
       <h1 class="font-heading text-[10rem] md:text-[14rem] font-bold text-secondary/10 leading-none select-none">404</h1>
@@ -29,13 +25,13 @@
 
     <!-- Action buttons -->
     <div class="scroll-reveal opacity-0 flex flex-col sm:flex-row gap-3 justify-center mb-16">
-      <a href="/" class="btn btn-secondary gap-2 hover:scale-105 transition-all duration-300 shadow-lg shadow-secondary/20">
+      <a href="/" class="btn btn-secondary gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
         Back to Home
       </a>
-      <a href="/contact" class="btn btn-outline btn-secondary gap-2 hover:scale-105 transition-all duration-300">
+      <a href="/contact" class="btn btn-outline btn-secondary gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>

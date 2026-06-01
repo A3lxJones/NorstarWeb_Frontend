@@ -2,16 +2,12 @@
 
 {% block content %}
 
-<section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
-  <!-- Background decoration -->
-  <div class="absolute inset-0 bg-gradient-to-br from-base-100 via-primary/10 to-base-100"></div>
-  <div class="absolute top-20 right-20 w-72 h-72 bg-secondary/5 rounded-full blur-3xl animate-float"></div>
-  <div class="absolute bottom-20 left-20 w-72 h-72 bg-accent/5 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+<section class="min-h-[80vh] flex items-center justify-center bg-base-200/40 py-12">
 
-  <div class="relative z-10 w-full max-w-md mx-auto px-4 py-12">
+  <div class="relative z-10 w-full max-w-md mx-auto px-4">
     <!-- Login card -->
-    <div class="scroll-reveal opacity-0 card bg-base-200 border border-base-300 shadow-2xl">
-      <div class="card-body p-8">
+    <div class="scroll-reveal opacity-0 bg-base-100 border border-base-300 rounded-box">
+      <div class="p-8">
         <!-- Header -->
         <div class="text-center mb-6">
           <h1 class="font-heading text-3xl font-bold mb-2">
@@ -73,14 +69,14 @@
           </div>
 
           <!-- Role indicator -->
-          <div class="alert bg-base-300/50 border-base-300 text-xs">
+          <div class="alert bg-base-200 border-base-300 text-xs">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span class="text-base-content/60">Members and coaches will see different dashboards based on their role.</span>
           </div>
 
-          <button type="submit" class="btn btn-secondary btn-block font-semibold gap-2 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-secondary/20">
+          <button type="submit" class="btn btn-secondary btn-block font-semibold gap-2">
             Sign In
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />

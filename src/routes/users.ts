@@ -109,8 +109,8 @@ router.get('/:id', async (req: Request, res: Response) => {
         const member = (payload && 'id' in (payload as Record<string, unknown>))
             ? (payload as UserRecord)
             : ((payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.data ||
-               (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.item ||
-               (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.row);
+                (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.item ||
+                (payload as { data?: UserRecord; item?: UserRecord; row?: UserRecord })?.row);
 
         const normalizedChildren = member?.children || member?.items || member?.rows || [];
         const normalizedMember = member
@@ -132,6 +132,8 @@ router.get('/:id', async (req: Request, res: Response) => {
         res.render('dashboard/users/detail.njk', {
             title: `${normalizedMember.full_name} — Norstar`,
             member: normalizedMember,
+            roleUpdated: req.query.roleUpdated === '1',
+            roleError: (req.query.roleError as string) || null,
         });
     } catch (error) {
         console.error('User detail error:', error);
@@ -153,17 +155,23 @@ router.post('/:id/role', async (req: Request, res: Response) => {
     }
 
     if (!role || !['parent', 'coach', 'admin'].includes(role)) {
-        res.redirect(`/dashboard/users/${userId}`);
+        res.redirect(`/dashboard/users/${userId}?roleError=Invalid+role+selected`);
         return;
     }
 
-    await apiRequest(`/api/admin/users/${userId}/role`, {
-        method: 'PATCH',
+    const result = await apiRequest(`/api/admin/users/${userId}`, {
+        method: 'PUT',
         token,
         body: { role },
     });
 
-    res.redirect(`/dashboard/users/${userId}`);
+    if (!result.success) {
+        const message = encodeURIComponent(result.error || 'Failed to update role. Please try again.');
+        res.redirect(`/dashboard/users/${userId}?roleError=${message}`);
+        return;
+    }
+
+    res.redirect(`/dashboard/users/${userId}?roleUpdated=1`);
 });
 
 export default router;
