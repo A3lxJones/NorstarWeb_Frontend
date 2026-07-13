@@ -4,66 +4,65 @@
  */
 
 interface DrillVisualizationConfig {
-    name: string;
-    category: string;
-    difficulty: string;
-    min_players: number;
-    max_players: number;
+  name: string;
+  category: string;
+  difficulty: string;
+  min_players: number;
+  max_players: number;
 }
 
 /**
  * Generate a unique SVG visualization for a drill based on its properties
  */
 export function generateDrillVisualization(config: DrillVisualizationConfig): string {
-    const { name, category, difficulty, min_players, max_players } = config;
-    const normalizedName = name.toLowerCase();
-    const normalizedCategory = category.toLowerCase();
+  const { name, category, difficulty, min_players, max_players } = config;
+  const normalizedName = name.toLowerCase();
+  const normalizedCategory = category.toLowerCase();
 
-    // Route to appropriate visualization function
-    if (normalizedCategory.includes('pass') || normalizedName.includes('pass')) {
-        return generatePassingDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('shoot') || normalizedName.includes('shoot')) {
-        return generateShootingDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('agil') || normalizedName.includes('agil') || normalizedName.includes('cone')) {
-        return generateAgilityDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('speed') || normalizedName.includes('speed')) {
-        return generateSpeedDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('cross') || normalizedName.includes('cross')) {
-        return generateCrossoverDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('stop') || normalizedName.includes('stop') || normalizedName.includes('brake')) {
-        return generateStoppingDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('footwork') || normalizedName.includes('footwork')) {
-        return generateFootworkDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('game') || normalizedName.includes('game')) {
-        return generateGameSimulationDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('defense') || normalizedName.includes('defense')) {
-        return generateDefensiveDrill(difficulty, min_players, max_players);
-    }
-    if (normalizedCategory.includes('transition') || normalizedName.includes('transition')) {
-        return generateTransitionDrill(difficulty, min_players, max_players);
-    }
+  // Route to appropriate visualization function
+  if (normalizedCategory.includes('pass') || normalizedName.includes('pass')) {
+    return generatePassingDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('shoot') || normalizedName.includes('shoot')) {
+    return generateShootingDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('agil') || normalizedName.includes('agil') || normalizedName.includes('cone')) {
+    return generateAgilityDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('speed') || normalizedName.includes('speed')) {
+    return generateSpeedDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('cross') || normalizedName.includes('cross')) {
+    return generateCrossoverDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('stop') || normalizedName.includes('stop') || normalizedName.includes('brake')) {
+    return generateStoppingDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('footwork') || normalizedName.includes('footwork')) {
+    return generateFootworkDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('game') || normalizedName.includes('game')) {
+    return generateGameSimulationDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('defense') || normalizedName.includes('defense')) {
+    return generateDefensiveDrill(difficulty, min_players, max_players);
+  }
+  if (normalizedCategory.includes('transition') || normalizedName.includes('transition')) {
+    return generateTransitionDrill(difficulty, min_players, max_players);
+  }
 
-    // Default visualization
-    return generateDefaultDrill(difficulty, min_players, max_players);
+  // Default visualization
+  return generateDefaultDrill(difficulty, min_players, max_players);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // PASSING DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generatePassingDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    const isAdvanced = difficulty === 'Advanced';
-    const numPlayers = Math.min(maxPlayers, isAdvanced ? 5 : 3);
+function generatePassingDrill(difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  const isAdvanced = difficulty === 'Advanced';
 
-    return `
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -87,8 +86,7 @@ function generatePassingDrill(difficulty: string, minPlayers: number, maxPlayers
   <circle cx="350" cy="300" r="28" fill="#a855f7" opacity="0.8"/>
   <text x="350" y="310" text-anchor="middle" fill="white" font-weight="bold" font-size="18">3</text>
   
-  ${
-    isAdvanced
+  ${isAdvanced
       ? `
   <!-- Advanced: Additional players -->
   <circle cx="550" cy="250" r="28" fill="#a855f7" opacity="0.8"/>
@@ -98,7 +96,7 @@ function generatePassingDrill(difficulty: string, minPlayers: number, maxPlayers
   <text x="750" y="260" text-anchor="middle" fill="white" font-weight="bold" font-size="18">5</text>
   `
       : ''
-  }
+    }
   
   <!-- Puck -->
   <circle cx="150" cy="250" r="8" fill="#f59e0b"/>
@@ -113,14 +111,13 @@ function generatePassingDrill(difficulty: string, minPlayers: number, maxPlayers
   <path d="M 165 240 L 335 210" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#passArrow)" stroke-dasharray="5,5"/>
   <path d="M 365 228 L 365 272" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#passArrow)" stroke-dasharray="5,5" opacity="0.6"/>
   
-  ${
-    isAdvanced
+  ${isAdvanced
       ? `
   <path d="M 365 300 Q 450 280 550 250" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#passArrow)" stroke-dasharray="5,5" opacity="0.5"/>
   <path d="M 565 235 L 735 250" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#passArrow)" stroke-dasharray="5,5" opacity="0.4"/>
   `
       : ''
-  }
+    }
   
   <!-- Labels -->
   <text x="600" y="590" text-anchor="middle" font-size="14" fill="#a855f7" font-weight="bold">Passing Drill</text>
@@ -133,10 +130,10 @@ function generatePassingDrill(difficulty: string, minPlayers: number, maxPlayers
 // SHOOTING DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateShootingDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    const isAdvanced = difficulty === 'Advanced';
+function generateShootingDrill(difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  const isAdvanced = difficulty === 'Advanced';
 
-    return `
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -160,8 +157,7 @@ function generateShootingDrill(difficulty: string, minPlayers: number, maxPlayer
   <circle cx="300" cy="350" r="28" fill="#a855f7" opacity="0.8"/>
   <text x="300" y="360" text-anchor="middle" fill="white" font-weight="bold" font-size="18">2</text>
   
-  ${
-    isAdvanced
+  ${isAdvanced
       ? `
   <!-- Advanced: Multiple shooting angles -->
   <circle cx="500" cy="200" r="28" fill="#a855f7" opacity="0.8"/>
@@ -174,7 +170,7 @@ function generateShootingDrill(difficulty: string, minPlayers: number, maxPlayer
   <text x="700" y="310" text-anchor="middle" fill="white" font-weight="bold" font-size="18">5</text>
   `
       : ''
-  }
+    }
   
   <!-- Puck at goal -->
   <circle cx="1100" cy="300" r="8" fill="#f59e0b"/>
@@ -188,13 +184,12 @@ function generateShootingDrill(difficulty: string, minPlayers: number, maxPlayer
   
   <path d="M 328 250 Q 700 280 1090 300" stroke="#f59e0b" stroke-width="3" fill="none" marker-end="url(#shotArrow)" opacity="0.7"/>
   
-  ${
-    isAdvanced
+  ${isAdvanced
       ? `
   <path d="M 328 350 Q 600 340 1090 300" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#shotArrow)" opacity="0.5" stroke-dasharray="5,5"/>
   `
       : ''
-  }
+    }
   
   <!-- Labels -->
   <text x="600" y="590" text-anchor="middle" font-size="14" fill="#a855f7" font-weight="bold">Shooting Drill</text>
@@ -207,37 +202,36 @@ function generateShootingDrill(difficulty: string, minPlayers: number, maxPlayer
 // AGILITY & CONE DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateAgilityDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    const numCones = difficulty === 'Advanced' ? 8 : difficulty === 'Intermediate' ? 5 : 3;
+function generateAgilityDrill(difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  const numCones = difficulty === 'Advanced' ? 8 : difficulty === 'Intermediate' ? 5 : 3;
 
-    return `
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
   
   <!-- Cone pattern -->
   ${Array.from({ length: numCones })
-    .map((_, i) => {
-      const x = 200 + (i % 4) * 250;
-      const y = 150 + (Math.floor(i / 4) * 250);
-      return `
+      .map((_, i) => {
+        const x = 200 + (i % 4) * 250;
+        const y = 150 + (Math.floor(i / 4) * 250);
+        return `
     <!-- Cone ${i + 1} -->
     <polygon points="${x},${y - 20} ${x + 15},${y + 15} ${x - 15},${y + 15}" fill="#f59e0b" opacity="0.7"/>
     <circle cx="${x}" cy="${y + 20}" r="10" fill="#f59e0b" opacity="0.5"/>
       `;
-    })
-    .join('')}
+      })
+      .join('')}
   
   <!-- Player path -->
   <circle cx="100" cy="300" r="28" fill="#a855f7" opacity="0.8"/>
   <text x="100" y="310" text-anchor="middle" fill="white" font-weight="bold" font-size="18">1</text>
   
   <!-- Weaving path through cones -->
-  <path d="M 130 300 Q 200 200 250 300 Q 300 400 350 300 Q 400 200 450 300 ${
-    numCones > 3
+  <path d="M 130 300 Q 200 200 250 300 Q 300 400 350 300 Q 400 200 450 300 ${numCones > 3
       ? 'Q 500 400 550 300 Q 600 200 650 300 Q 700 400 750 300'
       : ''
-  }" stroke="#a855f7" stroke-width="2" fill="none" stroke-dasharray="5,5" opacity="0.6"/>
+    }" stroke="#a855f7" stroke-width="2" fill="none" stroke-dasharray="5,5" opacity="0.6"/>
   
   <!-- Direction arrows -->
   <defs>
@@ -257,8 +251,8 @@ function generateAgilityDrill(difficulty: string, minPlayers: number, maxPlayers
 // SPEED DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateSpeedDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateSpeedDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -305,8 +299,8 @@ function generateSpeedDrill(difficulty: string, minPlayers: number, maxPlayers: 
 // CROSSOVER DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateCrossoverDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateCrossoverDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -348,8 +342,8 @@ function generateCrossoverDrill(difficulty: string, minPlayers: number, maxPlaye
 // STOPPING DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateStoppingDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateStoppingDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -392,8 +386,8 @@ function generateStoppingDrill(difficulty: string, minPlayers: number, maxPlayer
 // FOOTWORK DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateFootworkDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateFootworkDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -437,8 +431,8 @@ function generateFootworkDrill(difficulty: string, minPlayers: number, maxPlayer
 // GAME SIMULATION DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateGameSimulationDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateGameSimulationDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -482,8 +476,8 @@ function generateGameSimulationDrill(difficulty: string, minPlayers: number, max
 // DEFENSIVE DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateDefensiveDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateDefensiveDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -527,8 +521,8 @@ function generateDefensiveDrill(difficulty: string, minPlayers: number, maxPlaye
 // TRANSITION DRILLS
 // ═══════════════════════════════════════════════════════════════
 
-function generateTransitionDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+function generateTransitionDrill(_difficulty: string, _minPlayers: number, _maxPlayers: number): string {
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -582,7 +576,7 @@ function generateTransitionDrill(difficulty: string, minPlayers: number, maxPlay
 // ═══════════════════════════════════════════════════════════════
 
 function generateDefaultDrill(difficulty: string, minPlayers: number, maxPlayers: number): string {
-    return `
+  return `
 <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Court -->
   <rect x="50" y="50" width="1100" height="500" fill="none" stroke="#a855f7" stroke-width="3" rx="10"/>
@@ -590,16 +584,16 @@ function generateDefaultDrill(difficulty: string, minPlayers: number, maxPlayers
   
   <!-- Generic players based on min/max -->
   ${Array.from({ length: Math.min(maxPlayers, 5) })
-    .map((_, i) => {
-      const angle = (i / Math.min(maxPlayers, 5)) * Math.PI * 2;
-      const x = 600 + Math.cos(angle) * 150;
-      const y = 300 + Math.sin(angle) * 150;
-      return `
+      .map((_, i) => {
+        const angle = (i / Math.min(maxPlayers, 5)) * Math.PI * 2;
+        const x = 600 + Math.cos(angle) * 150;
+        const y = 300 + Math.sin(angle) * 150;
+        return `
     <circle cx="${x}" cy="${y}" r="25" fill="#a855f7" opacity="0.8"/>
     <text x="${x}" y="${y + 8}" text-anchor="middle" fill="white" font-weight="bold" font-size="16">${i + 1}</text>
       `;
-    })
-    .join('')}
+      })
+      .join('')}
   
   <!-- Center puck -->
   <circle cx="600" cy="300" r="8" fill="#f59e0b"/>

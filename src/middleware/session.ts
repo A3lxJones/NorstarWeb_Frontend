@@ -24,9 +24,22 @@ declare module "express-session" {
  * Tokens are stored in the session on the server — never exposed to the browser.
  */
 export function configureSession(app: Express): void {
+    const sessionSecret = process.env.SESSION_SECRET;
+
+    if (!sessionSecret) {
+        if (process.env.NODE_ENV === "production") {
+            throw new Error(
+                "SESSION_SECRET must be set in production. Refusing to start with an insecure default."
+            );
+        }
+        console.warn(
+            "⚠  SESSION_SECRET is not set — using an insecure development fallback. Do not use in production."
+        );
+    }
+
     app.use(
         session({
-            secret: process.env.SESSION_SECRET || "norstar-dev-secret",
+            secret: sessionSecret || "norstar-dev-secret",
             resave: false,
             saveUninitialized: false,
             name: "norstar.sid",
@@ -38,12 +51,4 @@ export function configureSession(app: Express): void {
             },
         })
     );
-
-    // Make session user available in all Nunjucks templates
-    app.use((req, _res, next) => {
-        if (req.app.locals) {
-            // This will be available as `user` in templates
-        }
-        next();
-    });
 }

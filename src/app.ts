@@ -140,6 +140,22 @@ configureSession(app);
 // --- Inject user into all templates ---
 app.use(injectUser);
 
+// ───────────────────────────────────────────
+// Security: Apply stricter rate limiter to form POST routes.
+// Registered BEFORE the route handlers so the limiter runs first.
+// ───────────────────────────────────────────
+app.post('/contact', formLimiter);
+app.post('/login', formLimiter);
+app.post('/signup', formLimiter);
+app.post('/forgot-password', formLimiter);
+app.post('/reset-password', formLimiter);
+app.post('/dashboard/children/add', formLimiter);
+app.post('/dashboard/users/:id/role', formLimiter);
+app.post('/dashboard/availability/create', formLimiter);
+app.post('/dashboard/availability/:id/respond', formLimiter);
+app.post('/dashboard/calendar/events', formLimiter);
+app.post('/dashboard/calendar/cleanup', formLimiter);
+
 // --- Routes ---
 app.use('/', homeRoutes);
 app.use('/fixtures', requireAuth, fixturesRoutes);
@@ -187,11 +203,6 @@ app.get('/api/auth/me', requireAuth, async (req: Request, res: Response) => {
             }
         }
 
-        // Log role change if it occurred
-        if (oldRole && oldRole !== newRole) {
-            console.log(`[Auth] Role updated for user ${req.session.user?.id}: ${oldRole} → ${newRole}`);
-        }
-
         res.json({
             success: true,
             data: {
@@ -237,11 +248,6 @@ app.post('/api/auth/refresh-role', requireAuth, async (req: Request, res: Respon
             if (result.data.full_name) {
                 req.session.user.full_name = result.data.full_name;
             }
-        }
-
-        // Log role change if it occurred
-        if (oldRole && oldRole !== newRole) {
-            console.log(`[Auth] Role updated for user ${req.session.user?.id}: ${oldRole} → ${newRole}`);
         }
 
         res.json({
@@ -305,17 +311,6 @@ app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, re
         });
     }
 });
-
-// Apply stricter rate limiter to form POST routes
-app.post('/contact', formLimiter);
-app.post('/login', formLimiter);
-app.post('/signup', formLimiter);
-app.post('/dashboard/children/add', formLimiter);
-app.post('/dashboard/users/:id/role', formLimiter);
-app.post('/dashboard/availability/create', formLimiter);
-app.post('/dashboard/availability/:id/respond', formLimiter);
-app.post('/dashboard/calendar/events', formLimiter);
-app.post('/dashboard/calendar/cleanup', formLimiter);
 
 // --- 404 Handler ---
 app.use((_req: Request, res: Response) => {
