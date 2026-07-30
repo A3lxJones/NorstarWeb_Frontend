@@ -1,5 +1,7 @@
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import { Express } from "express";
+import { getPool } from "../lib/db";
 
 /**
  * Extend the session to store auth data.
@@ -24,9 +26,46 @@ declare module "express-session" {
  * Tokens are stored in the session on the server — never exposed to the browser.
  */
 export function configureSession(app: Express): void {
+    const sessionSecret = process.env.SESSION_SECRET;
+
+    if (!sessionSecret) {
+        if (process.env.NODE_ENV === "production") {
+            throw new Error(
+                "SESSION_SECRET must be set in production. Refusing to start with an insecure default."
+            );
+        }
+        console.warn(
+            "⚠  SESSION_SECRET is not set — using an insecure development fallback. Do not use in production."
+        );
+    }
+
+    // On serverless (Vercel) the default MemoryStore is unsafe: each invocation
+    // is a separate instance, so sessions vanish between requests and memory
+    // leaks. Use a Postgres-backed store when DATABASE_URL is configured.
+    const pool = getPool();
+    let store: session.Store | undefined;
+
+    if (pool) {
+        const PgStore = connectPgSimple(session);
+        store = new PgStore({
+            pool,
+            tableName: "session",
+            createTableIfMissing: true,
+        });
+    } else if (process.env.NODE_ENV === "production") {
+        throw new Error(
+            "DATABASE_URL must be set in production — the in-memory session store is not safe on serverless."
+        );
+    } else {
+        console.warn(
+            "⚠  DATABASE_URL is not set — using the in-memory session store. Fine for local dev, unsafe in production."
+        );
+    }
+
     app.use(
         session({
-            secret: process.env.SESSION_SECRET || "norstar-dev-secret",
+            store,
+            secret: sessionSecret || "norstar-dev-secret",
             resave: false,
             saveUninitialized: false,
             name: "norstar.sid",
@@ -38,12 +77,4 @@ export function configureSession(app: Express): void {
             },
         })
     );
-
-    // Make session user available in all Nunjucks templates
-    app.use((req, _res, next) => {
-        if (req.app.locals) {
-            // This will be available as `user` in templates
-        }
-        next();
-    });
 }
