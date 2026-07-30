@@ -80,10 +80,11 @@ app.use(
 // ───────────────────────────────────────────
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 400, // limit each IP to 400 requests per window
+    max: isProd ? 1000 : 5000, // limit each IP per window (higher in dev)
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Too many requests — please try again later.',
+    skip: (req) => req.path.startsWith('/css/') || req.path.startsWith('/js/') || req.path.startsWith('/images/') || req.path.startsWith('/documents/'),
 });
 app.use(globalLimiter);
 

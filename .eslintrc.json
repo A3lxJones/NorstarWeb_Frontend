@@ -42,5 +42,17 @@
         "no-eval": "error",
         "no-implied-eval": "error",
         "no-new-func": "error"
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "src/server-api/**/*.ts"
+            ],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off",
+                "no-useless-escape": "off",
+                "no-undef": "off"
+            }
+        }
+    ]
 }

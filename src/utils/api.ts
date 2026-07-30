@@ -1,9 +1,14 @@
 /**
- * API client — makes requests from the frontend server to the backend API.
- * The browser never talks to the backend directly.
+ * API client — dispatches requests to the merged, in-process API.
+ *
+ * By default requests are injected directly into the in-process API app
+ * (src/server-api) with no network hop. When API_URL is set (e.g. the e2e
+ * suite pointing at the mock backend) requests go over HTTP instead. The
+ * browser never talks to the API directly either way.
  */
 
-const API_URL = process.env.API_URL || "http://localhost:3000";
+// Set only in environments that want the HTTP transport (e.g. e2e tests).
+const API_URL = process.env.API_URL;
 
 interface ApiResponse<T = unknown> {
     success: boolean;
@@ -39,14 +44,30 @@ export async function apiRequest<T = unknown>(
     }
 
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, {
+        // HTTP transport — used when an external API URL is configured.
+        if (API_URL) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : undefined,
+            });
+            return (await response.json()) as ApiResponse<T>;
+        }
+
+        // In-process transport — dispatch straight into the merged API app.
+        const { dispatch } = await import("../server-api/dispatch");
+        const { default: apiApp } = await import("../server-api");
+
+        const res = await dispatch(apiApp, {
             method,
+            url: endpoint,
             headers,
-            body: body ? JSON.stringify(body) : undefined,
+            payload: body ? JSON.stringify(body) : undefined,
         });
 
-        const data = (await response.json()) as ApiResponse<T>;
-        return data;
+        return (res.payload
+            ? JSON.parse(res.payload)
+            : { success: false, error: "Empty response from the server." }) as ApiResponse<T>;
     } catch (error) {
         console.error(`API request failed: ${endpoint}`, error);
         return {

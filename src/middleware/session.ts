@@ -1,5 +1,7 @@
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import { Express } from "express";
+import { getPool } from "../lib/db";
 
 /**
  * Extend the session to store auth data.
@@ -37,8 +39,32 @@ export function configureSession(app: Express): void {
         );
     }
 
+    // On serverless (Vercel) the default MemoryStore is unsafe: each invocation
+    // is a separate instance, so sessions vanish between requests and memory
+    // leaks. Use a Postgres-backed store when DATABASE_URL is configured.
+    const pool = getPool();
+    let store: session.Store | undefined;
+
+    if (pool) {
+        const PgStore = connectPgSimple(session);
+        store = new PgStore({
+            pool,
+            tableName: "session",
+            createTableIfMissing: true,
+        });
+    } else if (process.env.NODE_ENV === "production") {
+        throw new Error(
+            "DATABASE_URL must be set in production — the in-memory session store is not safe on serverless."
+        );
+    } else {
+        console.warn(
+            "⚠  DATABASE_URL is not set — using the in-memory session store. Fine for local dev, unsafe in production."
+        );
+    }
+
     app.use(
         session({
+            store,
             secret: sessionSecret || "norstar-dev-secret",
             resave: false,
             saveUninitialized: false,
