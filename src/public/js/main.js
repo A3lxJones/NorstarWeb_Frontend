@@ -9,7 +9,35 @@ document.addEventListener('DOMContentLoaded', () => {
     highlightActiveNav();
     initCookieBanner();
     initLoginModal();
+    initInteractionGuards();
 });
+
+/* ═══════════════════════════════════════════
+   Interaction Guards (CSP-safe replacements for inline handlers)
+   - data-confirm="msg"      on a form/submit button → confirm() before submit
+   - data-close-modal="id"   on a button → closes the <dialog id="id">
+   ═══════════════════════════════════════════ */
+function initInteractionGuards() {
+    // Confirmation prompts on form submission.
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || form.tagName !== 'FORM') return;
+        var message =
+            (e.submitter && e.submitter.getAttribute('data-confirm')) ||
+            form.getAttribute('data-confirm');
+        if (message && !window.confirm(message)) {
+            e.preventDefault();
+        }
+    });
+
+    // Close a <dialog> from a plain button.
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-close-modal]');
+        if (!trigger) return;
+        var dialog = document.getElementById(trigger.getAttribute('data-close-modal'));
+        if (dialog && typeof dialog.close === 'function') dialog.close();
+    });
+}
 
 /* ═══════════════════════════════════════════
    Scroll Reveal — IntersectionObserver

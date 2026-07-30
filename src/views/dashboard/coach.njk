@@ -126,13 +126,14 @@
       <!-- Teams section -->
       <div>
         <div class="flex items-center justify-between mb-4">
-          <h2 class="font-heading text-xl font-semibold">Your Teams</h2>
+          <h2 class="font-heading text-xl font-semibold">Teams</h2>
+          <a href="/dashboard/teams" class="btn btn-ghost btn-xs">View all</a>
         </div>
 
         {% if teams.length === 0 %}
         <div class="card bg-base-200 border border-base-300">
           <div class="card-body text-center py-8">
-            <p class="text-base-content/60">No teams assigned yet.</p>
+            <p class="text-base-content/60">No teams yet.</p>
           </div>
         </div>
         {% else %}
@@ -209,9 +210,9 @@
     <!-- ─── My Children ─────────────────────────────────── -->
     <div class="mt-10">
       <h2 class="font-heading text-2xl font-bold mb-2">
-        My Children<span class="text-secondary">.</span>
+        Teams/Player Information<span class="text-secondary">.</span>
       </h2>
-      <p class="text-base-content/60 mb-6">Register and manage your own children's hockey activities</p>
+      <p class="text-base-content/60 mb-6">Your teams information.</p>
 
       {% if children.length === 0 %}
       <div class="card bg-base-200 border border-base-300 shadow-lg">
@@ -236,11 +237,8 @@
                 </h3>
                 <p class="text-base-content/60 text-sm">
                   DOB: {{ child.date_of_birth }}
-                  {% if child.skill_level %}
-                    · <span class="badge badge-sm badge-outline">{{ child.skill_level }}</span>
-                  {% endif %}
                   {% if child.position %}
-                    · {{ child.position }}
+                    · {{ child.position | capitalize }}
                   {% endif %}
                 </p>
               </div>

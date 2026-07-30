@@ -94,12 +94,11 @@ async function getParentDashboard(userId: string) {
 
 // ─── Coach dashboard ────────────────────────────────────────
 
-async function getCoachDashboard(userId: string) {
-    // 1. Teams this coach manages
+async function getCoachDashboard(_userId: string) {
+    // 1. All teams — coaches can view and manage every team in the club
     const { data: teams } = await supabaseAdmin
         .from("teams")
-        .select("*")
-        .eq("coach_id", userId)
+        .select("*, coach:profiles(id, full_name, email)")
         .order("name");
 
     const teamIds = (teams || []).map((t: { id: string }) => t.id);

@@ -110,26 +110,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="form-control">
-                <label class="label" for="edit-skill">
-                  <span class="label-text font-medium">Skill Level</span>
-                </label>
-                <select id="edit-skill" name="skill_level"
-                        class="select select-bordered w-full focus:select-secondary transition-colors">
-                  <option value="" {% if not child.skill_level %}selected{% endif %}>Select level</option>
-                  <option value="beginner" {% if child.skill_level == 'beginner' %}selected{% endif %}>Beginner</option>
-                  <option value="intermediate" {% if child.skill_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
-                  <option value="advanced" {% if child.skill_level == 'advanced' %}selected{% endif %}>Advanced</option>
-                </select>
-              </div>
-              <div class="form-control">
                 <label class="label" for="edit-position">
-                  <span class="label-text font-medium">Preferred Position</span>
+                  <span class="label-text font-medium">Player Type</span>
                 </label>
                 <select id="edit-position" name="position"
                         class="select select-bordered w-full focus:select-secondary transition-colors">
-                  <option value="" {% if not child.position %}selected{% endif %}>Select position</option>
-                  <option value="forward" {% if child.position == 'forward' %}selected{% endif %}>Forward</option>
-                  <option value="defense" {% if child.position == 'defense' %}selected{% endif %}>Defence</option>
+                  <option value="" {% if not child.position %}selected{% endif %}>Select type</option>
+                  <option value="player" {% if child.position == 'player' %}selected{% endif %}>Player</option>
                   <option value="goalie" {% if child.position == 'goalie' %}selected{% endif %}>Goalie</option>
                 </select>
               </div>

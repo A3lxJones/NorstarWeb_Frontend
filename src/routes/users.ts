@@ -15,7 +15,6 @@ interface UserChild {
     first_name: string;
     last_name: string;
     date_of_birth: string;
-    skill_level?: string;
     position?: string;
 }
 

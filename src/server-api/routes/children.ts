@@ -286,9 +286,9 @@ router.put("/:id", async (req: Request, res: Response): Promise<void> => {
 
 /**
  * PATCH /api/children/:id/team-details
- * Coaches can update skill_level and position for children in their team.
+ * Coaches can update the player type for children in their team.
  * Admins can update any child.
- * Body: { skill_level?: "beginner" | "intermediate" | "advanced", position?: string }
+ * Body: { position?: "player" | "goalie" }
  */
 router.patch(
     "/:id/team-details",
@@ -299,23 +299,13 @@ router.patch(
             return;
         }
 
-        const { skill_level, position } = req.body;
+        const { position } = req.body;
 
-        // Validate that at least one field is provided
-        if (skill_level === undefined && position === undefined) {
+        // Validate that a field is provided
+        if (position === undefined) {
             res.status(400).json({
                 success: false,
-                error: "At least one of skill_level or position must be provided",
-            } as ApiResponse);
-            return;
-        }
-
-        // Validate skill_level if provided
-        const validSkillLevels = ["beginner", "intermediate", "advanced"];
-        if (skill_level !== undefined && !validSkillLevels.includes(skill_level)) {
-            res.status(400).json({
-                success: false,
-                error: `skill_level must be one of: ${validSkillLevels.join(", ")}`,
+                error: "position must be provided",
             } as ApiResponse);
             return;
         }
@@ -344,7 +334,6 @@ router.patch(
         const updatePayload: Record<string, unknown> = {
             updated_at: new Date().toISOString(),
         };
-        if (skill_level !== undefined) updatePayload.skill_level = skill_level;
         if (position !== undefined) updatePayload.position = position;
 
         const { data, error } = await supabaseAdmin

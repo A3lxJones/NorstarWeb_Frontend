@@ -115,7 +115,7 @@
               </select>
             </div>
             <button type="submit" class="btn btn-secondary btn-sm gap-1 hover:scale-[1.02] transition-all"
-                    onclick="return confirm('Change this user\'s role? This will affect their access permissions.')">
+                    data-confirm="Change this user's role? This will affect their access permissions.">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
@@ -150,9 +150,6 @@
                   </p>
                 </div>
                 <div class="flex gap-1">
-                  {% if child.skill_level %}
-                  <span class="badge badge-xs badge-outline badge-secondary">{{ child.skill_level | capitalize }}</span>
-                  {% endif %}
                   {% if child.position %}
                   <span class="badge badge-xs badge-ghost">{{ child.position | capitalize }}</span>
                   {% endif %}

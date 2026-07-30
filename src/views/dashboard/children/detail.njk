@@ -67,17 +67,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="text-base-content/50 text-xs uppercase tracking-wide">Skill Level</span>
-            <p class="font-medium mt-0.5">
-              {% if child.skill_level %}
-                <span class="badge badge-sm badge-outline badge-secondary">{{ child.skill_level | capitalize }}</span>
-              {% else %}
-                <span class="text-base-content/40">Not set</span>
-              {% endif %}
-            </p>
-          </div>
-          <div>
-            <span class="text-base-content/50 text-xs uppercase tracking-wide">Position</span>
+            <span class="text-base-content/50 text-xs uppercase tracking-wide">Player Type</span>
             <p class="font-medium mt-0.5">
               {% if child.position %}
                 {{ child.position | capitalize }}
@@ -230,7 +220,7 @@
         <form action="/dashboard/children/{{ child.id }}/delete" method="POST" class="inline">
           <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" />
           <button type="submit" class="btn btn-error btn-sm btn-outline gap-1 hover:scale-[1.02] transition-all"
-                  onclick="return confirm('Are you sure you want to remove {{ child.first_name }}? This cannot be undone.')">
+                  data-confirm="Are you sure you want to remove {{ child.first_name }}? This cannot be undone.">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>

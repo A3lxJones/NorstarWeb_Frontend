@@ -14,7 +14,6 @@ interface ChildRecord {
     first_name: string;
     last_name: string;
     date_of_birth: string;
-    skill_level?: string;
     position?: string;
     emergency_contact_name?: string;
     emergency_contact_phone?: string;
@@ -120,7 +119,6 @@ router.post('/add', async (req: Request, res: Response) => {
         last_name,
         date_of_birth,
         gender,
-        skill_level,
         position,
         emergency_contact_name,
         emergency_contact_phone,
@@ -141,7 +139,6 @@ router.post('/add', async (req: Request, res: Response) => {
         last_name,
         date_of_birth,
         gender,
-        skill_level,
         position,
         emergency_contact_name,
         emergency_contact_phone,
@@ -178,7 +175,6 @@ router.post('/add', async (req: Request, res: Response) => {
             last_name: last_name.trim(),
             date_of_birth,
             gender: gender || undefined,
-            skill_level: skill_level || undefined,
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
@@ -283,7 +279,6 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         last_name,
         date_of_birth,
         gender,
-        skill_level,
         position,
         emergency_contact_name,
         emergency_contact_phone,
@@ -304,7 +299,6 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         last_name,
         date_of_birth,
         gender,
-        skill_level,
         position,
         emergency_contact_name,
         emergency_contact_phone,
@@ -341,7 +335,6 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
             last_name: last_name.trim(),
             date_of_birth,
             gender: gender || undefined,
-            skill_level: skill_level || undefined,
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
