@@ -25,7 +25,6 @@ export interface Child {
     emergency_contact_phone: string;
     emergency_contact_relationship: string;
     photo_consent: boolean;
-    skill_level: "beginner" | "intermediate" | "advanced" | null;
     position: string | null;
     created_at: string;
     updated_at: string;
@@ -42,7 +41,6 @@ export interface CreateChildDTO {
     emergency_contact_phone: string;
     emergency_contact_relationship: string;
     photo_consent: boolean;
-    skill_level?: "beginner" | "intermediate" | "advanced";
     position?: string;
 }
 

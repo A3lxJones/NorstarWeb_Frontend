@@ -272,11 +272,11 @@ app.post('/api/auth/refresh-role', requireAuth, async (req: Request, res: Respon
     }
 });
 
-// ─── PATCH /api/children/:id/team-details — update child skill level & position ───
+// ─── PATCH /api/children/:id/team-details — update child player type ───
 app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
     const childId = req.params.id;
-    const { skill_level, position } = req.body;
+    const { position } = req.body;
 
     try {
         const result = await apiRequest<unknown>(
@@ -285,7 +285,6 @@ app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, re
                 method: 'PATCH',
                 token,
                 body: {
-                    skill_level: skill_level || undefined,
                     position: position || undefined,
                 },
             }

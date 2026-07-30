@@ -113,30 +113,15 @@
             </h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Skill Level -->
-              <div class="form-control">
-                <label class="label" for="child-skill">
-                  <span class="label-text font-medium">Skill Level</span>
-                </label>
-                <select id="child-skill" name="skill_level"
-                        class="select select-bordered w-full focus:select-secondary transition-colors">
-                  <option value="" {% if not values.skill_level %}selected{% endif %}>Select level</option>
-                  <option value="beginner" {% if values.skill_level == 'beginner' %}selected{% endif %}>Beginner</option>
-                  <option value="intermediate" {% if values.skill_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
-                  <option value="advanced" {% if values.skill_level == 'advanced' %}selected{% endif %}>Advanced</option>
-                </select>
-              </div>
-
-              <!-- Position -->
+              <!-- Player Type -->
               <div class="form-control">
                 <label class="label" for="child-position">
-                  <span class="label-text font-medium">Preferred Position</span>
+                  <span class="label-text font-medium">Player Type</span>
                 </label>
                 <select id="child-position" name="position"
                         class="select select-bordered w-full focus:select-secondary transition-colors">
-                  <option value="" {% if not values.position %}selected{% endif %}>Select position</option>
-                  <option value="forward" {% if values.position == 'forward' %}selected{% endif %}>Forward</option>
-                  <option value="defense" {% if values.position == 'defense' %}selected{% endif %}>Defence</option>
+                  <option value="" {% if not values.position %}selected{% endif %}>Select type</option>
+                  <option value="player" {% if values.position == 'player' %}selected{% endif %}>Player</option>
                   <option value="goalie" {% if values.position == 'goalie' %}selected{% endif %}>Goalie</option>
                 </select>
               </div>

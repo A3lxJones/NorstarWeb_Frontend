@@ -68,7 +68,7 @@ router.get("/users", async (req: Request, res: Response): Promise<void> => {
             if (profile.role === "parent") {
                 const { data: children } = await supabaseAdmin
                     .from("children")
-                    .select("id, first_name, last_name, date_of_birth, gender, skill_level")
+                    .select("id, first_name, last_name, date_of_birth, gender, position")
                     .eq("parent_id", profile.id);
 
                 return {
@@ -378,7 +378,6 @@ router.get("/children", async (req: Request, res: Response): Promise<void> => {
         const page = Math.max(parseInt(String(req.query.page ?? "1"), 10) || 1, 1);
         const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? "25"), 10) || 25, 1), 100);
         const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
-        const skillLevel = typeof req.query.skillLevel === "string" ? req.query.skillLevel : undefined;
 
         let query = supabaseAdmin
             .from("children")
@@ -388,7 +387,6 @@ router.get("/children", async (req: Request, res: Response): Promise<void> => {
                 last_name, 
                 date_of_birth, 
                 gender, 
-                skill_level, 
                 position, 
                 medical_conditions, 
                 allergies,
@@ -401,11 +399,6 @@ router.get("/children", async (req: Request, res: Response): Promise<void> => {
                 updated_at`,
                 { count: "exact" }
             );
-
-        // Filter by skill level if provided
-        if (skillLevel && ["beginner", "intermediate", "advanced"].includes(skillLevel)) {
-            query = query.eq("skill_level", skillLevel);
-        }
 
         // Search by name
         if (search) {
@@ -437,7 +430,6 @@ router.get("/children", async (req: Request, res: Response): Promise<void> => {
                 hasNextPage: page * limit < (total || 0),
                 hasPrevPage: page > 1,
                 search: search || null,
-                skillLevel: skillLevel || null,
             },
         } as ApiResponse & { items: any[]; rows: any[] };
 
