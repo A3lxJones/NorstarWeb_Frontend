@@ -26,11 +26,27 @@ export function getPool(): Pool | undefined {
         return undefined;
     }
 
+    // Fail fast with a clear message. pg parses this with `new URL()` deep in a
+    // request, surfacing only a cryptic "Invalid URL" 500. Common causes: an
+    // unreplaced `[YOUR-PASSWORD]` placeholder, unencoded special characters in
+    // the password, or stray quotes/whitespace.
+    try {
+        new URL(connectionString);
+    } catch {
+        throw new Error(
+            'DATABASE_URL is malformed and cannot be parsed as a URL. Expected ' +
+            'postgres://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres ' +
+            '— check for a leftover [YOUR-PASSWORD] placeholder, unencoded special ' +
+            'characters in the password, or surrounding quotes/whitespace.'
+        );
+    }
+
     pool = new Pool({
         connectionString,
-        // Supabase requires TLS. In production verify the chain; the pooler
-        // presents a valid certificate.
-        ssl: { rejectUnauthorized: true },
+        // Supabase's pooler cert doesn't chain to a CA in Node's default trust
+        // store, so strict verification fails with "self-signed certificate in
+        // certificate chain". Traffic stays TLS-encrypted; chain check is skipped.
+        ssl: { rejectUnauthorized: false },
         max: 5,
         idleTimeoutMillis: 10_000,
         connectionTimeoutMillis: 10_000,
