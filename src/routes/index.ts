@@ -10,8 +10,8 @@ router.get('/', (_req: Request, res: Response) => {
         heroCta: 'Join Us Today',
         programs: [
             {
-                name: 'Junior U13',
-                description: 'Competitive inline hockey for players under 13. Develop skills, teamwork, and a love for the game.',
+                name: 'Junior U12/U14',
+                description: 'Competitive inline hockey for our U12 and U14 players. Develop skills, teamwork, and a love for the game.',
                 icon: '🏒',
             },
             {
@@ -21,7 +21,7 @@ router.get('/', (_req: Request, res: Response) => {
             },
             {
                 name: 'Learn to Skate',
-                description: 'Master the fundamentals of inline skating in a fun, supportive environment.',
+                description: 'Master the fundamentals of inline skating in a fun, supportive environment.ss',
                 icon: '⛸️',
             },
         ],
@@ -32,9 +32,9 @@ router.get('/', (_req: Request, res: Response) => {
                 excerpt: 'Registration for the upcoming spring season is now open. Secure your spot today!',
             },
             {
-                title: 'U13s Win Regional Cup',
+                title: 'U14s Win Regional Cup',
                 date: '05 Feb 2026',
-                excerpt: 'Our Junior U13 team claimed victory at the regional cup with an outstanding performance.',
+                excerpt: 'Our Junior U14 team claimed victory at the regional cup with an outstanding performance.',
             },
             {
                 title: 'New Coaching Staff Announced',

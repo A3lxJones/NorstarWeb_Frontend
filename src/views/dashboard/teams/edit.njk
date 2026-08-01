@@ -38,7 +38,7 @@
             </label>
             <input type="text" id="team-name" name="name"
                    value="{{ values.name or '' }}"
-                   placeholder="e.g. Norstar U13 Academy"
+                   placeholder="e.g. Norstar U14 Academy"
                    class="input input-bordered w-full focus:input-secondary transition-colors"
                    required maxlength="100" />
           </div>
@@ -51,8 +51,8 @@
             <select id="team-age-group" name="age_group" class="select select-bordered w-full focus:select-secondary transition-colors" required>
               <option value="" disabled>Select age group</option>
               <option value="learn_to_play" {% if values.age_group === 'learn_to_play' %}selected{% endif %}>Learn to Play</option>
-              <option value="u13" {% if values.age_group === 'u13' %}selected{% endif %}>Under 13</option>
-              <option value="u15" {% if values.age_group === 'u15' %}selected{% endif %}>Under 15</option>
+              <option value="u12" {% if values.age_group === 'u12' %}selected{% endif %}>Under 12</option>
+              <option value="u14" {% if values.age_group === 'u14' %}selected{% endif %}>Under 14</option>
             </select>
           </div>
 

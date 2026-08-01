@@ -164,7 +164,7 @@ router.get("/:id/registrations", async (req: Request, res: Response): Promise<vo
  */
 router.post(
     "/",
-    authorize("parent"),
+    authorize("parent", "coach", "admin"),
     async (req: Request, res: Response): Promise<void> => {
         const missing = getMissingFields(req.body, REQUIRED_CHILD_FIELDS);
         if (missing.length > 0) {
