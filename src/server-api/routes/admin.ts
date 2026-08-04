@@ -62,23 +62,18 @@ router.get("/users", async (req: Request, res: Response): Promise<void> => {
         );
     }
 
-    // For each parent, fetch their children
+    // Fetch children for every user by parent_id — coaches (and other roles)
+    // can also be the guardian who added a child, not just "parent" accounts.
     const usersWithChildren = await Promise.all(
         filtered.map(async (profile) => {
-            if (profile.role === "parent") {
-                const { data: children } = await supabaseAdmin
-                    .from("children")
-                    .select("id, first_name, last_name, date_of_birth, gender, position")
-                    .eq("parent_id", profile.id);
+            const { data: children } = await supabaseAdmin
+                .from("children")
+                .select("id, first_name, last_name, date_of_birth, gender, position")
+                .eq("parent_id", profile.id);
 
-                return {
-                    ...profile,
-                    ...normalizeChildrenPayload(children || []),
-                };
-            }
             return {
                 ...profile,
-                ...normalizeChildrenPayload([]),
+                ...normalizeChildrenPayload(children || []),
             };
         })
     );
@@ -113,25 +108,18 @@ router.get("/users/:id", async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    // Fetch children if this is a parent
-    let userData: any = profile;
-    if (profile.role === "parent") {
-        const { data: children } = await supabaseAdmin
-            .from("children")
-            .select("*")
-            .eq("parent_id", profile.id)
-            .order("created_at", { ascending: false });
+    // Fetch children by parent_id regardless of role — coaches can also be the
+    // guardian who added a child, so we must not gate this on role === "parent".
+    const { data: children } = await supabaseAdmin
+        .from("children")
+        .select("*")
+        .eq("parent_id", profile.id)
+        .order("created_at", { ascending: false });
 
-        userData = {
-            ...profile,
-            ...normalizeChildrenPayload(children || []),
-        };
-    } else {
-        userData = {
-            ...profile,
-            ...normalizeChildrenPayload([]),
-        };
-    }
+    const userData: any = {
+        ...profile,
+        ...normalizeChildrenPayload(children || []),
+    };
 
     const responsePayload = {
         success: true,
