@@ -53,6 +53,15 @@
                 "no-useless-escape": "off",
                 "no-undef": "off"
             }
+        },
+        {
+            "files": [
+                "src/public/js/**/*.js"
+            ],
+            "env": {
+                "browser": true,
+                "node": false
+            }
         }
     ]
 }

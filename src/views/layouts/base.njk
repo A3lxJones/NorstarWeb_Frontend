@@ -39,11 +39,7 @@
 
   {% include "partials/cookie-banner.njk" %}
 
-  <!-- ═══════════════════════════════════════════
-       LOGIN MODAL — functional popup
-       Only shown to non-authenticated users.
-       Can be triggered by nav button or auto-shown on first visit.
-       ═══════════════════════════════════════════ -->
+ 
   {% if not isLoggedIn %}
   <dialog id="login-modal" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box bg-base-200 border border-base-300 shadow-2xl max-w-md p-0 relative overflow-hidden">
@@ -124,10 +120,6 @@
         <div class="text-center space-y-3">
           <p class="text-xs text-base-content/40">
             Don't have an account? <a href="/signup" class="text-secondary hover:underline">Sign up</a>
-          </p>
-          <p class="text-xs text-base-content/30 flex items-center justify-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-            Secured with bcrypt, rate limiting &amp; HTTPS
           </p>
         </div>
       </div>

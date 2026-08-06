@@ -146,9 +146,6 @@ function initCookieBanner() {
 
     if (!banner || !acceptBtn) return;
 
-    // Already accepted — don't show
-    if (localStorage.getItem('norstar-cookies-accepted')) return;
-
     // Slide the banner in after a short delay
     setTimeout(function () {
         banner.classList.remove('translate-y-full');
@@ -156,7 +153,6 @@ function initCookieBanner() {
     }, 1000);
 
     acceptBtn.addEventListener('click', function () {
-        localStorage.setItem('norstar-cookies-accepted', 'true');
         banner.classList.remove('translate-y-0');
         banner.classList.add('translate-y-full');
 
@@ -193,20 +189,14 @@ function initLoginModal() {
         });
     });
 
-    // Auto-show on first visit (only if not already dismissed this session)
-    if (!sessionStorage.getItem('norstar-login-shown')) {
-        // Wait for cookie banner to settle first, then show login modal
-        var delay = localStorage.getItem('norstar-cookies-accepted') ? 1500 : 3000;
+    // Auto-show after a short delay
+    setTimeout(function () {
+        // Don't show if user is on /login or /signup page already
+        var path = window.location.pathname;
+        if (path === '/login' || path === '/signup') return;
 
-        setTimeout(function () {
-            // Don't show if user is on /login or /signup page already
-            var path = window.location.pathname;
-            if (path === '/login' || path === '/signup') return;
-
-            loginModal.showModal();
-            sessionStorage.setItem('norstar-login-shown', 'true');
-        }, delay);
-    }
+        loginModal.showModal();
+    }, 3000);
 
     // Close on Escape key (dialog handles this natively, but just in case)
     loginModal.addEventListener('keydown', function (e) {
@@ -214,48 +204,5 @@ function initLoginModal() {
             loginModal.close();
         }
     });
-
-    // Mark as shown when closed so it doesn't re-appear on navigate
-    loginModal.addEventListener('close', function () {
-        sessionStorage.setItem('norstar-login-shown', 'true');
-    });
-}
-
-/* ═══════════════════════════════════════════
-   Role Refresh — Sync user role from backend
-   ═══════════════════════════════════════════ */
-/**
- * Refresh the user's role from the backend.
- * Call this after changing a user's role in Supabase to sync permissions.
- * @returns {Promise<Object>} Response with user data and roleChanged flag
- */
-async function refreshUserRole() {
-    try {
-        const response = await fetch('/api/auth/refresh-role', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const data = await response.json();
-
-        if (data.success && data.data?.roleChanged) {
-            console.log(`✅ Role refreshed: ${data.data.oldRole} → ${data.data.newRole}`);
-            // Reload the page to apply the new role's dashboard/permissions
-            setTimeout(() => {
-                location.reload();
-            }, 500);
-            return data;
-        }
-
-        return data;
-    } catch (error) {
-        console.error('❌ Failed to refresh role:', error);
-        return {
-            success: false,
-            error: error.message,
-        };
-    }
 }
 
