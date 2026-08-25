@@ -93,7 +93,7 @@ export interface CreateGameDTO {
 }
 
 // ─── Availability ───────────────────────────────────────────
-export type AvailabilityType = "match" | "training";
+export type AvailabilityType = "match" | "training" | "other";
 export type AvailabilityStatus = "available" | "unavailable" | "tentative";
 
 export interface Availability {
@@ -126,6 +126,7 @@ export interface AvailabilityRequest {
     team_id: string;
     game_id: string | null;
     request_type: AvailabilityType;
+    custom_request_type: string | null;
     title: string;
     event_date: string;
     event_time: string | null;
@@ -142,6 +143,7 @@ export interface CreateAvailabilityRequestDTO {
     team_id: string;
     game_id?: string;
     request_type: AvailabilityType;
+    custom_request_type?: string;
     title: string;
     event_date: string;
     event_time?: string;
