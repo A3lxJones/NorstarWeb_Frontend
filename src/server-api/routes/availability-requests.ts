@@ -46,10 +46,10 @@ router.post(
             return;
         }
 
-        if (!["match", "training"].includes(req.body.request_type)) {
+        if (!["match", "training", "other"].includes(req.body.request_type)) {
             res.status(400).json({
                 success: false,
-                error: "request_type must be 'match' or 'training'",
+                error: "request_type must be 'match', 'training', or 'other'",
             } as ApiResponse);
             return;
         }
