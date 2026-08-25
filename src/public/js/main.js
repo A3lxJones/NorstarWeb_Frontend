@@ -141,10 +141,24 @@ function highlightActiveNav() {
    Cookie Consent Banner
    ═══════════════════════════════════════════ */
 function initCookieBanner() {
+    var STORAGE_KEY = 'norstar-cookie-consent';
     var banner = document.getElementById('cookie-banner');
     var acceptBtn = document.getElementById('cookie-accept');
 
     if (!banner || !acceptBtn) return;
+
+    // Already accepted in a previous visit — don't show again
+    var consented = false;
+    try {
+        consented = localStorage.getItem(STORAGE_KEY) === 'accepted';
+    } catch (e) {
+        // localStorage unavailable (private mode); fall back to showing banner
+    }
+
+    if (consented) {
+        banner.remove();
+        return;
+    }
 
     // Slide the banner in after a short delay
     setTimeout(function () {
@@ -153,6 +167,12 @@ function initCookieBanner() {
     }, 1000);
 
     acceptBtn.addEventListener('click', function () {
+        try {
+            localStorage.setItem(STORAGE_KEY, 'accepted');
+        } catch (e) {
+            // Ignore storage failures; banner will reappear next visit
+        }
+
         banner.classList.remove('translate-y-0');
         banner.classList.add('translate-y-full');
 
