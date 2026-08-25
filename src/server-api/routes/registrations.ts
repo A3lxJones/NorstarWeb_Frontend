@@ -81,39 +81,7 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Notify coaches/managers: find recipients (profiles.role = 'coach') and team_managers
-        const { data: coaches } = await supabaseAdmin.from("profiles").select("email").eq("role", "coach");
-        const { data: managers } = await supabaseAdmin.from("team_managers").select("email");
-
-        const recipients = new Set<string>();
-        if (Array.isArray(coaches)) {
-            for (const c of coaches) if ((c as any).email) recipients.add((c as any).email);
-        }
-        if (Array.isArray(managers)) {
-            for (const m of managers) if ((m as any).email) recipients.add((m as any).email);
-        }
-
-        const recipientArray = Array.from(recipients);
-        if (recipientArray.length > 0) {
-            const notifications = recipientArray.map((email) => ({
-                registration_id: (inserted as any).id,
-                recipient_email: email,
-                payload: {
-                    registration: {
-                        id: (inserted as any).id,
-                        player_name: (inserted as any).player_name,
-                        player_email: (inserted as any).player_email,
-                        created_at: (inserted as any).created_at,
-                    },
-                },
-            }));
-
-            const { error: notifError } = await supabaseAdmin.from("registration_notifications").insert(notifications);
-            if (notifError) {
-                console.error("Failed to create notifications:", notifError);
-                // not fatal — continue
-            }
-        }
+        // MVP: store registration only. Notifications/emailing are intentionally omitted.
 
         res.json({ success: true, data: inserted } as ApiResponse);
     } catch (err) {
