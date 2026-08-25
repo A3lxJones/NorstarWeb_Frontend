@@ -73,7 +73,7 @@ router.post(
                 upcomingGames: [],
                 availabilityRequests: [],
                 isImpersonating: false,
-                realRole: req.session.user.role,
+                realRole: req.session.user!.role,
                 viewAsRole: null,
             });
             return;
@@ -116,7 +116,7 @@ router.post(
                 upcomingGames: [],
                 availabilityRequests: [],
                 isImpersonating: false,
-                realRole: req.session.user.role,
+                realRole: req.session.user!.role,
                 viewAsRole: null,
             });
             return;
