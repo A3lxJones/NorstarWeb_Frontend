@@ -314,6 +314,7 @@ router.get('/', async (req: Request, res: Response) => {
                 availabilityCount,
                 children: coachChildren,
                 childAvailabilityRequests,
+                registrations: dashData.registrations || [],
                 isImpersonating,
                 realRole: user.role,
                 viewAsRole: viewAsRole || null,

@@ -128,7 +128,20 @@ async function getCoachDashboard(_userId: string) {
         upcomingGames = games || [];
     }
 
-    return { teams: teams || [], pendingRegistrations, upcomingGames };
+    // 4. Recent player registrations (MVP) — show latest 20
+    let registrations: unknown[] = [];
+    try {
+        const { data: regs } = await supabaseAdmin
+            .from('player_registrations')
+            .select('id, player_name, player_email, created_at, photo_permission')
+            .order('created_at', { ascending: false })
+            .limit(20);
+        registrations = regs || [];
+    } catch (err) {
+        console.warn('[Coach Dashboard] Failed to fetch registrations:', err);
+    }
+
+    return { teams: teams || [], pendingRegistrations, upcomingGames, registrations };
 }
 
 // ─── Admin dashboard ────────────────────────────────────────

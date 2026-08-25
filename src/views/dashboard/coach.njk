@@ -207,6 +207,56 @@
 
     </div>
 
+    <!-- ─── Recent Registrations ─────────────────────────────────── -->
+    <div class="mt-10">
+      <h2 class="font-heading text-2xl font-bold mb-2">
+        Recent Registrations<span class="text-secondary">.</span>
+      </h2>
+      <p class="text-base-content/60 mb-6">Latest player registration form submissions (most recent first).</p>
+
+      {% if registrations.length === 0 %}
+      <div class="card bg-base-200 border border-base-300 shadow-lg">
+        <div class="card-body text-center py-8">
+          <p class="text-base-content/60">No registrations yet.</p>
+        </div>
+      </div>
+      {% else %}
+      <div class="card bg-base-200 border border-base-300 shadow-lg">
+        <div class="card-body p-4">
+          <div class="overflow-x-auto">
+            <table class="table w-full">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Email</th>
+                  <th>Photo Consent</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for reg in registrations %}
+                <tr>
+                  <td>{{ reg.player_name }}</td>
+                  <td>{{ reg.player_email }}</td>
+                  <td>
+                    {% if reg.photo_permission %}
+                      <span class="badge badge-success">Yes</span>
+                    {% else %}
+                      <span class="badge badge-warning">No</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ reg.created_at }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
     <!-- ─── My Children ─────────────────────────────────── -->
     <div class="mt-10">
       <h2 class="font-heading text-2xl font-bold mb-2">
