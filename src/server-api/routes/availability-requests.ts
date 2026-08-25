@@ -70,6 +70,7 @@ router.post(
             team_id: req.body.team_id,
             game_id: req.body.game_id || null,
             request_type: req.body.request_type,
+            custom_request_type: req.body.custom_request_type || null,
             title: req.body.title,
             event_date: req.body.event_date,
             event_time: req.body.event_time || null,
