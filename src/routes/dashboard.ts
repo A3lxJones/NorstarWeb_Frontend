@@ -25,6 +25,107 @@ router.post(
     }
 );
 
+// ─── POST /dashboard/registration — parent registration form submission ───
+router.post(
+    '/registration',
+    async (req: Request, res: Response) => {
+        const token = req.session.accessToken!;
+        const {
+            player_email,
+            player_name,
+            player_dob,
+            nominated_person_email,
+            nominated_person_name,
+            nominated_person_relationship,
+            nominated_person_address,
+            nominated_person_phone,
+            emergency_contact_name,
+            emergency_contact_phone,
+            emergency_contact_relationship,
+            ice_hockey_experience,
+            gp,
+            medical_conditions,
+            dietary_requirements,
+            allergies,
+            photo_permission,
+            inform_club_secretary,
+            medical_permission,
+            emergency_hospital_treatment,
+            policies_ack,
+            parental_consent,
+            other_medical,
+            website,
+        } = req.body as Record<string, any>;
+
+        // Honeypot check
+        if (website) {
+            res.redirect('/dashboard');
+            return;
+        }
+
+        // Basic validation
+        if (!player_email || !player_name || !player_dob) {
+            res.render('dashboard/parent.njk', {
+                title: 'My Dashboard — Norstar',
+                error: 'Please fill in player name, email and date of birth.',
+                children: [],
+                registrations: [],
+                upcomingGames: [],
+                availabilityRequests: [],
+                isImpersonating: false,
+                realRole: req.session.user.role,
+                viewAsRole: null,
+            });
+            return;
+        }
+
+        const body = {
+            player_email,
+            player_name,
+            player_dob,
+            nominated_person_email,
+            nominated_person_name,
+            nominated_person_relationship,
+            nominated_person_address,
+            nominated_person_phone,
+            emergency_contact_name,
+            emergency_contact_phone,
+            emergency_contact_relationship,
+            ice_hockey_experience,
+            gp,
+            medical_conditions,
+            dietary_requirements,
+            allergies,
+            photo_permission,
+            inform_club_secretary,
+            medical_permission,
+            emergency_hospital_treatment,
+            policies_ack,
+            parental_consent,
+            other_medical,
+        };
+
+        const result = await apiRequest('/api/registrations', { method: 'POST', token, body });
+
+        if (!result.success) {
+            res.render('dashboard/parent.njk', {
+                title: 'My Dashboard — Norstar',
+                error: result.error || 'Failed to submit registration. Please try again.',
+                children: [],
+                registrations: [],
+                upcomingGames: [],
+                availabilityRequests: [],
+                isImpersonating: false,
+                realRole: req.session.user.role,
+                viewAsRole: null,
+            });
+            return;
+        }
+
+        res.redirect('/dashboard?registered=1');
+    }
+);
+
 // ─── GET /dashboard — role-based dashboard ──────────────────
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;

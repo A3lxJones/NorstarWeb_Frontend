@@ -106,13 +106,12 @@
           </div>
         </a>
 
-        <!-- Medical & Consent Form -->
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" target="_blank" rel="noopener noreferrer"
-           class="card bg-gradient-to-br from-warning/10 via-base-200 to-warning/5 border border-warning/20 shadow-lg hover:shadow-xl hover:border-warning/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
+        <!-- Medical & Consent Form (Inline) -->
+        <form action="/dashboard/registration" method="POST" novalidate class="card bg-gradient-to-br from-warning/10 via-base-200 to-warning/5 border border-warning/20 shadow-lg hover:shadow-xl hover:border-warning/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
           <div class="card-body p-6">
             <div class="flex items-start gap-4">
               <div class="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center shrink-0 group-hover:bg-warning/30 transition-colors">
-                <svg xmlns="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -125,8 +124,157 @@
                 </p>
               </div>
             </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input type="hidden" name="form_date" value="{{ "now" | date("%Y-%m-%d") }}" />
+
+              <!-- Honeypot -->
+              <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+                <label>Leave this field empty</label>
+                <input type="text" name="website" tabindex="-1" autocomplete="off" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Player's full name *</span></label>
+                <input name="player_name" required maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Player's email *</span></label>
+                <input name="player_email" type="email" required maxlength="254" autocomplete="email" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Player's date of birth *</span></label>
+                <input name="player_dob" type="date" required class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Is this player an ice skater / Ice Hockey experience?</span></label>
+                <div class="flex gap-3 items-center">
+                  <label class="cursor-pointer"><input type="radio" name="ice_hockey_experience" value="true" class="radio" /> Yes</label>
+                  <label class="cursor-pointer"><input type="radio" name="ice_hockey_experience" value="false" class="radio" /> No</label>
+                </div>
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">GP</span></label>
+                <input name="gp" maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Nominated person for club communication - name</span></label>
+                <input name="nominated_person_name" maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Nominated person email</span></label>
+                <input name="nominated_person_email" type="email" maxlength="254" autocomplete="email" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Relationship to player</span></label>
+                <input name="nominated_person_relationship" maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Player's address</span></label>
+                <input name="nominated_person_address" maxlength="200" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Phone number for club communication</span></label>
+                <input name="nominated_person_phone" maxlength="20" autocomplete="tel" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Emergency contact name</span></label>
+                <input name="emergency_contact_name" maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Emergency contact phone</span></label>
+                <input name="emergency_contact_phone" maxlength="20" class="input input-bordered w-full" />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Relationship to player (emergency)</span></label>
+                <input name="emergency_contact_relationship" maxlength="100" class="input input-bordered w-full" />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Medical conditions</span></label>
+                <textarea name="medical_conditions" maxlength="2000" class="textarea textarea-bordered w-full" rows="3"></textarea>
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Special dietary requirements</span></label>
+                <textarea name="dietary_requirements" maxlength="2000" class="textarea textarea-bordered w-full" rows="2"></textarea>
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Allergies</span></label>
+                <textarea name="allergies" maxlength="2000" class="textarea textarea-bordered w-full" rows="2"></textarea>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Other medical information</span></label>
+                <textarea name="other_medical" maxlength="2000" class="textarea textarea-bordered w-full" rows="2"></textarea>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Permission for Photos</span></label>
+                <div class="flex gap-3 items-center">
+                  <label class="cursor-pointer"><input type="radio" name="photo_permission" value="true" class="radio" /> Yes</label>
+                  <label class="cursor-pointer"><input type="radio" name="photo_permission" value="false" class="radio" /> No</label>
+                </div>
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">I will inform the Club Secretary of any important changes</span></label>
+                <div class="flex gap-3 items-center">
+                  <label class="cursor-pointer"><input type="radio" name="inform_club_secretary" value="true" class="radio" /> Yes</label>
+                  <label class="cursor-pointer"><input type="radio" name="inform_club_secretary" value="false" class="radio" /> Other</label>
+                </div>
+              </div>
+
+              <div>
+                <label class="label"><span class="label-text">Medical permissions (first-aider / medical treatment)</span></label>
+                <div class="flex gap-3 items-center">
+                  <label class="cursor-pointer"><input type="radio" name="medical_permission" value="true" class="radio" /> Yes</label>
+                  <label class="cursor-pointer"><input type="radio" name="medical_permission" value="false" class="radio" /> No</label>
+                </div>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Emergency hospital treatment authorisation</span></label>
+                <div class="flex gap-3 items-center">
+                  <label class="cursor-pointer"><input type="radio" name="emergency_hospital_treatment" value="true" class="radio" /> Yes</label>
+                  <label class="cursor-pointer"><input type="radio" name="emergency_hospital_treatment" value="false" class="radio" /> No</label>
+                </div>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Club policies acknowledgement</span></label>
+                <div class="form-control">
+                  <label class="cursor-pointer inline-flex items-center gap-2"><input type="checkbox" name="policies_ack" class="checkbox" /> I have read and understood the Club policies</label>
+                </div>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="label"><span class="label-text">Parental consent</span></label>
+                <div class="form-control">
+                  <label class="cursor-pointer inline-flex items-center gap-2"><input type="checkbox" name="parental_consent" class="checkbox" /> I give consent for my child to participate</label>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mt-4 flex items-center justify-end gap-3">
+              <button type="submit" class="btn btn-secondary">Submit Registration</button>
+            </div>
           </div>
-        </a>
+        </form>
 
         <!-- Equipment Information -->
         <a href="https://ihi.vensport.com/memberships" target="_blank" rel="noopener noreferrer"

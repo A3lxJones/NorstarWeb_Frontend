@@ -28,6 +28,7 @@ import reportsRoutes from "./routes/reports";
 import drillsRoutes from "./routes/drills";
 import calendarRoutes from "./routes/calendar";
 import adminRoutes from "./routes/admin";
+import registrationsRoutes from "./routes/registrations";
 
 const apiApp = express();
 
@@ -57,6 +58,7 @@ apiApp.use("/api/reports", reportsRoutes);
 apiApp.use("/api/drills", drillsRoutes);
 apiApp.use("/api/calendar", calendarRoutes);
 apiApp.use("/api/admin", adminRoutes);
+apiApp.use("/api/registrations", registrationsRoutes);
 
 // 404 for unknown API routes — same shape the frontend already handles.
 apiApp.use((_req, res) => {
