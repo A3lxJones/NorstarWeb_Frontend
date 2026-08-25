@@ -151,6 +151,7 @@ app.post('/signup', formLimiter);
 app.post('/forgot-password', formLimiter);
 app.post('/reset-password', formLimiter);
 app.post('/dashboard/children/add', formLimiter);
+app.post('/dashboard/registration', formLimiter);
 app.post('/dashboard/users/:id/role', formLimiter);
 app.post('/dashboard/availability/create', formLimiter);
 app.post('/dashboard/availability/:id/respond', formLimiter);
