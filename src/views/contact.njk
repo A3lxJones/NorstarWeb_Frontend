@@ -1,5 +1,35 @@
 {% extends "layouts/base.njk" %}
 
+{% block structuredData %}
+<script type="application/ld+json" nonce="{{ cspNonce }}">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "name": "Norstar Inline Hockey Club — Ballymena North Centre",
+  "description": "Training venue for Norstar Inline Hockey Club junior teams and Learn to Skate sessions.",
+  "url": "{{ canonicalUrl }}",
+  "email": "info.norstarhockey@gmail.com",
+  "image": "{{ siteUrl }}/images/NortstarTeams2.png",
+  "parentOrganization": { "@id": "{{ siteUrl }}/#organization" },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Ballymena North Centre",
+    "addressLocality": "Ballymena",
+    "addressRegion": "County Antrim",
+    "addressCountry": "GB"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "13:30",
+      "closes": "16:30"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
 {% block content %}
 
 <!-- Page header -->
@@ -60,7 +90,9 @@
           </div>
           <div>
             <h3 class="font-heading font-bold text-base mb-0.5">Location</h3>
-            <p class="text-base-content/65 text-sm">Ballymena North Centre, Ballymena, Co. Antrim</p>
+            <p class="text-base-content/65 text-sm">
+              <a href="https://www.google.com/maps?q=Ballymena+North+Centre,+Ballymena,+Co.+Antrim" target="_blank" rel="noopener noreferrer" class="hover:text-secondary transition-colors">Ballymena North Centre, Ballymena, Co. Antrim</a>
+            </p>
           </div>
         </div>
 
@@ -84,8 +116,8 @@
           </div>
           <div>
             <h3 class="font-heading font-bold text-base mb-0.5">Training times</h3>
-            <p class="text-base-content/65 text-sm">Saturdays 13.15– 16:15</p>
-            <p class="text-base-content/50 text-xs mt-1">13:30–14:45 U12/U14 &amp; LTP &middot; 15:00–16:30 Academy</p>
+            <p class="text-base-content/65 text-sm">Saturdays 13:30–16:30</p>
+            <p class="text-base-content/50 text-xs mt-1">13:30–14:45 U12/U14 &middot; 15:00–16:30 Academy</p>
           </div>
         </div>
 
@@ -121,7 +153,7 @@
         <input type="radio" name="faq" checked="checked" />
         <div class="collapse-title font-heading font-bold text-base">What age can my child start?</div>
         <div class="collapse-content">
-          <p class="text-base-content/70">Our Learn to Skate programme is open to children aged 6 and up. Once they're comfortable on skates, they can progress to Learn to Play (ages 6+) and eventually to the competitive Junior U12/U14 squad.</p>
+          <p class="text-base-content/70">Our Learn to Skate programme is open to children aged 6 and up. Once they're comfortable on skates, they can progress to the competitive Junior U12/U14 squad.</p>
         </div>
       </div>
 
@@ -129,7 +161,7 @@
         <input type="radio" name="faq" />
         <div class="collapse-title font-heading font-bold text-base">Do I need my own equipment?</div>
         <div class="collapse-content">
-          <p class="text-base-content/70">For Learn to Skate sessions we provide all the equipment you need. For Learn to Play and U12/U14, we recommend having your own inline skates and a hockey stick. Full protective gear is required for competitive play — we can advise on brands and sizing.</p>
+          <p class="text-base-content/70">For Learn to Skate sessions we provide all the equipment you need. For U12/U14, we recommend having your own inline skates and a hockey stick. Full protective gear is required for competitive play — we can advise on brands and sizing.</p>
         </div>
       </div>
 
@@ -145,8 +177,7 @@
         <input type="radio" name="faq" />
         <div class="collapse-title font-heading font-bold text-base">Where do you train?</div>
         <div class="collapse-content">
-          <p class="text-base-content/70">All sessions take place at Ballymena North Centre in Ballymena, Saturdays 13:00–16:15. Away matches are played at various venues across Northern Ireland and Ireland.</p>
-          <a href="https://www.google.com/maps?q=Ballymena+North+Centre,+Ballymena,+Co.+Antrim" class="hover:text-secondary transition-colors">View on Map</a>
+          <p class="text-base-content/70">All sessions take place at <a href="https://www.google.com/maps?q=Ballymena+North+Centre,+Ballymena,+Co.+Antrim" target="_blank" rel="noopener noreferrer" class="hover:text-secondary transition-colors">Ballymena North Centre</a> in Ballymena, Saturdays 13:30–16:30 (13:30–14:45 U12/U14 &middot; 15:00–16:30 Academy). Away matches are played at various venues across Northern Ireland and Ireland.</p>
         </div>
       </div>
     </div>

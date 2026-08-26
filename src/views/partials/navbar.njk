@@ -14,12 +14,14 @@
         <li><a href="/" class="font-medium">Home</a></li>
         {% if isLoggedIn %}<li><a href="/fixtures" class="font-medium">Fixtures</a></li>{% endif %}
         <li><a href="/news" class="font-medium">News</a></li>
+        <li><a href="/learn-to-skate" class="font-medium">Learn to Skate</a></li>
         <li><a href="/contact" class="font-medium">Contact</a></li>
         <li>
           <a href="/shop" class="font-medium">
             Shop
           </a>
         </li>
+        <li><a href="/sponsors" class="font-medium text-accent">Sponsors</a></li>
         <li class="mt-2 border-t border-base-300 pt-2">
           {% if isLoggedIn %}
             <a href="/dashboard" class="font-medium">Dashboard</a>
@@ -58,6 +60,11 @@
         </a>
       </li>
       <li>
+        <a href="/learn-to-skate" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
+          Learn to Skate
+        </a>
+      </li>
+      <li>
         <a href="/contact" class="font-medium text-base hover:text-secondary transition-colors duration-200 rounded-lg">
           Contact
         </a>
@@ -72,6 +79,19 @@
 
   <!-- Auth button -->
   <div class="navbar-end gap-2">
+
+    <!-- Sponsor placeholder slot -->
+    <a href="/sponsors"
+       class="hidden md:flex items-center gap-2 mr-1 px-3 py-1.5 rounded-lg border border-dashed border-base-300 hover:border-accent/60 hover:bg-base-200 transition-colors group"
+       aria-label="Sponsorship opportunities">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30 group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span class="leading-tight text-left">
+        <span class="block text-[10px] uppercase tracking-wider text-base-content/40 group-hover:text-accent transition-colors">Sponsor</span>
+        <span class="block text-xs font-semibold text-base-content/60 group-hover:text-accent transition-colors">Your logo here</span>
+      </span>
+    </a>
 
     {% if isLoggedIn %}
       {% if isImpersonating %}

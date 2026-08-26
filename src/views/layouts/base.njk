@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="norstar_light">
+<html lang="en-GB" data-theme="norstar_light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="index, follow" />
-  <meta name="description" content="{{ description | default('Norstar Inline Hockey Club — Ballymena\'s home of inline hockey. Junior U12/U14, Learn to Play, and Learn to Skate programmes.') }}" />
   <meta name="theme-color" content="#ffffff" />
   <meta name="color-scheme" content="light" />
 
@@ -12,7 +10,36 @@
   <!-- X-Frame-Options and X-Content-Type-Options are set via HTTP headers by Helmet -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-  <title>{{ title | default('Norstar Inline Hockey Club') }}</title>
+  <title>{{ title | default('Norstar Inline Hockey Club — Ballymena, Northern Ireland') }}</title>
+
+  <!-- SEO -->
+  <meta name="description" content="{{ description | default(defaultDescription) }}" />
+  <meta name="robots" content="{{ robots | default('index, follow') }}" />
+  <meta name="googlebot" content="{{ robots | default('index, follow') }}" />
+  {% if keywords %}<meta name="keywords" content="{{ keywords }}" />{% endif %}
+  <meta name="author" content="Norstar Inline Hockey Club" />
+  <link rel="canonical" href="{{ canonicalUrl }}" />
+
+  <!-- Geo targeting -->
+  <meta name="geo.region" content="GB-ANT" />
+  <meta name="geo.placename" content="Ballymena, County Antrim, Northern Ireland" />
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Norstar Inline Hockey Club" />
+  <meta property="og:type" content="{{ ogType | default('website') }}" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:title" content="{{ ogTitle | default(title) | default('Norstar Inline Hockey Club — Ballymena, Northern Ireland') }}" />
+  <meta property="og:description" content="{{ description | default(defaultDescription) }}" />
+  <meta property="og:url" content="{{ canonicalUrl }}" />
+  <meta property="og:image" content="{{ siteUrl }}{{ ogImage | default(defaultOgImage) }}" />
+  <meta property="og:image:alt" content="{{ ogImageAlt | default('Norstar Inline Hockey Club players in Ballymena') }}" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ ogTitle | default(title) | default('Norstar Inline Hockey Club — Ballymena, Northern Ireland') }}" />
+  <meta name="twitter:description" content="{{ description | default(defaultDescription) }}" />
+  <meta name="twitter:image" content="{{ siteUrl }}{{ ogImage | default(defaultOgImage) }}" />
+  <meta name="twitter:image:alt" content="{{ ogImageAlt | default('Norstar Inline Hockey Club players in Ballymena') }}" />
 
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
@@ -24,6 +51,81 @@
 
   <!-- Tailwind / DaisyUI compiled CSS -->
   <link rel="stylesheet" href="/css/output.css" />
+
+  <!-- Structured data: the club itself (shown on every page) -->
+  <script type="application/ld+json" nonce="{{ cspNonce }}">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsClub",
+    "@id": "{{ siteUrl }}/#organization",
+    "name": "Norstar Inline Hockey Club",
+    "alternateName": "Ballymena Norstar Inline Hockey Club",
+    "description": "Youth inline hockey club in Ballymena, County Antrim, running Junior U12/U14 teams and Learn to Skate sessions.",
+    "url": "{{ siteUrl }}/",
+    "logo": "{{ siteUrl }}/images/Norstar.png",
+    "image": "{{ siteUrl }}/images/NorstarTeams.png",
+    "email": "info.norstarhockey@gmail.com",
+    "foundingDate": "2023",
+    "sport": "Inline Hockey",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Ballymena North Centre",
+      "addressLocality": "Ballymena",
+      "addressRegion": "County Antrim",
+      "addressCountry": "GB"
+    },
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": "Northern Ireland"
+    },
+    "sameAs": [
+      "https://www.facebook.com/p/Ballymena-Norstar-Inline-Hockey-Club-100086120628419/"
+    ]
+  }
+  </script>
+
+  <!-- Structured data: this page -->
+  <script type="application/ld+json" nonce="{{ cspNonce }}">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "{{ canonicalUrl }}#webpage",
+    "url": "{{ canonicalUrl }}",
+    "name": "{{ title | default('Norstar Inline Hockey Club') }}",
+    "description": "{{ description | default(defaultDescription) }}",
+    "inLanguage": "en-GB",
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": "{{ siteUrl }}/#website",
+      "url": "{{ siteUrl }}/",
+      "name": "Norstar Inline Hockey Club",
+      "publisher": { "@id": "{{ siteUrl }}/#organization" }
+    },
+    "about": { "@id": "{{ siteUrl }}/#organization" }
+  }
+  </script>
+
+  {% if breadcrumbs and breadcrumbs.length > 1 %}
+  <!-- Structured data: breadcrumb trail -->
+  <script type="application/ld+json" nonce="{{ cspNonce }}">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {%- for crumb in breadcrumbs %}
+      {
+        "@type": "ListItem",
+        "position": {{ loop.index }},
+        "name": "{{ crumb.name }}",
+        "item": "{{ crumb.url }}"
+      }{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    ]
+  }
+  </script>
+  {% endif %}
+
+  {% block structuredData %}{% endblock %}
 
   {% block head %}{% endblock %}
 </head>

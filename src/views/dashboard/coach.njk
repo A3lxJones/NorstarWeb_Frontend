@@ -100,7 +100,7 @@
 
     <!-- Resources — Calendar CTA -->
     <a href="/dashboard/calendar"
-       class="card bg-gradient-to-r from-info/10 via-base-200 to-secondary/10 border border-info/20 shadow-lg hover:shadow-xl hover:border-info/40 transition-all duration-300 hover:scale-[1.01] mb-8 group scroll-reveal opacity-0">
+       class="card bg-gradient-to-r from-info/10 via-base-200 to-secondary/10 border border-info/20 shadow-lg hover:shadow-xl hover:border-info/40 transition-all duration-300 hover:scale-[1.01] mb-4 group scroll-reveal opacity-0">
       <div class="card-body p-5 flex-row items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-info/20 flex items-center justify-center shrink-0 group-hover:bg-info/30 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,6 +116,29 @@
           </p>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30 group-hover:text-info group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </a>
+
+    <!-- Resources — Player Information CTA -->
+    <a href="/dashboard/children/roster"
+       class="card bg-gradient-to-r from-warning/10 via-base-200 to-accent/10 border border-warning/20 shadow-lg hover:shadow-xl hover:border-warning/40 transition-all duration-300 hover:scale-[1.01] mb-8 group scroll-reveal opacity-0">
+      <div class="card-body p-5 flex-row items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center shrink-0 group-hover:bg-warning/30 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-heading font-semibold text-lg group-hover:text-warning transition-colors">
+            Player Information
+          </h3>
+          <p class="text-sm text-base-content/50">
+            Filter players by team to see emergency contacts, medical conditions &amp; allergies
+          </p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/30 group-hover:text-warning group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </div>
@@ -236,9 +259,8 @@
                   {{ child.first_name }} {{ child.last_name }}
                 </h3>
                 <p class="text-base-content/60 text-sm">
-                  DOB: {{ child.date_of_birth }}
                   {% if child.position %}
-                    · {{ child.position | capitalize }}
+                    {{ child.position | capitalize }}
                   {% endif %}
                 </p>
               </div>
@@ -343,7 +365,6 @@
                     <span class="ml-2 badge badge-sm
                       {% if child.current_status === 'available' %}badge-success
                       {% elif child.current_status === 'unavailable' %}badge-error
-                      {% elif child.current_status === 'tentative' %}badge-warning
                       {% endif %}">
                       {{ child.current_status | capitalize }}
                     </span>
@@ -359,13 +380,6 @@
                     </svg>
                     Available
                   </button>
-                  <button type="button" data-status="tentative"
-                          class="btn btn-warning btn-xs gap-1 availability-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
-                    </svg>
-                    Maybe
-                  </button>
                   <button type="button" data-status="unavailable"
                           class="btn btn-error btn-xs gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -379,7 +393,6 @@
                   <span class="badge badge-sm
                     {% if child.current_status === 'available' %}badge-success
                     {% elif child.current_status === 'unavailable' %}badge-error
-                    {% elif child.current_status === 'tentative' %}badge-warning
                     {% endif %} current-status-badge">
                     {{ child.current_status | capitalize }}
                   </span>
@@ -387,12 +400,6 @@
                   <button type="button" data-status="available" class="btn btn-success btn-xs btn-outline gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                     Available
-                  </button>
-                  {% endif %}
-                  {% if child.current_status !== 'tentative' %}
-                  <button type="button" data-status="tentative" class="btn btn-warning btn-xs btn-outline gap-1 availability-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" /></svg>
-                    Maybe
                   </button>
                   {% endif %}
                   {% if child.current_status !== 'unavailable' %}
@@ -423,7 +430,6 @@
 (function () {
   var STATUS_CONFIG = {
     available:   { badge: 'badge-success', label: 'Available' },
-    tentative:   { badge: 'badge-warning', label: 'Maybe' },
     unavailable: { badge: 'badge-error',   label: 'Unavailable' }
   };
 
@@ -456,7 +462,7 @@
     badge.className = 'badge badge-sm ' + cfg.badge + ' current-status-badge';
     badge.textContent = cfg.label;
     row.appendChild(badge);
-    var allStatuses = ['available', 'tentative', 'unavailable'];
+    var allStatuses = ['available', 'unavailable'];
     allStatuses.forEach(function (s) {
       if (s === newStatus) return;
       var btnCfg = STATUS_CONFIG[s];
@@ -464,7 +470,7 @@
       btn.type = 'button';
       btn.dataset.status = s;
       btn.className = 'btn btn-xs btn-outline gap-1 availability-btn btn-' +
-        (s === 'available' ? 'success' : s === 'tentative' ? 'warning' : 'error');
+        (s === 'available' ? 'success' : 'error');
       btn.textContent = btnCfg.label;
       row.appendChild(btn);
     });

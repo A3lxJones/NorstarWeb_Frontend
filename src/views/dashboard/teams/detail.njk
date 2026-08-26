@@ -134,7 +134,6 @@
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>DOB</th>
                     <th>Type</th>
                     {% if canEdit %}<th class="text-right">Actions</th>{% endif %}
                   </tr>
@@ -142,8 +141,11 @@
                 <tbody>
                   {% for reg in team.members %}
                   <tr class="hover">
-                    <td class="font-medium">{{ reg.child.first_name }} {{ reg.child.last_name }}</td>
-                    <td class="text-base-content/60">{{ reg.child.date_of_birth }}</td>
+                    <td class="font-medium">
+                      <a href="/dashboard/children/{{ reg.child.id }}/info" class="link link-hover text-secondary">
+                        {{ reg.child.first_name }} {{ reg.child.last_name }}
+                      </a>
+                    </td>
                     <td>{{ reg.child.position | capitalize if reg.child.position else '—' }}</td>
                     {% if canEdit %}
                     <td class="text-right">

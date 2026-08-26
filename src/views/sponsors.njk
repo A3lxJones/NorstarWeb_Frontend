@@ -1,0 +1,113 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  <!-- ======== HERO ======== -->
+  <section class="py-16 md:py-24 bg-base-200/40 relative overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-72 h-72 bg-accent/5 rounded-full blur-3xl animate-float" aria-hidden="true"></div>
+    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-secondary/5 rounded-full blur-3xl animate-float" aria-hidden="true"></div>
+
+    <div class="relative z-10 container mx-auto px-4 lg:px-8 max-w-4xl text-center">
+      <span class="eyebrow mb-3 block">Sponsorship</span>
+      <h1 class="font-heading text-4xl md:text-5xl font-bold mb-4 leading-tight">
+        Become an official <span class="text-secondary">NOR</span>STAR sponsor
+      </h1>
+      <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto">
+        We're looking for local businesses to partner with Ballymena's home of inline hockey.
+        Your support helps us keep youth hockey affordable, buy equipment and travel to fixtures
+        across Northern Ireland and Ireland.
+      </p>
+    </div>
+  </section>
+
+  <!-- ======== SPONSOR SLOTS ======== -->
+  <section class="py-16 md:py-24">
+    <div class="container mx-auto px-4 lg:px-8 max-w-6xl">
+      <div class="text-center mb-10">
+        <h2 class="font-heading text-3xl md:text-4xl font-bold">Our sponsor</h2>
+        <p class="text-base-content/60 mt-2">This space is available now — yours could be here.</p>
+      </div>
+
+      <div class="max-w-sm mx-auto">
+        <div class="scroll-reveal opacity-0 card bg-base-200 border border-dashed border-base-300 shadow-xl hover:border-secondary/40 transition-colors">
+          <div class="card-body items-center text-center py-12">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-base-content/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h3 class="font-heading font-semibold text-lg">Your logo here</h3>
+            <p class="text-sm text-base-content/50">Sponsorship slot available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== WHY SPONSOR ======== -->
+  <section class="py-16 md:py-24 bg-base-200/60 border-t border-base-300">
+    <div class="container mx-auto px-4 lg:px-8 max-w-5xl">
+      <div class="text-center mb-10">
+        <h2 class="font-heading text-3xl md:text-4xl font-bold">Why partner with us?</h2>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="scroll-reveal opacity-0 card bg-base-100 border border-base-300 shadow-xl">
+          <div class="card-body">
+            <div class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg">Support local youth sport</h3>
+            <p class="text-sm text-base-content/65">Every pound goes straight back into coaching, equipment and travel for our young players.</p>
+          </div>
+        </div>
+
+        <div class="scroll-reveal opacity-0 card bg-base-100 border border-base-300 shadow-xl">
+          <div class="card-body">
+            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg">Brand visibility</h3>
+            <p class="text-sm text-base-content/65">Your logo on our website, social media and matchday presence across Northern Ireland and beyond.</p>
+          </div>
+        </div>
+
+        <div class="scroll-reveal opacity-0 card bg-base-100 border border-base-300 shadow-xl">
+          <div class="card-body">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 text-secondary flex items-center justify-center mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg">Flexible packages</h3>
+            <p class="text-sm text-base-content/65">From Jeresys to full club partnership — we'll tailor something that suits you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CTA ======== -->
+  <section class="py-16 md:py-24">
+    <div class="container mx-auto px-4 lg:px-8 max-w-3xl">
+      <div class="card bg-base-200 border border-base-300 shadow-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-secondary via-accent to-secondary"></div>
+        <div class="card-body items-center text-center py-12">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold mb-2">Contact us to be our official sponsor</h2>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/contact" class="btn btn-secondary gap-2 hover:scale-[1.02] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Contact us
+            </a>
+            <a href="mailto:info.norstarhockey@gmail.com" class="btn btn-outline btn-secondary gap-2 hover:scale-[1.02] transition-all">
+              Email the club
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

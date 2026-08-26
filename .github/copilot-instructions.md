@@ -191,7 +191,7 @@ npm start           # Run compiled output from dist/
 - The club serves **youth players** and families — keep language friendly, inclusive, and encouraging.
 - Hockey-themed puns are welcome in informal contexts (404 page, loading states).
 - Location references: **Ballymena**, **Northern Ireland**.
-- Programmes: U13 Inline Hockey, Learn to Play, Learn to Skate.
+- Programmes: U13 Inline Hockey, Learn to Skate.
 
 ---
 

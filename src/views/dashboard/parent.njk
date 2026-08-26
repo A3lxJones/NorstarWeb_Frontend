@@ -106,19 +106,19 @@
           </div>
         </a>
 
-        <!-- Medical & Consent Form -->
+        <!-- Club Registration Form -->
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" target="_blank" rel="noopener noreferrer"
            class="card bg-gradient-to-br from-warning/10 via-base-200 to-warning/5 border border-warning/20 shadow-lg hover:shadow-xl hover:border-warning/40 transition-all duration-300 hover:scale-[1.02] group scroll-reveal opacity-0">
           <div class="card-body p-6">
             <div class="flex items-start gap-4">
               <div class="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center shrink-0 group-hover:bg-warning/30 transition-colors">
-                <svg xmlns="https://docs.google.com/forms/d/e/1FAIpQLSdSHQnFsBZfPUB0dcF_fy-RjNQQSupe_zcafjd_NtOE6qvQRw/viewform" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div class="flex-1">
                 <h3 class="font-heading font-semibold text-lg group-hover:text-warning transition-colors">
-                  Medical & Club Form
+                  Club Registration Form
                 </h3>
                 <p class="text-sm text-base-content/60 mt-1">
                   Provide medical information, allergies, and media consent details
@@ -199,9 +199,8 @@
                 {{ child.first_name }} {{ child.last_name }}
               </h2>
               <p class="text-base-content/60 text-sm">
-                DOB: {{ child.date_of_birth }}
                 {% if child.position %}
-                  · {{ child.position | capitalize }}
+                  {{ child.position | capitalize }}
                 {% endif %}
               </p>
             </div>
@@ -306,7 +305,6 @@
                     <span class="ml-2 badge badge-sm
                       {% if child.current_status === 'available' %}badge-success
                       {% elif child.current_status === 'unavailable' %}badge-error
-                      {% elif child.current_status === 'tentative' %}badge-warning
                       {% endif %}">
                       {{ child.current_status | capitalize }}
                     </span>
@@ -322,13 +320,6 @@
                     </svg>
                     Available
                   </button>
-                  <button type="button" data-status="tentative"
-                          class="btn btn-warning btn-xs gap-1 availability-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
-                    </svg>
-                    Maybe
-                  </button>
                   <button type="button" data-status="unavailable"
                           class="btn btn-error btn-xs gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -342,7 +333,6 @@
                   <span class="badge badge-sm
                     {% if child.current_status === 'available' %}badge-success
                     {% elif child.current_status === 'unavailable' %}badge-error
-                    {% elif child.current_status === 'tentative' %}badge-warning
                     {% endif %} current-status-badge">
                     {{ child.current_status | capitalize }}
                   </span>
@@ -351,12 +341,6 @@
                   <button type="button" data-status="available" class="btn btn-success btn-xs btn-outline gap-1 availability-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                     Available
-                  </button>
-                  {% endif %}
-                  {% if child.current_status !== 'tentative' %}
-                  <button type="button" data-status="tentative" class="btn btn-warning btn-xs btn-outline gap-1 availability-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" /></svg>
-                    Maybe
                   </button>
                   {% endif %}
                   {% if child.current_status !== 'unavailable' %}
@@ -387,7 +371,6 @@
 (function () {
   var STATUS_CONFIG = {
     available:   { badge: 'badge-success', label: 'Available' },
-    tentative:   { badge: 'badge-warning', label: 'Maybe' },
     unavailable: { badge: 'badge-error',   label: 'Unavailable' }
   };
 
@@ -428,8 +411,8 @@
     badge.textContent = cfg.label;
     row.appendChild(badge);
 
-    // Change-buttons for the other two statuses
-    var allStatuses = ['available', 'tentative', 'unavailable'];
+    // Change-button for the opposite status
+    var allStatuses = ['available', 'unavailable'];
     allStatuses.forEach(function (s) {
       if (s === newStatus) return;
       var btnCfg = STATUS_CONFIG[s];
@@ -437,7 +420,7 @@
       btn.type = 'button';
       btn.dataset.status = s;
       btn.className = 'btn btn-xs btn-outline gap-1 availability-btn btn-' +
-        (s === 'available' ? 'success' : s === 'tentative' ? 'warning' : 'error');
+        (s === 'available' ? 'success' : 'error');
       btn.textContent = btnCfg.label;
       row.appendChild(btn);
     });

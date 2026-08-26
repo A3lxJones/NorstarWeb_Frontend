@@ -5,8 +5,7 @@ import {
     getMissingFields,
     isValidUUID,
     isNotNumeric,
-    isValidPhoneNumber,
-    validateAge
+    isValidPhoneNumber
 } from "../utils/validation";
 import { ApiResponse, CreateChildDTO } from "../types";
 
@@ -56,11 +55,12 @@ router.use(authenticate);
 const REQUIRED_CHILD_FIELDS = [
     "first_name",
     "last_name",
-    "date_of_birth",
     "gender",
     "emergency_contact_name",
     "emergency_contact_phone",
     "emergency_contact_relationship",
+    "medical_conditions",
+    "allergies",
 ];
 
 /**
@@ -158,9 +158,9 @@ router.get("/:id/registrations", async (req: Request, res: Response): Promise<vo
  * POST /api/children
  * Register a new child (parents only — linked to their account).
  * Validation:
- * - Child must be between 4 and 17 years old
  * - first_name and last_name must not be purely numeric
  * - emergency_contact_phone must be valid phone format
+ * - medical_conditions and allergies must be supplied ("NA" if none)
  */
 router.post(
     "/",
@@ -171,16 +171,6 @@ router.post(
             res.status(400).json({
                 success: false,
                 error: `Missing required fields: ${missing.join(", ")}`,
-            } as ApiResponse);
-            return;
-        }
-
-        // Validate age (must be 4-17)
-        const ageError = validateAge(req.body.date_of_birth, 4, 17);
-        if (ageError) {
-            res.status(400).json({
-                success: false,
-                error: ageError,
             } as ApiResponse);
             return;
         }

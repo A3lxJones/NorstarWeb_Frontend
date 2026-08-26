@@ -17,7 +17,6 @@ export interface Child {
     parent_id: string;
     first_name: string;
     last_name: string;
-    date_of_birth: string;
     gender: "male" | "female" | "other";
     medical_conditions: string | null;
     allergies: string | null;
@@ -33,10 +32,9 @@ export interface Child {
 export interface CreateChildDTO {
     first_name: string;
     last_name: string;
-    date_of_birth: string;
     gender: "male" | "female" | "other";
-    medical_conditions?: string;
-    allergies?: string;
+    medical_conditions: string;
+    allergies: string;
     emergency_contact_name: string;
     emergency_contact_phone: string;
     emergency_contact_relationship: string;
@@ -94,7 +92,7 @@ export interface CreateGameDTO {
 
 // ─── Availability ───────────────────────────────────────────
 export type AvailabilityType = "match" | "training" | "other";
-export type AvailabilityStatus = "available" | "unavailable" | "tentative";
+export type AvailabilityStatus = "available" | "unavailable";
 
 export interface Availability {
     id: string;

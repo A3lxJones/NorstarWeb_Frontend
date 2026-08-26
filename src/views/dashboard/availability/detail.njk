@@ -57,7 +57,7 @@
 
     <!-- Response Summary Cards -->
     {% if request.response_summary %}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-3 gap-4 mb-8">
       <div class="stat bg-success/10 border border-success/20 rounded-box p-4">
         <div class="stat-title text-xs text-success">Available</div>
         <div class="stat-value text-2xl text-success">{{ request.response_summary.available }}</div>
@@ -65,10 +65,6 @@
       <div class="stat bg-error/10 border border-error/20 rounded-box p-4">
         <div class="stat-title text-xs text-error">Unavailable</div>
         <div class="stat-value text-2xl text-error">{{ request.response_summary.unavailable }}</div>
-      </div>
-      <div class="stat bg-warning/10 border border-warning/20 rounded-box p-4">
-        <div class="stat-title text-xs text-warning">Tentative</div>
-        <div class="stat-value text-2xl text-warning">{{ request.response_summary.tentative }}</div>
       </div>
       <div class="stat bg-base-200 border border-base-300 rounded-box p-4">
         <div class="stat-title text-xs">Pending</div>
@@ -121,13 +117,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                       Unavailable
-                    </span>
-                  {% elif response.status === 'tentative' %}
-                    <span class="badge badge-warning badge-sm gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01" />
-                      </svg>
-                      Tentative
                     </span>
                   {% endif %}
                 </td>

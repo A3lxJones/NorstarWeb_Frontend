@@ -9,6 +9,7 @@ import crypto from 'crypto';
 // Session & auth middleware
 import { configureSession } from './middleware/session';
 import { injectUser, requireAuth } from './middleware/auth';
+import { injectSeo } from './middleware/seo';
 import { apiRequest, getCurrentUser } from './utils/api';
 
 // Import routes
@@ -17,6 +18,8 @@ import fixturesRoutes from './routes/fixtures';
 import newsRoutes from './routes/news';
 import contactRoutes from './routes/contact';
 import privacyPolicyRoutes from './routes/privacy-policy';
+import learnToSkateRoutes from './routes/learn-to-skate';
+import sponsorsRoutes from './routes/sponsors';
 import loginRoutes from './routes/login';
 import signupRoutes from './routes/signup';
 import logoutRoutes from './routes/logout';
@@ -30,6 +33,7 @@ import usersRoutes from './routes/users';
 import availabilityRoutes from './routes/availability';
 import calendarRoutes from './routes/calendar';
 import shopRoutes from './routes/shop';
+import seoRoutes from './routes/seo';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -141,6 +145,9 @@ configureSession(app);
 // --- Inject user into all templates ---
 app.use(injectUser);
 
+// --- Inject canonical URL, robots directive and social sharing defaults ---
+app.use(injectSeo);
+
 // ───────────────────────────────────────────
 // Security: Apply stricter rate limiter to form POST routes.
 // Registered BEFORE the route handlers so the limiter runs first.
@@ -158,11 +165,14 @@ app.post('/dashboard/calendar/events', formLimiter);
 app.post('/dashboard/calendar/cleanup', formLimiter);
 
 // --- Routes ---
+app.use('/', seoRoutes);
 app.use('/', homeRoutes);
 app.use('/fixtures', requireAuth, fixturesRoutes);
 app.use('/news', newsRoutes);
 app.use('/contact', contactRoutes);
 app.use('/privacy-policy', privacyPolicyRoutes);
+app.use('/learn-to-skate', learnToSkateRoutes);
+app.use('/sponsors', sponsorsRoutes);
 app.use('/shop', shopRoutes);
 app.use('/login', loginRoutes);
 app.use('/signup', signupRoutes);
@@ -314,13 +324,19 @@ app.patch('/api/children/:id/team-details', requireAuth, async (req: Request, re
 
 // --- 404 Handler ---
 app.use((_req: Request, res: Response) => {
-    res.status(404).render('404.njk', { title: 'Page Not Found' });
+    res.status(404).render('404.njk', {
+        title: 'Page Not Found — Norstar Inline Hockey Club',
+        robots: 'noindex, follow',
+    });
 });
 
 // --- Global Error Handler ---
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error('[ERROR]', err.message);
-    res.status(500).render('404.njk', { title: 'Something Went Wrong' });
+    res.status(500).render('404.njk', {
+        title: 'Something Went Wrong — Norstar Inline Hockey Club',
+        robots: 'noindex, nofollow',
+    });
 });
 
 export default app;

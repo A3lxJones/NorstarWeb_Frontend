@@ -4,7 +4,13 @@ const router = Router();
 
 router.get('/', (_req: Request, res: Response) => {
     res.render('home.njk', {
-        title: 'Norstar Inline Hockey Club — Ballymena',
+        title: 'Norstar Inline Hockey Club — Youth Inline Hockey in Ballymena, NI',
+        description:
+            "Norstar Inline Hockey Club is Ballymena's home of inline hockey. Junior U12/U14 teams and Learn to Skate sessions at Ballymena North Centre, Co. Antrim. New players always welcome.",
+        keywords:
+            'inline hockey Ballymena, inline hockey Northern Ireland, youth hockey club Co. Antrim, learn to skate Ballymena, U12 U14 hockey, roller hockey Northern Ireland',
+        ogImage: '/images/NorstarTeams.png',
+        ogImageAlt: 'Norstar Inline Hockey Club junior team in Ballymena',
         heroTitle: 'NORSTAR INLINE HOCKEY',
         heroSubtitle: 'Ballymena\'s home of inline hockey',
         heroCta: 'Join Us Today',
@@ -15,13 +21,8 @@ router.get('/', (_req: Request, res: Response) => {
                 icon: '🏒',
             },
             {
-                name: 'Learn to Play',
-                description: 'New to hockey? Our structured programme takes you from beginner to confident player.',
-                icon: '🎯',
-            },
-            {
                 name: 'Learn to Skate',
-                description: 'Master the fundamentals of inline skating in a fun, supportive environment.ss',
+                description: 'Master the fundamentals of inline skating in a fun, supportive environment.',
                 icon: '⛸️',
             },
         ],

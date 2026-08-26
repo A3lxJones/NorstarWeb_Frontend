@@ -407,10 +407,10 @@ router.post(
             return;
         }
 
-        if (!["available", "unavailable", "tentative"].includes(req.body.status)) {
+        if (!["available", "unavailable"].includes(req.body.status)) {
             res.status(400).json({
                 success: false,
-                error: "status must be 'available', 'unavailable', or 'tentative'",
+                error: "status must be 'available' or 'unavailable'",
             } as ApiResponse);
             return;
         }

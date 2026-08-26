@@ -90,7 +90,6 @@
         <thead>
           <tr class="text-xs uppercase tracking-wider text-base-content/50">
             <th>Name</th>
-            <th>Date of Birth</th>
             <th>Type</th>
             <th>Parent</th>
             <th>Emergency Contact</th>
@@ -101,7 +100,6 @@
           {% for child in children %}
           <tr class="hover:bg-base-300/40 transition-colors">
             <td class="font-medium">{{ child.first_name }} {{ child.last_name }}</td>
-            <td class="text-base-content/70 text-sm">{{ child.date_of_birth }}</td>
             <td class="text-base-content/70 text-sm">{{ child.position | capitalize if child.position else '—' }}</td>
             <td class="text-sm">
               {% if child.parent %}
@@ -132,7 +130,6 @@
           <div class="flex items-start justify-between mb-3">
             <div>
               <h3 class="font-semibold">{{ child.first_name }} {{ child.last_name }}</h3>
-              <p class="text-sm text-base-content/60">DOB: {{ child.date_of_birth }}</p>
             </div>
             <div class="flex gap-1">
               {% if child.position %}
