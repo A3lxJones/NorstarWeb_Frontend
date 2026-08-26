@@ -197,45 +197,6 @@
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {% for item in news %}
-      <article class="scroll-reveal opacity-0 group bg-base-100 border border-base-300 rounded-box overflow-hidden hover:border-secondary/40 transition-colors duration-200" style="--animation-delay: {{ loop.index0 * 0.1 }}s;">
-        <figure class="aspect-[16/10] bg-base-200 overflow-hidden">
-          {% if loop.index0 == 0 %}
-            <img src="/images/NorstarTeam5.png" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
-          {% elif loop.index0 == 1 %}
-            <img src="/images/NorstarTeams.png" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
-          {% else %}
-            <img src="/images/NorstarTeams3.png" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
-          {% endif %}
-        </figure>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-base-content/50 mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            {{ item.date }}
-          </div>
-          <h3 class="font-heading text-lg font-bold mb-2 group-hover:text-secondary transition-colors duration-200">
-            {{ item.title }}
-          </h3>
-          <p class="text-base-content/65 leading-relaxed text-sm mb-4">
-            {{ item.excerpt }}
-          </p>
-          <a href="/news" class="text-sm font-semibold text-secondary inline-flex items-center gap-1 hover:gap-2 transition-all duration-200">
-            Read more
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-
 <!-- ═══════════════════════════════════════════════════════════════
      CALL TO ACTION
      ═══════════════════════════════════════════════════════════════ -->
