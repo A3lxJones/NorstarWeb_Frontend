@@ -89,7 +89,6 @@
                 <option value="" disabled {% if not values.status %}selected{% endif %}>Select status</option>
                 <option value="available" {% if values.status == 'available' %}selected{% endif %}>Available</option>
                 <option value="unavailable" {% if values.status == 'unavailable' %}selected{% endif %}>Unavailable</option>
-                <option value="tentative" {% if values.status == 'tentative' %}selected{% endif %}>Tentative</option>
               </select>
             </div>
 
@@ -180,13 +179,6 @@
                       </svg>
                       Available
                     </span>
-                  {% elif record.status == 'tentative' %}
-                    <span class="badge badge-sm badge-warning gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01" />
-                      </svg>
-                      Tentative
-                    </span>
                   {% else %}
                     <span class="badge badge-sm badge-error gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -230,8 +222,6 @@
                     </span>
                     {% if record.status == 'available' %}
                       <span class="badge badge-xs badge-success">Available</span>
-                    {% elif record.status == 'tentative' %}
-                      <span class="badge badge-xs badge-warning">Tentative</span>
                     {% else %}
                       <span class="badge badge-xs badge-error">Unavailable</span>
                     {% endif %}

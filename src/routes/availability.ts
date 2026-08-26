@@ -29,7 +29,6 @@ interface AvailabilityRequest {
     response_summary?: {
         available: number;
         unavailable: number;
-        tentative: number;
         pending: number;
     };
 }
@@ -39,7 +38,7 @@ interface AvailabilityResponse {
     availability_request_id: string;
     child_id: string;
     child_name?: string;
-    status: 'available' | 'unavailable' | 'tentative';
+    status: 'available' | 'unavailable';
     responded_at: string;
     parent_name?: string;
 }
@@ -310,9 +309,6 @@ router.get(
                     unavailable: responses.filter(
                         (r: AvailabilityResponse) => r.status === 'unavailable'
                     ).length,
-                    tentative: responses.filter(
-                        (r: AvailabilityResponse) => r.status === 'tentative'
-                    ).length,
                     pending: pendingMembers.length,
                 },
             };
@@ -396,7 +392,7 @@ router.post(
         if (
             !child_id ||
             !status ||
-            !['available', 'unavailable', 'tentative'].includes(status)
+            !['available', 'unavailable'].includes(status)
         ) {
             if (wantsJson) { res.status(400).json({ success: false, error: 'Missing or invalid fields' }); return; }
             res.redirect('/dashboard');

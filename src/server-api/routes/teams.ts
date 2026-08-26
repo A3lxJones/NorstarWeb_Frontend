@@ -87,7 +87,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     // Fetch approved members
     const { data: approved } = await supabaseAdmin
         .from("team_registrations")
-        .select("*, child:children(id, first_name, last_name, date_of_birth, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
+        .select("*, child:children(id, first_name, last_name, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
         .eq("team_id", req.params.id)
         .eq("status", "approved");
 
@@ -96,14 +96,14 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     if (req.userRole === "coach" || req.userRole === "admin") {
         const { data } = await supabaseAdmin
             .from("team_registrations")
-            .select("*, child:children(id, first_name, last_name, date_of_birth, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
+            .select("*, child:children(id, first_name, last_name, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
             .eq("team_id", req.params.id)
             .eq("status", "pending");
         pending = data || [];
     } else if (req.userRole === "parent") {
         const { data } = await supabaseAdmin
             .from("team_registrations")
-            .select("*, child:children(id, first_name, last_name, date_of_birth, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
+            .select("*, child:children(id, first_name, last_name, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
             .eq("team_id", req.params.id)
             .eq("status", "pending")
             .eq("registered_by", req.userId!);
@@ -133,7 +133,7 @@ router.get("/:id/registrations", async (req: Request, res: Response): Promise<vo
 
     let query = supabaseAdmin
         .from("team_registrations")
-        .select("*, child:children(id, first_name, last_name, date_of_birth, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
+        .select("*, child:children(id, first_name, last_name, position), registered_by_profile:profiles!team_registrations_registered_by_fkey(id, full_name, email)")
         .eq("team_id", req.params.id);
 
     // Filter by status if provided

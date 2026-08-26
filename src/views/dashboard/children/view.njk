@@ -5,11 +5,11 @@
   <div class="container mx-auto px-4 max-w-3xl">
 
     <!-- Back link -->
-    <a href="/dashboard/children/all" class="btn btn-ghost btn-sm gap-1 mb-6 -ml-2 text-base-content/60 hover:text-secondary">
+    <a href="{{ backUrl | default('/dashboard') }}" class="btn btn-ghost btn-sm gap-1 mb-6 -ml-2 text-base-content/60 hover:text-secondary">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      Back to Children
+      {{ backLabel | default('Back') }}
     </a>
 
     <!-- Header -->
@@ -36,10 +36,6 @@
             <div>
               <span class="text-base-content/50 text-xs uppercase tracking-wide">Full Name</span>
               <p class="font-medium mt-0.5">{{ child.first_name }} {{ child.last_name }}</p>
-            </div>
-            <div>
-              <span class="text-base-content/50 text-xs uppercase tracking-wide">Date of Birth</span>
-              <p class="font-medium mt-0.5">{{ child.date_of_birth }}</p>
             </div>
           </div>
         </div>

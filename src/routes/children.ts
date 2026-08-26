@@ -13,7 +13,6 @@ interface ChildRecord {
     id: string;
     first_name: string;
     last_name: string;
-    date_of_birth: string;
     position?: string;
     emergency_contact_name?: string;
     emergency_contact_phone?: string;
@@ -93,10 +92,80 @@ router.get('/all/:id', requireRole('admin'), async (req: Request, res: Response)
         res.render('dashboard/children/view.njk', {
             title: `${result.data.first_name} ${result.data.last_name} — Norstar`,
             child: result.data,
+            backUrl: '/dashboard/children/all',
+            backLabel: 'Back to Children',
         });
     } catch (error) {
         console.error('Admin child detail error:', error);
         res.status(500).render('404.njk', { title: 'Error Loading Details' });
+    }
+});
+
+// ─── COACH/ADMIN: GET /dashboard/children/roster — player info by team ─
+
+const UUID_PATTERN =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+interface TeamSummary {
+    id: string;
+    name: string;
+    age_group: string;
+}
+
+interface RosterChild extends ChildRecord {
+    emergency_contact_relationship?: string;
+    medical_conditions?: string | null;
+    allergies?: string | null;
+}
+
+router.get('/roster', requireRole('coach', 'admin'), async (req: Request, res: Response) => {
+    const token = req.session.accessToken!;
+    const rawTeamId = (req.query.team as string) || '';
+    const teamId = UUID_PATTERN.test(rawTeamId) ? rawTeamId : '';
+
+    try {
+        const [teamsResult, childrenResult] = await Promise.all([
+            apiRequest<TeamSummary[]>('/api/teams', { token }),
+            apiRequest<RosterChild[]>('/api/children', { token }),
+        ]);
+
+        const teams = teamsResult.data || [];
+        let children = childrenResult.data || [];
+        let selectedTeam: TeamSummary | undefined;
+
+        if (teamId) {
+            selectedTeam = teams.find((t) => t.id === teamId);
+
+            const regsResult = await apiRequest<{ child?: { id: string } | null }[]>(
+                `/api/teams/${teamId}/registrations?status=approved`,
+                { token }
+            );
+
+            const memberIds = new Set(
+                (regsResult.data || [])
+                    .map((reg) => reg.child?.id)
+                    .filter((id): id is string => Boolean(id))
+            );
+
+            children = children.filter((child) => memberIds.has(child.id));
+        }
+
+        res.render('dashboard/children/roster.njk', {
+            title: 'Player Information — Norstar',
+            teams,
+            children,
+            selectedTeamId: teamId,
+            selectedTeam,
+        });
+    } catch (error) {
+        console.error('Player roster error:', error);
+        res.render('dashboard/children/roster.njk', {
+            title: 'Player Information — Norstar',
+            teams: [],
+            children: [],
+            selectedTeamId: '',
+            error: 'Unable to load player information.',
+        });
     }
 });
 
@@ -117,7 +186,6 @@ router.post('/add', async (req: Request, res: Response) => {
     const {
         first_name,
         last_name,
-        date_of_birth,
         gender,
         position,
         emergency_contact_name,
@@ -137,7 +205,6 @@ router.post('/add', async (req: Request, res: Response) => {
     const values = {
         first_name,
         last_name,
-        date_of_birth,
         gender,
         position,
         emergency_contact_name,
@@ -149,10 +216,10 @@ router.post('/add', async (req: Request, res: Response) => {
     };
 
     // Validation
-    if (!first_name || !last_name || !date_of_birth) {
+    if (!first_name || !last_name) {
         res.render('dashboard/children/add.njk', {
             title: 'Add Child — Norstar',
-            error: 'First name, last name, and date of birth are required.',
+            error: 'First name and last name are required.',
             values,
         });
         return;
@@ -167,20 +234,28 @@ router.post('/add', async (req: Request, res: Response) => {
         return;
     }
 
+    if (!medical_conditions?.trim() || !allergies?.trim()) {
+        res.render('dashboard/children/add.njk', {
+            title: 'Add Child — Norstar',
+            error: 'Medical conditions and allergies are required — enter "NA" if there are none.',
+            values,
+        });
+        return;
+    }
+
     const result = await apiRequest<{ id: string }>('/api/children', {
         method: 'POST',
         token,
         body: {
             first_name: first_name.trim(),
             last_name: last_name.trim(),
-            date_of_birth,
             gender: gender || undefined,
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
             emergency_contact_relationship,
-            medical_conditions: medical_conditions?.trim() || undefined,
-            allergies: allergies?.trim() || undefined,
+            medical_conditions: medical_conditions.trim(),
+            allergies: allergies.trim(),
             photo_consent: photo_consent === 'on',
         },
     });
@@ -241,6 +316,33 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+// ─── GET /dashboard/children/:id/info — read-only child info ───
+
+router.get('/:id/info', async (req: Request, res: Response) => {
+    const token = req.session.accessToken!;
+    const childId = req.params.id;
+
+    try {
+        const result = await apiRequest<Record<string, unknown>>(
+            `/api/children/${childId}`,
+            { token }
+        );
+
+        if (!result.success || !result.data) {
+            res.status(404).render('404.njk', { title: 'Child Not Found' });
+            return;
+        }
+
+        res.render('dashboard/children/view.njk', {
+            title: `${result.data.first_name} ${result.data.last_name} — Norstar`,
+            child: result.data,
+        });
+    } catch (error) {
+        console.error('Child info error:', error);
+        res.status(500).render('404.njk', { title: 'Error Loading Details' });
+    }
+});
+
 // ─── GET /dashboard/children/:id/edit — show edit form ──────
 
 router.get('/:id/edit', async (req: Request, res: Response) => {
@@ -277,7 +379,6 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
     const {
         first_name,
         last_name,
-        date_of_birth,
         gender,
         position,
         emergency_contact_name,
@@ -297,7 +398,6 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
     const childData = {
         first_name,
         last_name,
-        date_of_birth,
         gender,
         position,
         emergency_contact_name,
@@ -309,10 +409,10 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
     };
 
     // Validation
-    if (!first_name || !last_name || !date_of_birth) {
+    if (!first_name || !last_name) {
         res.render('dashboard/children/edit.njk', {
             title: 'Edit Child — Norstar',
-            error: 'First name, last name, and date of birth are required.',
+            error: 'First name and last name are required.',
             child: { id: childId, ...childData },
         });
         return;
@@ -327,20 +427,28 @@ router.post('/:id/edit', async (req: Request, res: Response) => {
         return;
     }
 
+    if (!medical_conditions?.trim() || !allergies?.trim()) {
+        res.render('dashboard/children/edit.njk', {
+            title: 'Edit Child — Norstar',
+            error: 'Medical conditions and allergies are required — enter "NA" if there are none.',
+            child: { id: childId, ...childData },
+        });
+        return;
+    }
+
     const result = await apiRequest<unknown>(`/api/children/${childId}`, {
         method: 'PUT',
         token,
         body: {
             first_name: first_name.trim(),
             last_name: last_name.trim(),
-            date_of_birth,
             gender: gender || undefined,
             position: position || undefined,
             emergency_contact_name: emergency_contact_name.trim(),
             emergency_contact_phone: emergency_contact_phone.trim(),
             emergency_contact_relationship,
-            medical_conditions: medical_conditions?.trim() || undefined,
-            allergies: allergies?.trim() || undefined,
+            medical_conditions: medical_conditions.trim(),
+            allergies: allergies.trim(),
             photo_consent: photo_consent === 'on',
         },
     });
@@ -385,7 +493,7 @@ interface AvailabilityRecord {
     game_id: string | null;
     availability_type: 'match' | 'training';
     event_date: string;
-    status: 'available' | 'unavailable' | 'tentative';
+    status: 'available' | 'unavailable';
     reason: string | null;
     created_at?: string;
 }

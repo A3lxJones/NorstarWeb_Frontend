@@ -68,7 +68,7 @@ router.get("/users", async (req: Request, res: Response): Promise<void> => {
         filtered.map(async (profile) => {
             const { data: children } = await supabaseAdmin
                 .from("children")
-                .select("id, first_name, last_name, date_of_birth, gender, position")
+                .select("id, first_name, last_name, gender, position")
                 .eq("parent_id", profile.id);
 
             return {
@@ -298,7 +298,7 @@ router.get("/parents-with-children", async (req: Request, res: Response): Promis
         if (parentIds.length > 0) {
             const { data: children, error: childrenError } = await supabaseAdmin
                 .from("children")
-                .select("id, parent_id, first_name, last_name, date_of_birth")
+                .select("id, parent_id, first_name, last_name")
                 .in("parent_id", parentIds)
                 .order("created_at", { ascending: false });
 
@@ -313,7 +313,6 @@ router.get("/parents-with-children", async (req: Request, res: Response): Promis
                     id: child.id,
                     firstName: child.first_name,
                     lastName: child.last_name,
-                    dob: child.date_of_birth,
                 });
                 acc.set(child.parent_id, list);
                 return acc;
@@ -373,7 +372,6 @@ router.get("/children", async (req: Request, res: Response): Promise<void> => {
                 `id, 
                 first_name, 
                 last_name, 
-                date_of_birth, 
                 gender, 
                 position, 
                 medical_conditions, 

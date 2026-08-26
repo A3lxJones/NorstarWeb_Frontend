@@ -1,0 +1,54 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  <!-- ======== HERO ======== -->
+  <section class="min-h-[70vh] flex items-center justify-center py-16 md:py-24 bg-base-200/40 relative overflow-hidden">
+    <!-- Decorative blobs -->
+    <div class="absolute -top-24 -left-24 w-72 h-72 bg-secondary/5 rounded-full blur-3xl animate-float" aria-hidden="true"></div>
+    <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-accent/5 rounded-full blur-3xl animate-float" aria-hidden="true"></div>
+
+    <div class="relative z-10 max-w-2xl mx-auto px-4 text-center">
+      <!-- Icon -->
+      <div class="mb-8 flex justify-center">
+        <div class="p-6 bg-secondary/10 text-secondary rounded-full border border-secondary/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+      </div>
+
+      <span class="eyebrow mb-3 block">Programmes</span>
+
+      <h1 class="font-heading text-4xl md:text-5xl font-bold mb-4 leading-tight">
+        Learn to Skate
+      </h1>
+
+      <p class="text-lg text-base-content/70 mb-8 leading-relaxed">
+        Coming soon — more information will be available once dates and sessions are confirmed.
+      </p>
+
+      <div class="bg-base-100 border border-base-300 rounded-box p-6 mb-8 shadow-xl">
+        <p class="text-base-content/65">
+          Our Learn to Skate programme introduces children to inline skating in a fun, supportive
+          environment. We're finalising the schedule, coaching team and joining details, and we'll
+          publish everything here as soon as it's organised.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/contact" class="btn btn-secondary gap-2 hover:scale-[1.02] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Register your interest
+        </a>
+        <a href="/" class="btn btn-outline btn-secondary gap-2 hover:scale-[1.02] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to home
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

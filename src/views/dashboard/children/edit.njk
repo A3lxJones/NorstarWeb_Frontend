@@ -85,16 +85,6 @@
                 </select>
               </div>
             </div>
-
-            <div class="form-control mt-4">
-              <label class="label" for="edit-dob">
-                <span class="label-text font-medium">Date of Birth <span class="text-error">*</span></span>
-              </label>
-              <input type="date" id="edit-dob" name="date_of_birth"
-                     value="{{ child.date_of_birth or '' }}"
-                     class="input input-bordered w-full focus:input-secondary transition-colors"
-                     required autocomplete="bday" />
-            </div>
           </div>
 
           <div class="divider"></div>
@@ -185,20 +175,22 @@
 
             <div class="form-control">
               <label class="label" for="edit-medical">
-                <span class="label-text font-medium">Medical Conditions</span>
+                <span class="label-text font-medium">Medical Conditions <span class="text-error">*</span></span>
+                <span class="label-text-alt text-base-content/40">Enter NA if none</span>
               </label>
               <textarea id="edit-medical" name="medical_conditions" rows="3"
                         class="textarea textarea-bordered w-full focus:textarea-secondary transition-colors"
-                        maxlength="2000">{{ child.medical_conditions or '' }}</textarea>
+                        required maxlength="2000">{{ child.medical_conditions or '' }}</textarea>
             </div>
 
             <div class="form-control mt-4">
               <label class="label" for="edit-allergies">
-                <span class="label-text font-medium">Allergies</span>
+                <span class="label-text font-medium">Allergies <span class="text-error">*</span></span>
+                <span class="label-text-alt text-base-content/40">Enter NA if none</span>
               </label>
               <textarea id="edit-allergies" name="allergies" rows="2"
                         class="textarea textarea-bordered w-full focus:textarea-secondary transition-colors"
-                        maxlength="2000">{{ child.allergies or '' }}</textarea>
+                        required maxlength="2000">{{ child.allergies or '' }}</textarea>
             </div>
           </div>
 
