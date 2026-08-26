@@ -25,6 +25,22 @@ router.post(
     }
 );
 
+// ─── GET /dashboard/files — Important Files ─────────────────
+router.get('/files', (req: Request, res: Response) => {
+    const user = req.session.user!;
+    const isAdmin = user.role === 'admin';
+    const viewAsRole = isAdmin ? req.session.viewAsRole : undefined;
+    const effectiveRole = viewAsRole || user.role;
+
+    res.render('dashboard/files.njk', {
+        title: 'Important Files — Norstar',
+        isCoach: isAdmin || effectiveRole === 'coach',
+        isImpersonating: isAdmin && !!viewAsRole,
+        realRole: user.role,
+        viewAsRole: viewAsRole || null,
+    });
+});
+
 // ─── GET /dashboard — role-based dashboard ──────────────────
 router.get('/', async (req: Request, res: Response) => {
     const token = req.session.accessToken!;
