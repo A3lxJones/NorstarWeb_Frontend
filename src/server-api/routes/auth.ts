@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { supabase } from "../config/supabase";
 import { supabaseAdmin } from "../config/supabase";
 import { isValidEmail, isNonEmptyString } from "../utils/validation";
+import { encryptField } from "../utils/encryption";
 import { ApiResponse, UserRole } from "../types";
 
 const router = Router();
@@ -42,11 +43,18 @@ router.post("/signup", async (req: Request, res: Response): Promise<void> => {
 
     const userRole: UserRole = "parent";
 
+    // Encrypt once, up front. The values below are handed to Supabase Auth as
+    // user metadata because the `handle_new_user` DB trigger seeds the profile
+    // row from it — passing ciphertext means the profile is never written in
+    // plaintext, not even momentarily.
+    const emailEnc = encryptField(email as string);
+    const phoneEnc = encryptField((phone || null) as string | null);
+
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-            data: { full_name, phone: phone || null, role: userRole },
+            data: { full_name, phone: phoneEnc, email_enc: emailEnc, role: userRole },
         },
     });
 
@@ -59,9 +67,9 @@ router.post("/signup", async (req: Request, res: Response): Promise<void> => {
     if (data.user) {
         await supabaseAdmin.from("profiles").upsert({
             id: data.user.id,
-            email,
+            email: emailEnc,
             full_name,
-            phone: phone || null,
+            phone: phoneEnc,
             role: userRole,
         });
     }

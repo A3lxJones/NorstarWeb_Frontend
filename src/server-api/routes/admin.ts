@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { supabaseAdmin } from "../config/supabase";
 import { authenticate, authorize } from "../middleware/auth";
+import { decryptDeep, encryptField } from "../utils/encryption";
 import { ApiResponse } from "../types";
 
 const router = Router();
@@ -51,14 +52,16 @@ router.get("/users", async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    // Filter by search term if provided (name or email)
-    let filtered = profiles;
+    // Filter by search term if provided (name or email). Emails are stored as
+    // ciphertext, so match against the decrypted values rather than in SQL.
+    const decrypted = decryptDeep(profiles);
+    let filtered = decrypted;
     if (search && typeof search === "string") {
         const searchLower = search.toLowerCase();
-        filtered = profiles.filter(
+        filtered = decrypted.filter(
             (p) =>
                 p.full_name?.toLowerCase().includes(searchLower) ||
-                p.email.toLowerCase().includes(searchLower)
+                p.email?.toLowerCase().includes(searchLower)
         );
     }
 
@@ -153,7 +156,7 @@ router.put("/users/:id", async (req: Request, res: Response): Promise<void> => {
     };
 
     if (full_name) updateData.full_name = full_name;
-    if (phone) updateData.phone = phone;
+    if (phone) updateData.phone = encryptField(phone as string);
     if (role) updateData.role = role;
 
     // Update profiles table
@@ -272,24 +275,48 @@ router.get("/parents-with-children", async (req: Request, res: Response): Promis
         const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? "25"), 10) || 25, 1), 100);
         const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
 
-        let parentsQuery = supabaseAdmin
+        const parentsQuery = supabaseAdmin
             .from("profiles")
             .select("id, full_name, email, phone", { count: "exact" })
             .eq("role", "parent")
             .order("created_at", { ascending: false });
 
-        if (search) {
-            parentsQuery = parentsQuery.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
-        }
-
         const from = (page - 1) * limit;
         const to = from + limit - 1;
 
-        const { data: parents, count: total, error: parentsError } = await parentsQuery.range(from, to);
+        // Emails are stored encrypted, so a SQL ILIKE can never match them.
+        // When searching, load the (club-sized) parent list, decrypt, then
+        // filter and paginate in memory. Unsearched requests keep DB paging.
+        let parents: any[];
+        let total: number;
 
-        if (parentsError) {
-            res.status(500).json({ success: false, error: parentsError.message } as ApiResponse);
-            return;
+        if (search) {
+            const { data, error: parentsError } = await parentsQuery;
+
+            if (parentsError) {
+                res.status(500).json({ success: false, error: parentsError.message } as ApiResponse);
+                return;
+            }
+
+            const searchLower = search.toLowerCase();
+            const matches = decryptDeep(data || []).filter(
+                (p) =>
+                    p.full_name?.toLowerCase().includes(searchLower) ||
+                    p.email?.toLowerCase().includes(searchLower)
+            );
+
+            total = matches.length;
+            parents = matches.slice(from, from + limit);
+        } else {
+            const { data, count, error: parentsError } = await parentsQuery.range(from, to);
+
+            if (parentsError) {
+                res.status(500).json({ success: false, error: parentsError.message } as ApiResponse);
+                return;
+            }
+
+            parents = data || [];
+            total = count || 0;
         }
 
         const parentIds = (parents || []).map((p) => p.id);

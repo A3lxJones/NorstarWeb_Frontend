@@ -17,6 +17,7 @@ import "express-async-errors";
 import express from "express";
 
 import { errorHandler } from "./middleware/errorHandler";
+import { decryptDeep } from "./utils/encryption";
 import authRoutes from "./routes/auth";
 import dashboardRoutes from "./routes/dashboard";
 import childrenRoutes from "./routes/children";
@@ -37,6 +38,14 @@ apiApp.disable("x-powered-by");
 // Body parsing — mirrors the former backend limits.
 apiApp.use(express.json({ limit: "10kb" }));
 apiApp.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Personal data (emails, phone numbers) is stored encrypted. Decrypt on the way
+// out here rather than in each route so nested Supabase embeds are covered too.
+apiApp.use((_req, res, next) => {
+    const json = res.json.bind(res);
+    res.json = (body: unknown) => json(decryptDeep(body));
+    next();
+});
 
 // Health check (kept for parity / diagnostics).
 apiApp.get("/api/health", (_req, res) => {

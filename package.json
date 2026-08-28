@@ -14,6 +14,7 @@
         "start": "node dist/server.js",
         "lint": "eslint src --ext .ts",
         "lint:fix": "eslint src --ext .ts --fix",
+        "pii:encrypt": "npm run build:ts && node dist/scripts/encrypt-existing-pii.js",
         "type-check": "tsc --noEmit",
         "test": "npm run type-check && npm run lint && npm run build && npm run test:e2e",
         "test:e2e": "playwright test",
