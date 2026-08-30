@@ -2,6 +2,8 @@ node_modules/
 dist/
 src/public/css/output.css
 .env
+.env.*
+!.env.example
 *.js.map
 *.d.ts
 !tailwind.config.js

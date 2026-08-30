@@ -7,6 +7,7 @@ import {
     isNotNumeric,
     isValidPhoneNumber
 } from "../utils/validation";
+import { encryptField } from "../utils/encryption";
 import { ApiResponse, CreateChildDTO } from "../types";
 
 const router = Router();
@@ -215,6 +216,8 @@ router.post(
             ...req.body,
             parent_id: req.userId!,
             photo_consent: req.body.photo_consent ?? false,
+            // Validated above in plaintext; stored encrypted.
+            emergency_contact_phone: encryptField(req.body.emergency_contact_phone as string),
         };
 
         const { data, error } = await supabaseAdmin
@@ -258,6 +261,17 @@ router.put("/:id", async (req: Request, res: Response): Promise<void> => {
 
     // Strip fields that shouldn't be updated directly
     const { id: _id, parent_id: _pid, created_at: _ca, ...updateData } = req.body;
+
+    if (updateData.emergency_contact_phone !== undefined) {
+        if (!isValidPhoneNumber(updateData.emergency_contact_phone)) {
+            res.status(400).json({
+                success: false,
+                error: "Emergency contact phone must be a valid phone number",
+            } as ApiResponse);
+            return;
+        }
+        updateData.emergency_contact_phone = encryptField(updateData.emergency_contact_phone as string);
+    }
 
     const { data, error } = await supabaseAdmin
         .from("children")

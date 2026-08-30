@@ -46,6 +46,14 @@
     "overrides": [
         {
             "files": [
+                "src/scripts/**/*.ts"
+            ],
+            "rules": {
+                "no-console": "off"
+            }
+        },
+        {
+            "files": [
                 "src/server-api/**/*.ts"
             ],
             "rules": {
